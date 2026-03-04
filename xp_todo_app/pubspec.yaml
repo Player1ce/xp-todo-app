@@ -2,7 +2,7 @@ name: xp_todo_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -20,6 +20,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.11.0
+  flutter: ">=3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,6 +36,24 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Firebase (Cloud services)
+  firebase_core: ^4.5.0
+  firebase_auth: ^6.2.0
+  cloud_firestore: ^6.1.3
+  firebase_ui_auth: ^3.0.1
+
+  # Riverpod (State management)
+  flutter_riverpod: ^3.2.1
+  riverpod_annotation: ^4.0.2
+
+  # Go_router (Routing/navigation)
+  go_router: ^17.1.0
+
+  # Adaptive platform UI (Platform-aware widgets)
+  adaptive_platform_ui: ^0.1.103
+
+  # Other dependencies
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -46,12 +65,17 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+  # Riverpod code generation (State management)
+  build_runner:
+  riverpod_generator: ^4.0.3
+
+  # Other dev dependencies
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
