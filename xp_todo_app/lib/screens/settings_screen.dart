@@ -6,16 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:xp_todo_app/util/route_constants.dart';
 import 'package:xp_todo_app/widgets/custom_navigation_bar.dart';
 
-class MyDemoHomePage extends StatefulWidget {
-  const MyDemoHomePage({super.key, required this.title});
-
-  final String title;
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<MyDemoHomePage> createState() => _MyDemoHomePageState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _MyDemoHomePageState extends State<MyDemoHomePage> {
+class _SettingsScreenState extends State<SettingsScreen> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -39,7 +37,7 @@ class _MyDemoHomePageState extends State<MyDemoHomePage> {
     // than having to individually change instances of widgets.
     return AdaptiveScaffold(
       appBar: AdaptiveAppBar(
-        title: "test",
+        title: "Settings",
         actions: [
           AdaptiveAppBarAction(
             icon: Icons.undo,
@@ -47,7 +45,7 @@ class _MyDemoHomePageState extends State<MyDemoHomePage> {
             onPressed: () {
               // Handle settings button press
               if (kDebugMode) {
-                print("Undu action pressed");
+                print("Undo action pressed");
               }
             },
           ),
