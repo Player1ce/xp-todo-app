@@ -1,17 +1,17 @@
-
 import 'package:flutter/material.dart';
 
-class MyDemoHomePage extends StatefulWidget {
-  const MyDemoHomePage({super.key, required this.title});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyDemoHomePage> createState() => _MyDemoHomePageState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _MyDemoHomePageState extends State<MyDemoHomePage> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final int _counter = 0;
+
   @override
   Widget build(BuildContext context) {
     return Center(

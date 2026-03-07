@@ -7,10 +7,8 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 // flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // go_router
-import 'package:go_router/go_router.dart';
 // router code
 import 'routing/router_config.dart' as router_config;
 

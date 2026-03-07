@@ -1,12 +1,13 @@
 // go_router
 import 'package:go_router/go_router.dart';
+import 'package:xp_todo_app/const/page_view_configurations.dart';
 
 // Screens
-import 'package:xp_todo_app/screens/my_demo_home_screen.dart';
 import 'package:xp_todo_app/screens/settings_screen.dart';
+import 'package:xp_todo_app/screens/page_view_home_screen.dart';
 
 // Route constants
-import 'package:xp_todo_app/util/route_constants.dart';
+import 'package:xp_todo_app/const/route_constants.dart';
 
 // GoRouter configuration
 final mainRouter = GoRouter(
@@ -14,7 +15,7 @@ final mainRouter = GoRouter(
     GoRoute(
       path: RouteConstants.home,
       builder: (context, state) =>
-          const MyDemoHomePage(title: "Flutter Demo Home Page"),
+          const PageViewHomeScreen(pageLayout: mainPageLayout),
     ),
     GoRoute(
       path: RouteConstants.settings,
