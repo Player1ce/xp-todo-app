@@ -7,6 +7,7 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 // flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:xp_todo_app/theme/app_theme.dart';
 
 // go_router
 // router code
@@ -30,12 +31,14 @@ class MyApp extends ConsumerWidget {
 
       // AdaptiveApp configuration
       themeMode: ThemeMode.system,
-      materialLightTheme: ThemeData.light(),
-      materialDarkTheme: ThemeData.dark(),
-      cupertinoLightTheme: const CupertinoThemeData(
-        brightness: Brightness.light,
-      ),
-      cupertinoDarkTheme: const CupertinoThemeData(brightness: Brightness.dark),
+      materialLightTheme: AppMaterialTheme.light,
+      materialDarkTheme: AppMaterialTheme.dark,
+      cupertinoLightTheme: AppCupertinoTheme.light,
+      cupertinoDarkTheme: AppCupertinoTheme.dark,
+      // cupertinoLightTheme: const CupertinoThemeData(
+      //   brightness: Brightness.light,
+      // ),
+      // cupertinoDarkTheme: const CupertinoThemeData(brightness: Brightness.dark),
 
       // Localization configuration
       localizationsDelegates: [
