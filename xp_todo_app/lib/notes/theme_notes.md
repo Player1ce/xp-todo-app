@@ -1,4 +1,4 @@
-## The References You Should Bookmark
+# The References You Should Bookmark
 
 These are the sources that will answer every question you'll have when customising this further:
 

@@ -53,6 +53,7 @@ dependencies:
 
   # Adaptive platform UI (Platform-aware widgets)
   adaptive_platform_ui: ^0.1.103
+  collection: ^1.19.1
 
   # Other dependencies
 
