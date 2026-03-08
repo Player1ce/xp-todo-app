@@ -6,10 +6,8 @@ import 'package:xp_todo_app/screens/my_demo_home_screen.dart';
 import 'package:xp_todo_app/util/page_layout.dart';
 
 // mainPage
-Widget _buildMainPage_HomePage(BuildContext context) =>
-    MyDemoHomePage(title: "Title");
-Widget _buildMainPage_HomePage2(BuildContext context) =>
-    MyDemoHomePage(title: "Title2");
+Widget _buildMainPage_HomePage(BuildContext context) => MyDemoHomePage();
+Widget _buildMainPage_HomePage2(BuildContext context) => MyDemoHomePage();
 
 const mainPageList = [
   PageData(

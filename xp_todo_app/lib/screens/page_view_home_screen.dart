@@ -38,7 +38,7 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
   void switchPageViewPage(int index) {
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
     ref
@@ -80,3 +80,21 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
     );
   }
 }
+
+// NOTE: a pageView.builder edition for reference
+
+// PageView.builder(
+//   itemBuilder: (context, index) =>
+//       widget.pageLayout[index].builder(context),
+//   onPageChanged: (index) {
+//     ref
+//         .read(
+//           pageIndexProvider(
+//             widget.pageLayout.id,
+//             widget.pageLayout.initialPage,
+//           ).notifier,
+//         )
+//         .setPage(index);
+//   },
+//   controller: _pageController,
+// ),
