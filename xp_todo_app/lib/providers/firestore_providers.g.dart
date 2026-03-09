@@ -56,10 +56,10 @@ final class FirestoreProvider
 
 String _$firestoreHash() => r'0e25e335c5657f593fc1baf3d9fd026e70bca7fa';
 
-@ProviderFor(userRepository)
-final userRepositoryProvider = UserRepositoryProvider._();
+@ProviderFor(firestoreRepository)
+final firestoreRepositoryProvider = FirestoreRepositoryProvider._();
 
-final class UserRepositoryProvider
+final class FirestoreRepositoryProvider
     extends
         $FunctionalProvider<
           FirestoreRepository,
@@ -67,19 +67,19 @@ final class UserRepositoryProvider
           FirestoreRepository
         >
     with $Provider<FirestoreRepository> {
-  UserRepositoryProvider._()
+  FirestoreRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'userRepositoryProvider',
+        name: r'firestoreRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$userRepositoryHash();
+  String debugGetCreateSourceHash() => _$firestoreRepositoryHash();
 
   @$internal
   @override
@@ -89,7 +89,7 @@ final class UserRepositoryProvider
 
   @override
   FirestoreRepository create(Ref ref) {
-    return userRepository(ref);
+    return firestoreRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -101,4 +101,5 @@ final class UserRepositoryProvider
   }
 }
 
-String _$userRepositoryHash() => r'496173c82f02b5be5aeccab1dd0b0e1b2a721803';
+String _$firestoreRepositoryHash() =>
+    r'5f5fa55ad290ae9040292719ad35eee7e8917a89';

@@ -1,5 +1,4 @@
 import 'package:xp_todo_app/exceptions/document_not_found_exception.dart';
-import 'package:xp_todo_app/providers/firestore_providers.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
 import 'package:xp_todo_app/util/pair.dart';
 
@@ -13,12 +12,15 @@ import 'package:flutter/material.dart';
 class FirestoreRepository {
   final FirebaseFirestore database;
 
-  FirestoreRepository(this.database) {
-    // database = firestore;
+  FirestoreRepository({required FirebaseFirestore firestoreInstance})
+    : database = firestoreInstance {
+    // CRITICAL: Limit cache size to prevent memory issues
+    // 100MB is reasonable for most apps. Adjust if needed.
     database.settings = const Settings(
       persistenceEnabled: true,
-      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+      cacheSizeBytes: 100 * 1024 * 1024, // 100MB cache limit
     );
+    debugPrint("FirestoreRepository: Initialized with 100MB cache limit");
   }
 
   Future<String?> create(
@@ -273,6 +275,7 @@ class FirestoreRepository {
   }
 
   //TODO: should this return the new object or just bool?
+
   Future<bool> update(
     String collectionName,
     String docId,
@@ -324,6 +327,52 @@ class FirestoreRepository {
     } catch (e) {
       debugPrint(
         "Error updating document in subcollection $collectionName/$docId/$subcollectionName/$subId: $e",
+      );
+      return false;
+    }
+  }
+
+  Future<bool> setSubcollectionDocument(
+    String collectionName,
+    String docId,
+    String subcollectionName,
+    String subDocId,
+    Map<String, dynamic> data, {
+    bool merge = false,
+  }) async {
+    try {
+      final docRef = database
+          .collection(collectionName)
+          .doc(docId)
+          .collection(subcollectionName)
+          .doc(subDocId);
+      await docRef.set(data, SetOptions(merge: merge));
+      return true;
+    } catch (e) {
+      debugPrint(
+        "Error setting document in subcollection $collectionName/$docId/$subcollectionName/$subDocId: $e",
+      );
+      return false;
+    }
+  }
+
+  Future<bool> deleteSubcollectionDocument(
+    String collectionName,
+    String docId,
+    String subcollectionName,
+    String subDocId,
+  ) async {
+    try {
+      final docRef = database
+          .collection(collectionName)
+          .doc(docId)
+          .collection(subcollectionName)
+          .doc(subDocId);
+      await docRef.delete();
+      return true;
+    } catch (e) {
+      debugPrint(
+        "Error deleting document in subcollection $collectionName/$docId/$subcollectionName/$subDocId: $e",
       );
       return false;
     }
@@ -511,6 +560,21 @@ class FirestoreRepository {
     }
   }
 
+  Future<List<DataWithId>> readAll(String collectionName) async {
+    try {
+      final snapshot = await database.collection(collectionName).get();
+      debugPrint(
+        "Read all from collection $collectionName returned ${snapshot.docs.length} documents",
+      );
+      return snapshot.docs.map((doc) => DataWithId.fromFirestore(doc)).toList();
+    } catch (e) {
+      debugPrint(
+        "Error reading all documents from collection $collectionName: $e",
+      );
+      return [];
+    }
+  }
+
   Future<List<DataWithId>> subQueryByField(
     String collectionName,
     String docId,
@@ -636,35 +700,6 @@ class FirestoreRepository {
     }
   }
 
-  /// Helper function to create workd tracker. This is specialized so that it cannot be used elsewhere because it should not be
-  Future<bool> addWordTracker(
-    String collectionName,
-    String childID,
-    String subcollectionName,
-    String wordID,
-    Map<String, dynamic> data,
-  ) async {
-    try {
-      final docRef = database.collection(collectionName).doc(childID);
-      final subDocRef = docRef.collection(subcollectionName).doc(wordID);
-
-      return await database.runTransaction((transaction) async {
-        final snapshot = await transaction.get(docRef);
-        if (!snapshot.exists) {
-          throw Exception("addWordTracker: Child document does not exist");
-        }
-
-        transaction.update(docRef, {"wordCount": FieldValue.increment(1)});
-        transaction.set(subDocRef, data);
-
-        return true;
-      });
-    } catch (e) {
-      debugPrint("Error adding word tracker in $collectionName: $e");
-      return false;
-    }
-  }
-
   Future<DataWithId?> moveDocumentWithoutSubcollections(
     String documentId,
     String fromCollection,
@@ -697,7 +732,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<Pair<DataWithId, String>?> changeUserStorageType(
+  Future<Pair<DataWithId, String>?> changeUserType(
     String userId,
     List<String> possibleFromCollections,
     String newCollectionName, {
@@ -732,8 +767,6 @@ class FirestoreRepository {
           debugPrint(
             "FirestoreRepository: changeUserType() moving user $userId from ${currentUserDataWithIdAndCollection.second} to $newCollectionName with data: ${currentUserDataWithIdAndCollection.first.data}",
           );
-
-          /// TODO: this will need to include subcollections in the future if we add those to parent, researcher, or some other user model
           final newUser = await moveDocumentWithoutSubcollections(
             userId,
             currentUserDataWithIdAndCollection.second,
@@ -759,6 +792,28 @@ class FirestoreRepository {
     } catch (e) {
       debugPrint("changeUserType: $e");
       return null;
+    }
+  }
+
+  Future<bool> batchUpdate(Map<String, Map<String, dynamic>> updates) async {
+    try {
+      final batch = database.batch();
+
+      for (final entry in updates.entries) {
+        final parts = entry.key.split('/');
+        if (parts.length >= 2) {
+          final collection = parts[0];
+          final docId = parts[1];
+          final docRef = database.collection(collection).doc(docId);
+          batch.update(docRef, entry.value);
+        }
+      }
+
+      await batch.commit();
+      return true;
+    } catch (e) {
+      debugPrint("Error in batch update: $e");
+      return false;
     }
   }
 }

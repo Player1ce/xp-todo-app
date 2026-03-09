@@ -7,7 +7,7 @@ enum Difficulty {
   hard,
   extreme; // Difficulties ordered from easies to hardest so index can be used for comparison
 
-  static const defaultDifficulty =
+  static const defaultValue =
       Difficulty.normal; // default to normal if there is an error
 
   // Serialize to Firestore
@@ -17,16 +17,12 @@ enum Difficulty {
 
   // deserialize from string
   static Difficulty fromStorage(String? value) {
-    if (value == null) {}
-    return Difficulty.values.firstWhere(
-      (d) => d.name == value,
-      orElse: () {
-        debugPrint(
-          'Difficulty value is null in fromStorage, defaulting to normal',
-        );
-        return defaultDifficulty;
-      }, // default to normal if value is null or unrecognized
-    );
+    if (value == null) {
+      debugPrint(
+        'Difficulty value is null in fromStorage, defaulting to normal',
+      );
+    }
+    return Difficulty.values.byName(value ?? defaultValue.name);
   }
 
   String get displayName {
@@ -58,7 +54,7 @@ enum Difficulty {
         debugPrint(
           'Difficulty value is null in fromDisplayName, defaulting to normal',
         );
-        return defaultDifficulty;
+        return defaultValue;
       },
     );
   }
@@ -74,7 +70,7 @@ enum Difficulty {
         debugPrint(
           'Difficulty value is null in fromDifficultyRating, defaulting to normal',
         );
-        return defaultDifficulty;
+        return defaultValue;
       },
     );
   }
