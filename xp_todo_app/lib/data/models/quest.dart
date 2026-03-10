@@ -2,18 +2,21 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
-import 'package:xp_todo_app/util/difficulty.dart';
+import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/util/time_utils.dart';
 
 class Quest {
-  String id;
-  String title;
-  int xpReward;
-  int level;
-  Difficulty difficulty;
-  String gameID;
-  DateTime? expireDate;
+  static String collectionName = 'Quest';
+
+  final String id;
+  final String title;
+  final int xpReward;
+  final int level;
+  final Difficulty difficulty;
+  final String gameID;
+  final DateTime? expireDate;
 
   // Metadata
   final DateTime? createdAt;
@@ -110,7 +113,7 @@ class Quest {
     String? gameID,
     DateTime? expireDate,
   }) {
-    Map<String, dynamic> map = {'updatedAt': DateTime.now()};
+    Map<String, dynamic> map = {'updatedAt': FieldValue.serverTimestamp()};
 
     if (title != null) map['title'] = title;
     if (xpReward != null) map['xpReward'] = xpReward;

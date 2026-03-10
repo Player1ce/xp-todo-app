@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
 import 'package:xp_todo_app/util/language_code.dart';
 import 'package:xp_todo_app/util/time_utils.dart';
-import 'package:xp_todo_app/util/user_role.dart';
+import 'package:xp_todo_app/util/enums/user_role.dart';
 
 import 'dart:convert';
 
@@ -62,8 +63,8 @@ class UserProfile {
   });
 
   // Helper getters
-  bool get isParent => role == UserRole.base;
-  bool get isResearcher => role == UserRole.manager;
+  bool get isBase => role == UserRole.base;
+  bool get isManager => role == UserRole.manager;
   bool get isAdmin => role == UserRole.admin;
   // bool get isDemoUser => status == UserStatus.demo;
   // bool get isActive => status == UserStatus.active;
@@ -136,7 +137,7 @@ class UserProfile {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'role': role.name,
+      'role': role.toStorage(),
       'email': email,
       'name': name,
       'firstName': firstName,
@@ -219,7 +220,7 @@ class UserProfile {
     bool? nightlyNotificationsEnabled,
     bool? weeklyNotificationsEnabled,
   }) {
-    Map<String, dynamic> map = {'updatedAt': DateTime.now()};
+    Map<String, dynamic> map = {'updatedAt': FieldValue.serverTimestamp()};
 
     if (role != null) map['role'] = role.name;
     if (email != null) map['email'] = email;
