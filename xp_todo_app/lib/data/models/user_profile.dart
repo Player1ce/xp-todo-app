@@ -10,8 +10,6 @@ import 'dart:convert';
 /// Unified user profile model
 /// Replaces Parent, Researcher, and User collections
 class UserProfile {
-  static String collectionName = 'UserProfile';
-
   final String id;
   final UserRole role;
 

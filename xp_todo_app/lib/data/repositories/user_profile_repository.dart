@@ -1,9 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:xp_todo_app/data/models/data_with_id.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
 import 'package:xp_todo_app/data/repositories/firestore_repository.dart';
 import 'package:flutter/foundation.dart';
 
-class UserProfileService extends ChangeNotifier {
+class UserProfileService {
+  static const String serviceName = "UserProfileService";
+  static const String collectionName = 'UserProfile';
+
+  static String localizeCollectionName(bool isDemo) {
+    return isDemo ? 'demo_$collectionName' : collectionName;
+  }
+
   final FirestoreRepository _repository;
   final FirebaseFirestore _database;
 
@@ -24,27 +32,26 @@ class UserProfileService extends ChangeNotifier {
 
     while (attempts < maxRetries) {
       try {
-        final collection = _database.collection(UserProfile.collectionName);
+        final collection = _database.collection(collectionName);
         await collection
             .doc(profile.id)
             .set(profile.toMap(), SetOptions(merge: merge));
         debugPrint(
-          'UserProfileService: Created profile for ${profile.id} (${profile.role.name})',
+          '$serviceName: Created profile for ${profile.id} (${profile.role.name})',
         );
-        notifyListeners();
         return profile;
       } catch (e) {
         attempts++;
-        debugPrint('UserProfileService: Create attempt $attempts failed: $e');
+        debugPrint('$serviceName: Create attempt $attempts failed: $e');
 
         if (attempts < maxRetries) {
           await Future.delayed(retryDelay);
         } else {
           debugPrint(
-            'UserProfileService: Failed to create profile after $maxRetries attempts',
+            '$serviceName: Failed to create profile after $maxRetries attempts',
           );
           throw Exception(
-            'Failed to create user profile after $maxRetries attempts: $e',
+            '$serviceName: Failed to create user profile after $maxRetries attempts: $e',
           );
         }
       }
@@ -58,45 +65,26 @@ class UserProfileService extends ChangeNotifier {
     String userId, {
     bool isDemo = false,
   }) async {
+    final localCollectionName = localizeCollectionName(isDemo);
     try {
-      final collectionName = isDemo
-          ? 'demo_${UserProfile.collectionName}'
-          : UserProfile.collectionName;
-      final data = await _repository.read(collectionName, userId);
-      if (data != null) {
-        return UserProfile.fromDataWithId(data);
+      final docRef = _database.collection(localCollectionName).doc(userId);
+      final doc = await docRef.get();
+      if (!doc.exists) {
+        debugPrint(
+          "FirebaseRepository: Document $localCollectionName/$userId does not exist",
+        );
+        return null;
       }
-      return null;
+      return UserProfile.fromDataWithId(
+        DataWithId(id: doc.id, data: doc.data() as Map<String, dynamic>),
+      );
     } catch (e) {
-      debugPrint('UserProfileService: Error getting profile: $e');
+      debugPrint(
+        "$serviceName: Error getting profile document: $localCollectionName/$userId: $e",
+      );
       return null;
     }
   }
-
-  /// Get user profile listener for real-time updates
-  // IDocumentListener getUserProfileListener(
-  //   String userId, {
-  //   bool isDemo = false,
-  // }) {
-  //   final collectionName = isDemo
-  //       ? 'demo_${UserProfile.collectionName}'
-  //       : UserProfile.collectionName;
-  //   final path = '$collectionName/$userId';
-
-  //   // Must use Firestore Repository for listener (cast if needed)
-  //   FirestoreRepository fireRepo;
-  //   if (_repository is FirestoreRepository) {
-  //     fireRepo = _repository;
-  //   } else {
-  //     fireRepo = FirestoreRepository();
-  //   }
-
-  //   return FirestoreDocumentListener<UserProfile>(
-  //     firestoreRepository: fireRepo,
-  //     path: path,
-  //     convertDataWithId: UserProfile.fromDataWithId,
-  //   );
-  // }
 
   /// Update profile
   Future<bool> updateUserProfile(
@@ -104,15 +92,18 @@ class UserProfileService extends ChangeNotifier {
     Map<String, dynamic> updates, {
     bool isDemo = false,
   }) async {
+    final localCollectionName = localizeCollectionName(isDemo);
     try {
-      final collectionName = isDemo
-          ? 'demo_${UserProfile.collectionName}'
-          : UserProfile.collectionName;
-      await _repository.update(collectionName, userId, updates);
-      notifyListeners();
+      if (updates.containsKey('id')) {
+        updates.remove('id');
+      }
+      final docRef = _database.collection(localCollectionName).doc(userId);
+      await docRef.update(updates);
       return true;
     } catch (e) {
-      debugPrint('UserProfileService: Error updating profile: $e');
+      debugPrint(
+        "$serviceName: error updating document $localCollectionName/$userId: $e",
+      );
       return false;
     }
   }
@@ -176,17 +167,16 @@ class UserProfileService extends ChangeNotifier {
     String childId, {
     bool isDemo = false,
   }) async {
+    final localCollectionName = isDemo
+        ? 'demo_$collectionName'
+        : collectionName;
     try {
-      final collectionName = isDemo
-          ? 'demo_${UserProfile.collectionName}'
-          : UserProfile.collectionName;
       await _repository.appendToArrayField(
-        collectionName,
+        localCollectionName,
         userId,
         'childIDs',
         childId,
       );
-      notifyListeners();
       return true;
     } catch (e) {
       debugPrint('UserProfileService: Error adding child: $e');
