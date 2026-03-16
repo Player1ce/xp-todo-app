@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -6,13 +7,16 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 // flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:xp_todo_app/firebase_options.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 
 // go_router
 // router code
 import 'routing/router_config.dart' as router_config;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ProviderScope(child: const MyApp()));
 }
 
