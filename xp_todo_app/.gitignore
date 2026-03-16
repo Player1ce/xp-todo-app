@@ -1,6 +1,46 @@
 # Created by https://gitignore.org
 # Flutter.gitignore
 
+# Firebase config files (NEVER commit these)
+**/google-services.json
+**/GoogleService-Info.plist
+**/*.p8
+web/firebase-config.js
+firebase_options.dart  # Regenerate with flutterfire CLI
+
+# Firebase CLI
+.firebaserc
+.firebase/
+firebase-debug*.log
+
+# Firebase Hosting/Functions
+.firebase.json
+hosting/.cache
+/functions/node_modules/
+.functions/.env
+.functions/package-lock.json
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# iOS specific
+ios/Runner/GoogleService-Info.plist
+ios/Runner/Debug/*
+ios/Runner/Release/*
+ios/Flutter/Release.xcconfig
+ios/Flutter/Debug.xcconfig
+
+# Android specific
+android/app/google-services.json
+android/app/build.gradle  # If it contains secrets
+android/local.properties
+
+# Firebase Emulators
+.firebase-*.zip
+emulator-ui/
+
 # Miscellaneous
 *.class
 *.lock
