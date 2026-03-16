@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // providers
-import 'package:xp_todo_app/providers/page_view_providers.dart';
+import 'package:xp_todo_app/providers/go_router_provider.dart';
 
 // consts
 import 'package:xp_todo_app/util/page_layout.dart';
@@ -35,7 +35,11 @@ AdaptiveBottomNavigationBar getCustomPageViewNavigationBar(
       switchPageViewPage(index);
     },
     selectedIndex: ref.watch(
-      pageIndexProvider(pageLayout.id, pageLayout.initialPage),
+      goRouterProvider.select(
+        (router) => pageLayout.pageList.indexWhere(
+          (pageData) => pageData.route == router.state.matchedLocation,
+        ),
+      ),
     ),
   );
 }
@@ -59,7 +63,11 @@ BottomNavigationBar getCustomPageViewAndroidNavigationBar(
         )
         .toList(),
     currentIndex: ref.watch(
-      pageIndexProvider(pageLayout.id, pageLayout.initialPage),
+      goRouterProvider.select(
+        (router) => pageLayout.pageList.indexWhere(
+          (pageData) => pageData.route == router.state.matchedLocation,
+        ),
+      ),
     ),
     onTap: (index) {
       switchPageViewPage(index);

@@ -1,35 +1,39 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/cupertino.dart';
+import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/screens/games_screen.dart';
-import 'package:xp_todo_app/screens/main_todo_screen.dart';
+import 'package:xp_todo_app/screens/todo_screen.dart';
 import 'package:xp_todo_app/screens/profile_screen.dart';
 
 import 'package:xp_todo_app/util/page_layout.dart';
 
 // mainPage
-Widget _buildMainPage_Todo(BuildContext context) => const MainTodoScreen();
 Widget _buildMainPage_Games(BuildContext context) => const GamesScreen();
+Widget _buildMainPage_Todo(BuildContext context) => const TodoScreen();
 Widget _buildMainPage_Profile(BuildContext context) => const ProfileScreen();
 
 const mainPageList = [
   PageData(
-    'checkmark.square.fill',
-    'Quests',
-    CupertinoIcons.check_mark_circled_solid,
-    _buildMainPage_Todo,
+    route: RouteConstants.gameLibrary,
+    iconString: 'square.grid.2x2.fill',
+    label: 'Library',
+    iconData: CupertinoIcons.square_grid_2x2_fill,
+    builder: _buildMainPage_Games,
   ),
   PageData(
-    'square.grid.2x2.fill',
-    'Library',
-    CupertinoIcons.square_grid_2x2_fill,
-    _buildMainPage_Games,
+    route: RouteConstants.home,
+    iconString: 'checkmark.square.fill',
+    label: 'Quests',
+    iconData: CupertinoIcons.check_mark_circled_solid,
+    builder: _buildMainPage_Todo,
   ),
   PageData(
-    'person.crop.circle.fill',
-    'Profile',
-    CupertinoIcons.person,
-    _buildMainPage_Profile,
+    route: RouteConstants.profile,
+    iconString: 'person.crop.circle.fill',
+    label: 'Profile',
+    iconData: CupertinoIcons.person,
+    builder: _buildMainPage_Profile,
   ),
 ];
 

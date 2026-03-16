@@ -8,6 +8,7 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 // flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/firebase_options.dart';
+import 'package:xp_todo_app/providers/go_router_provider.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 
 // go_router
@@ -26,11 +27,13 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+
     return AdaptiveApp.router(
       title: 'XP Todo App',
 
       // GoRouter configuration
-      routerConfig: router_config.mainRouter,
+      routerConfig: router,
 
       // AdaptiveApp configuration
       themeMode: ThemeMode.system,

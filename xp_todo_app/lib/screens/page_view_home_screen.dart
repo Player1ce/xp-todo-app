@@ -6,7 +6,7 @@ import 'package:xp_todo_app/util/page_layout.dart';
 import 'package:xp_todo_app/widgets/custom_page_view_navigation_bar.dart';
 
 // providers
-import 'package:xp_todo_app/providers/page_view_providers.dart';
+import 'package:xp_todo_app/providers/go_router_provider.dart';
 
 class PageViewHomeScreen extends ConsumerStatefulWidget {
   final PageLayout pageLayout;
@@ -41,14 +41,7 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
-    ref
-        .read(
-          pageIndexProvider(
-            widget.pageLayout.id,
-            widget.pageLayout.initialPage,
-          ).notifier,
-        )
-        .setPage(index);
+    ref.read(goRouterProvider).go(widget.pageLayout.pageList[index].route);
   }
 
   @override
@@ -59,13 +52,8 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
         controller: _pageController,
         onPageChanged: (index) {
           ref
-              .read(
-                pageIndexProvider(
-                  widget.pageLayout.id,
-                  widget.pageLayout.initialPage,
-                ).notifier,
-              )
-              .setPage(index);
+              .read(goRouterProvider)
+              .go(widget.pageLayout.pageList[index].route);
         },
         children: widget.pageLayout.pageList
             .map((pageData) => pageData.builder(context))

@@ -29,7 +29,8 @@ AdaptiveBottomNavigationBar getCustomNavigationBar(
           label: navBarList[index].$3, // label string
         ),
     ],
-    selectedIndex: navBarList.indexWhere(
+    selectedIndex: 
+    navBarList.indexWhere(
       (element) => element.$1 == GoRouter.of(context).state.fullPath,
     ),
     onTap: (index) {

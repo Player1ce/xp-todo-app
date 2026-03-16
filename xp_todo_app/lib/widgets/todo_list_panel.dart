@@ -6,14 +6,13 @@ import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/providers/todo_ui_providers.dart';
+import 'package:xp_todo_app/providers/user_profile_providers.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/widgets/todo_item_card.dart';
 
 class TodoListPanel extends ConsumerStatefulWidget {
-  final String userId;
-
-  const TodoListPanel({super.key, required this.userId});
+  const TodoListPanel({super.key});
 
   @override
   ConsumerState<TodoListPanel> createState() => _TodoListPanelState();
@@ -24,12 +23,15 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final gamesAsync = ref.watch(activeGamesProvider(widget.userId));
+    // userID is not null here we handle that in the above widget (maybe move that here)
+    final userId = ref.watch(activeUserIdProvider).value!;
+
+    final gamesAsync = ref.watch(activeGamesProvider(userId));
 
     return gamesAsync.when(
       data: (games) {
         if (games.isEmpty) {
-          return _EmptyTodoState(userId: widget.userId);
+          return _EmptyTodoState(userId: userId);
         }
 
         _selectedGameId ??= games.first.id;
@@ -39,7 +41,7 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
 
         final selectedGame = games.firstWhere((g) => g.id == _selectedGameId);
         return _TodoListContent(
-          userId: widget.userId,
+          userId: userId,
           games: games,
           selectedGame: selectedGame,
           onGameChanged: (next) => setState(() => _selectedGameId = next),

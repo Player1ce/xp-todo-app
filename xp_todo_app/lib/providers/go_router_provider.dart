@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/screens/games_screen.dart';
-import 'package:xp_todo_app/screens/main_todo_screen.dart';
+import 'package:xp_todo_app/screens/login_screen.dart';
+import 'package:xp_todo_app/screens/todo_screen.dart';
 import 'package:xp_todo_app/screens/page_view_home_screen.dart';
 import 'package:xp_todo_app/screens/profile_screen.dart';
 import 'package:xp_todo_app/screens/settings_screen.dart';
@@ -19,14 +21,34 @@ GoRouter goRouter(Ref ref) {
   return GoRouter(
     initialLocation: RouteConstants.home,
     redirect: (context, state) {
-      final isLoggedIn = authAsync.value != null;
       final isAuthRoute = state.matchedLocation == RouteConstants.login;
+      final isSplashRoute = state.matchedLocation == RouteConstants.splash;
 
-      if (!isLoggedIn && !isAuthRoute) return RouteConstants.login;
-      if (isLoggedIn && isAuthRoute) return RouteConstants.home;
-      return null; // no redirect needed
+      return authAsync.when(
+        data: (data) {
+          if (data == null && !isAuthRoute) {
+            return RouteConstants.login;
+          }
+          return isAuthRoute && data != null ? RouteConstants.home : null;
+        },
+        error: (error, stackTrace) {
+          // Handle auth errors if needed, for now just print and allow access to login
+          debugPrint('Auth error in router: $error | $stackTrace');
+          return isAuthRoute ? null : RouteConstants.login;
+        },
+        loading: () {
+          // While auth state is loading, we will show a splash screen. If we're already on the splash route, do nothing.
+          return isSplashRoute ? null : RouteConstants.splash;
+        },
+      );
     },
     routes: [
+      // a splash page for initial loading state
+      GoRoute(
+        path: RouteConstants.splash,
+        builder: (_, _) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+      ),
       // Shell route wraps the PageView + persistent nav bar
       ShellRoute(
         builder: (context, state, child) {
@@ -35,7 +57,7 @@ GoRouter goRouter(Ref ref) {
         routes: [
           GoRoute(
             path: RouteConstants.home,
-            builder: (context, state) => const MainTodoScreen(),
+            builder: (context, state) => const TodoScreen(),
           ),
           GoRoute(
             path: RouteConstants.gameLibrary,
@@ -53,6 +75,14 @@ GoRouter goRouter(Ref ref) {
         path: RouteConstants.settings,
         builder: (context, state) => const SettingsScreen(),
       ),
+      GoRoute(
+        path: RouteConstants.login,
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.settings,
+        builder: (context, state) => const SettingsScreen(),
+      ),
       // GoRoute(
       //   path: RouteConstants.gameView,
       //   builder: (context, state) {
@@ -66,4 +96,9 @@ GoRouter goRouter(Ref ref) {
       // ),
     ],
   );
+}
+
+@riverpod
+String? providerMatchedLocation(Ref ref) {
+  return ref.watch(goRouterProvider).state.matchedLocation;
 }

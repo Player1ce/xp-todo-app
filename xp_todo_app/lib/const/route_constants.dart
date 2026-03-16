@@ -4,6 +4,7 @@ class RouteConstants {
   static const login = '/login';
   static const gameLibrary = '/game_library';
   static const profile = '/profile';
+  static const splash = '/splash';
 
   // Sub-pages
   static const settings = '/settings';

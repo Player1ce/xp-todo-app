@@ -1,12 +1,19 @@
 import 'package:flutter/cupertino.dart';
 
 class PageData {
+  final String route;
   final String iconString;
   final String label;
   final IconData iconData;
   final WidgetBuilder builder;
 
-  const PageData(this.iconString, this.label, this.iconData, this.builder);
+  const PageData({
+    required this.route,
+    required this.iconString,
+    required this.label,
+    required this.iconData,
+    required this.builder,
+  });
 }
 
 class PageLayout {
