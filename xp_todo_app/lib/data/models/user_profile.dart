@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
+import 'package:xp_todo_app/data/models/i_firestore_model.dart';
 import 'package:xp_todo_app/util/language_code.dart';
 import 'package:xp_todo_app/util/time_utils.dart';
 import 'package:xp_todo_app/util/enums/user_role.dart';
@@ -9,7 +9,9 @@ import 'dart:convert';
 
 /// Unified user profile model
 /// Replaces Parent, Researcher, and User collections
-class UserProfile {
+class UserProfile extends IFirestoreModel {
+  static String collectionName = 'UserProfile';
+
   final String id;
   final UserRole role;
 
@@ -132,6 +134,7 @@ class UserProfile {
 
   // TODO: this version introduces a modification where ID is stored in the map.
   //  This will need to be stripped at uplaod for firestore repos.
+  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -188,6 +191,11 @@ class UserProfile {
     );
   }
 
+  factory UserProfile.fromFirestore(String id, Map<String, dynamic> map) {
+    map['id'] = id; // Ensure 'id' is included for model creation
+    return UserProfile.fromMap(map);
+  }
+
   String toJson() => json.encode(toMap());
 
   factory UserProfile.fromJson(String source) =>
@@ -218,7 +226,7 @@ class UserProfile {
     bool? nightlyNotificationsEnabled,
     bool? weeklyNotificationsEnabled,
   }) {
-    Map<String, dynamic> map = {'updatedAt': FieldValue.serverTimestamp()};
+    Map<String, dynamic> map = {};
 
     if (role != null) map['role'] = role.name;
     if (email != null) map['email'] = email;

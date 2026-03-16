@@ -3,10 +3,11 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
+import 'package:xp_todo_app/data/models/i_firestore_model.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/util/time_utils.dart';
 
-class Game {
+class Game extends IFirestoreModel {
   static String collectionName = 'Game';
 
   final String id;
@@ -74,6 +75,7 @@ class Game {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -112,6 +114,11 @@ class Game {
           ? convertToDateTime(map['updatedAt'])
           : null,
     );
+  }
+
+  factory Game.fromFirestore(String id, Map<String, dynamic> map) {
+    map['id'] = id; // Ensure 'id' is included for model creation
+    return Game.fromMap(map);
   }
 
   String toJson() => json.encode(toMap());

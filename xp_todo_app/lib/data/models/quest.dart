@@ -4,10 +4,11 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
+import 'package:xp_todo_app/data/models/i_firestore_model.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/util/time_utils.dart';
 
-class Quest {
+class Quest extends IFirestoreModel {
   static String collectionName = 'Quest';
 
   final String id;
@@ -60,6 +61,7 @@ class Quest {
 
   // TODO: this version introduces a modification where ID is stored in the map.
   //  This will need to be stripped at uplaod for firestore repos.
+  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -92,6 +94,11 @@ class Quest {
           ? convertToDateTime(map['updatedAt'])
           : null,
     );
+  }
+
+  factory Quest.fromFirestore(String id, Map<String, dynamic> map) {
+    map['id'] = id; // Ensure 'id' is included for model creation
+    return Quest.fromMap(map);
   }
 
   String toJson() => json.encode(toMap());
