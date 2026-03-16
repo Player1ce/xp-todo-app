@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuestLog — Design System & Screen Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Core Palette */
+    --bg-deep:       #0a0e14;
+    --bg-base:       #0d1117;
+    --bg-surface:    #161b22;
+    --bg-elevated:   #1c2330;
+    --bg-card:       #1e2a3a;
+    --bg-hover:      #243040;
+
+    /* Borders */
+    --border-subtle: rgba(99,140,180,0.12);
+    --border-mid:    rgba(99,140,180,0.25);
+    --border-bright: rgba(99,140,180,0.5);
+
+    /* Accent Colors */
+    --accent-blue:   #4d9fdc;
+    --accent-cyan:   #66c0f4;
+    --accent-gold:   #f4c842;
+    --accent-green:  #4caf6e;
+    --accent-red:    #e05a5a;
+    --accent-purple: #9b6dff;
+
+    /* XP / Quest Colors */
+    --xp-color:      #f4c842;
+    --main-story:    #e8943a;
+    --side-quest:    #4d9fdc;
+    --complete:      #4caf6e;
+
+    /* Text */
+    --text-primary:  #c7d5e0;
+    --text-secondary:#8fa3b8;
+    --text-muted:    #4a6070;
+    --text-heading:  #ffffff;
+
+    /* Fonts */
+    --font-display:  'Rajdhani', sans-serif;
+    --font-body:     'Exo 2', sans-serif;
+    --font-mono:     'Share Tech Mono', monospace;
+
+    /* Spacing */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Layout ─────────────────────────────────────── */
+  .page-wrap { max-width: 1400px; margin: 0 auto; padding: 40px 32px; }
+
+  .doc-header {
+    border-bottom: 1px solid var(--border-mid);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .doc-title {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-heading);
+  }
+  .doc-title span { color: var(--accent-cyan); }
+  .doc-subtitle {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .section {
+    margin-bottom: 64px;
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    border-left: 3px solid var(--accent-cyan);
+    padding-left: 12px;
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-heading);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  /* ── Color Swatches ──────────────────────────────── */
+  .swatch-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .swatch {
+    width: 120px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+  }
+  .swatch-color { height: 64px; }
+  .swatch-info { padding: 8px 10px; background: var(--bg-surface); }
+  .swatch-name { font-size: 11px; font-weight: 600; color: var(--text-primary); font-family: var(--font-display); letter-spacing: 1px; }
+  .swatch-hex  { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+
+  /* ── Typography Samples ──────────────────────────── */
+  .type-sample { margin-bottom: 20px; padding: 20px; background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); }
+  .type-label  { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+
+  /* ── Screen Mockups ──────────────────────────────── */
+  .screens-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 32px; }
+
+  .screen-wrap {
+    background: var(--bg-base);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-mid);
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  .screen-label {
+    padding: 10px 16px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .screen-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 6px var(--accent-cyan);
+  }
+  .screen-body { padding: 0; }
+
+  /* ── Phone Frame ─────────────────────────────────── */
+  .phone {
+    width: 100%;
+    min-height: 600px;
+    background: var(--bg-base);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Shared UI Components ────────────────────────── */
+
+  /* App Bar */
+  .app-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 12px;
+    background: transparent;
+  }
+  .app-bar-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-bar-icon { color: var(--accent-cyan); font-size: 16px; }
+  .app-bar-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    display: flex;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-mid);
+    padding: 8px 0 12px;
+    margin-top: auto;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-icon { font-size: 20px; color: var(--text-muted); }
+  .nav-label { font-family: var(--font-display); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+  .nav-item.active .nav-icon { color: var(--accent-cyan); filter: drop-shadow(0 0 4px var(--accent-cyan)); }
+  .nav-item.active .nav-label { color: var(--accent-cyan); }
+
+  /* Search Bar */
+  .search-bar {
+    margin: 0 16px 14px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ── SCREEN 1: QUESTS ────────────────────────────── */
+  .quest-group { margin-bottom: 6px; }
+  .quest-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px 8px;
+    cursor: pointer;
+  }
+  .quest-group-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .group-img {
+    width: 28px; height: 28px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #2a3a4a, #1a2530);
+    border: 1px solid var(--border-mid);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .group-img-inner {
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+  .group-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--accent-cyan);
+  }
+  .group-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .chevron { color: var(--text-muted); font-size: 11px; }
+
+  .quest-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px 10px 46px;
+    border-top: 1px solid var(--border-subtle);
+    gap: 12px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .quest-item:hover { background: var(--bg-hover); }
+  .quest-item.completed { opacity: 0.45; }
+
+  .quest-checkbox {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--border-bright);
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quest-checkbox.checked {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: #fff;
+    font-size: 10px;
+  }
+
+  .quest-info { flex: 1; min-width: 0; }
+  .quest-name {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .quest-item.completed .quest-name { text-decoration: line-through; }
+  .quest-tags { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+
+  .tag {
+    font-family: var(--font-display);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .tag-main  { background: rgba(232,148,58,0.2); color: var(--main-story); border: 1px solid rgba(232,148,58,0.35); }
+  .tag-side  { background: rgba(77,159,220,0.15); color: var(--side-quest); border: 1px solid rgba(77,159,220,0.3); }
+  .tag-level { color: var(--text-muted); font-family: var(--font-mono); font-size: 9px; }
+
+  .quest-xp {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .xp-value {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--xp-color);
+    white-space: nowrap;
+  }
+  .xp-value svg, .xp-value::before { }
+  .xp-status { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 72px;
+    right: 18px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--bg-deep);
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(77,159,220,0.45);
+    cursor: pointer;
+  }
+
+  /* ── SCREEN 2: LIBRARY ───────────────────────────── */
+  .library-header {
+    padding: 16px 18px 4px;
+  }
+  .library-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-heading);
+  }
+  .library-subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 12px 18px;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0 14px 14px;
+  }
+  .game-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    position: relative;
+    cursor: pointer;
+    aspect-ratio: 0.7;
+    display: flex;
+    flex-direction: column;
+  }
+  .game-card-img {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .game-active-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--bg-deep);
+    border: 1.5px solid var(--accent-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--accent-green);
+  }
+  .game-inactive-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--bg-deep);
+    border: 1.5px solid var(--border-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+  .game-card-info {
+    padding: 7px 8px;
+    background: linear-gradient(to bottom, rgba(13,17,23,0.0), var(--bg-card));
+  }
+  .game-card-name {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .game-progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+  .game-progress-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-right: 6px;
+  }
+  .game-progress-fill { height: 100%; background: var(--accent-cyan); border-radius: 2px; }
+  .game-progress-pct { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); }
+
+  /* ── SCREEN 3: PROFILE ───────────────────────────── */
+  .profile-bg {
+    height: 120px;
+    background: linear-gradient(160deg, #1a3a5c 0%, #0d1f30 60%, var(--bg-base) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(77,159,220,0.15) 0%, transparent 70%);
+  }
+  .profile-identity {
+    padding: 0 18px;
+    margin-top: -28px;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 12px;
+  }
+  .avatar-wrap {
+    width: 60px; height: 60px;
+    border-radius: 4px;
+    border: 2px solid var(--accent-cyan);
+    overflow: hidden;
+    background: var(--bg-card);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .avatar-img {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #2a4a6a, #1a2a3a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .level-badge {
+    position: absolute;
+    bottom: -1px;
+    left: -1px;
+    background: var(--accent-gold);
+    color: var(--bg-deep);
+    font-family: var(--font-display);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    letter-spacing: 1px;
+  }
+  .profile-name-block { flex: 1; padding-bottom: 4px; }
+  .profile-username {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 1px;
+  }
+  .profile-rank {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-cyan);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .profile-actions { display: flex; gap: 6px; padding-bottom: 4px; }
+
+  /* XP Bar */
+  .xp-bar-wrap { padding: 0 18px 14px; }
+  .xp-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .xp-bar-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .xp-bar-value {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--xp-color);
+  }
+  .xp-bar-track {
+    height: 6px;
+    background: var(--bg-elevated);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+  }
+  .xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(102,192,244,0.4);
+  }
+
+  /* Profile Sections */
+  .profile-section {
+    margin: 0 14px 12px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+  }
+  .ps-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .ps-icon { color: var(--xp-color); font-size: 13px; }
+  .ps-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-heading);
+  }
+  .ps-body { padding: 10px 14px; }
+
+  /* Badges */
+  .badges-row { display: flex; gap: 8px; }
+  .badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    min-width: 60px;
+  }
+  .badge-icon { font-size: 20px; }
+  .badge-name { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); text-align: center; letter-spacing: 0.5px; }
+
+  /* Completion rows */
+  .completion-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .completion-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .completion-thumb {
+    width: 36px; height: 36px;
+    border-radius: 3px;
+    background: var(--bg-card);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .completion-thumb-inner { width: 100%; height: 100%; background-size: cover; background-position: center; }
+  .completion-info { flex: 1; min-width: 0; }
+  .completion-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
+  .completion-sub { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); }
+  .completion-pct {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-align: right;
+  }
+  .completion-pct-label { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); text-align: right; }
+
+  /* ── SUBPAGE: GAME VIEW ──────────────────────────── */
+  .game-hero {
+    height: 160px;
+    background: linear-gradient(160deg, #1a3a2a 0%, #0d1f15 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .game-hero-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5;
+  }
+  .game-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--bg-base) 0%, transparent 60%);
+  }
+  .back-btn {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 30px; height: 30px;
+    background: rgba(10,14,20,0.7);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+  }
+  .game-hero-identity {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .game-play-icon {
+    width: 36px; height: 36px;
+    background: rgba(102,192,244,0.2);
+    border: 2px solid var(--accent-cyan);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    color: var(--accent-cyan);
+  }
+  .game-hero-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  }
+  .game-hero-sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--accent-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .game-stats-row {
+    display: flex;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 0;
+  }
+  .game-stat {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid var(--border-subtle);
+    padding: 0 8px;
+  }
+  .game-stat:last-child { border-right: none; }
+  .game-stat-label { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+  .game-stat-value { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text-heading); margin-top: 2px; }
+  .game-stat-sub { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); }
+
+  .achievements-bar-wrap { padding: 12px 18px; border-bottom: 1px solid var(--border-subtle); }
+  .achievements-bar-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .achievements-bar-track {
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .achievements-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f4a842, var(--xp-color));
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(244,200,66,0.4);
+  }
+
+  /* ── SETTINGS ────────────────────────────────────── */
+  .settings-group { margin-bottom: 20px; }
+  .settings-group-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    padding: 0 18px 8px;
+  }
+  .settings-item {
+    display: flex;
+    align-items: center;
+    padding: 13px 18px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .settings-item:hover { background: var(--bg-hover); }
+  .settings-item:first-of-type { border-top: 1px solid var(--border-subtle); border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .settings-item:last-of-type { border-radius: 0 0 var(--radius-md) var(--radius-md); border-bottom: none; }
+  .settings-item-icon { width: 28px; color: var(--text-muted); font-size: 15px; text-align: center; }
+  .settings-item-info { flex: 1; }
+  .settings-item-name { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .settings-item-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .settings-item-arrow { color: var(--text-muted); font-size: 11px; }
+
+  .signout-btn {
+    margin: 8px 14px;
+    padding: 13px;
+    background: rgba(224,90,90,0.08);
+    border: 1px solid rgba(224,90,90,0.25);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    transition: background 0.15s;
+  }
+
+  /* ── DIALOG: NEW QUEST ───────────────────────────── */
+  .dialog-screen {
+    position: relative;
+    min-height: 600px;
+  }
+  .dialog-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5,8,12,0.75);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+  }
+  .dialog {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    box-shadow: 0 16px 60px rgba(0,0,0,0.7);
+    overflow: hidden;
+  }
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .dialog-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dialog-title-icon { color: var(--accent-cyan); }
+  .dialog-close { color: var(--text-muted); font-size: 16px; cursor: pointer; }
+  .dialog-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+  .form-field {}
+  .form-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 13px;
+  }
+  .form-input.active-border { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(77,159,220,0.15); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .accept-btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #2a5a8a, var(--accent-blue));
+    border: 1px solid var(--accent-cyan);
+    border-radius: var(--radius-sm);
+    color: var(--text-heading);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(77,159,220,0.25);
+  }
+
+  /* ── COMPONENTS SECTION ──────────────────────────── */
+  .components-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .component-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .component-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+  }
+
+  /* ── SPACING ─────────────────────────────────────── */
+  .spec-table { width: 100%; border-collapse: collapse; }
+  .spec-table th, .spec-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+  .spec-table th { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-cyan); background: var(--bg-surface); }
+  .spec-table td:first-child { font-family: var(--font-mono); color: var(--accent-gold); }
+  .spec-table tr:last-child td { border-bottom: none; }
+
+  /* game bg helpers */
+  .gbg1 { background-image: linear-gradient(135deg, #1a2a3a, #0d1f2a); }
+  .gbg2 { background-image: linear-gradient(135deg, #2a1a3a, #1a0d2a); }
+  .gbg3 { background-image: linear-gradient(135deg, #1a3a2a, #0d2a1a); }
+
+  .scroll-area { overflow-y: auto; flex: 1; }
+  .scroll-area::-webkit-scrollbar { width: 3px; }
+  .scroll-area::-webkit-scrollbar-track { background: transparent; }
+  .scroll-area::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+
+  /* Annotations */
+  .annotation {
+    background: rgba(77,159,220,0.08);
+    border: 1px dashed rgba(77,159,220,0.3);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-cyan);
+    margin: 8px 14px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-title">Quest<span>Log</span></div>
+    <div class="doc-subtitle">// Design System & Screen Reference — v1.0</div>
+  </div>
+
+  <!-- COLOR PALETTE -->
+  <div class="section">
+    <div class="section-label">01 — Color System</div>
+    <div class="section-title">Palette</div>
+    <p class="section-desc">Steam-dark foundation with cyan tactical accents. Gold for XP/rewards, orange for main story, green for completion. Every color has purpose.</p>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#0a0e14"></div><div class="swatch-info"><div class="swatch-name">BG Deep</div><div class="swatch-hex">#0a0e14</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#161b22"></div><div class="swatch-info"><div class="swatch-name">BG Surface</div><div class="swatch-hex">#161b22</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1e2a3a"></div><div class="swatch-info"><div class="swatch-name">BG Card</div><div class="swatch-hex">#1e2a3a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#4d9fdc"></div><div class="swatch-info"><div class="swatch-name">Accent Blue</div><div class="swatch-hex">#4d9fdc</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#66c0f4"></div><div class="swatch-info"><div class="swatch-name">Accent Cyan</div><div class="swatch-hex">#66c0f4</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#f4c842"></div><div class="swatch-info"><div class="swatch-name">XP Gold</div><div class="swatch-hex">#f4c842</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#e8943a"></div><div class="swatch-info"><div class="swatch-name">Main Story</div><div class="swatch-hex">#e8943a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#4caf6e"></div><div class="swatch-info"><div class="swatch-name">Complete</div><div class="swatch-hex">#4caf6e</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#e05a5a"></div><div class="swatch-info"><div class="swatch-name">Danger/Out</div><div class="swatch-hex">#e05a5a</div></div></div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <div class="section-label">02 — Typography</div>
+    <div class="section-title">Type Scale</div>
+    <p class="section-desc">Three fonts — Rajdhani for bold UI headers (tactical/military feel), Exo 2 for body text (clean sci-fi), Share Tech Mono for data/labels (terminal aesthetic).</p>
+    <div class="type-sample">
+      <div class="type-label">Display / Screen Titles — Rajdhani 700 • 22–28px • +3px tracking • uppercase</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff">ACTIVE QUESTS</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-label">Section Heading — Rajdhani 600 • 15px • +1px tracking</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;letter-spacing:1px;color:#66c0f4">Life Admin</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-label">Body / Quest Name — Exo 2 500 • 13px</div>
+      <div style="font-family:'Exo 2',sans-serif;font-size:13px;font-weight:500;color:#c7d5e0">Pay Utility Bills</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-label">Data Label — Share Tech Mono • 9–11px • +2px tracking • uppercase</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8fa3b8">EXPERIENCE TO LEVEL 43 &nbsp;•&nbsp; 34,500 / 35,000 XP</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-label">XP Value — Rajdhani 600 • 13px • gold</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#f4c842">✦ +50 XP</div>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="section">
+    <div class="section-label">03 — Main Screens</div>
+    <div class="section-title">PageView Screens</div>
+    <p class="section-desc">Three swipeable main screens sharing a persistent bottom nav. Each screen has a distinct visual identity while staying cohesive with the system.</p>
+
+    <div class="screens-grid">
+
+      <!-- SCREEN 1: QUESTS -->
+      <div class="screen-wrap">
+        <div class="screen-label">Screen 1 — Quests (Main Todo)</div>
+        <div class="screen-body">
+          <div class="phone">
+            <div class="app-bar">
+              <div class="app-bar-title"><span class="app-bar-icon">🛡</span> Active Quests</div>
+              <div class="app-bar-actions">
+                <div class="icon-btn">⚙</div>
+              </div>
+            </div>
+
+            <div class="search-bar">
+              <span style="font-size:12px">🔍</span>
+              <span>Search quest log...</span>
+            </div>
+
+            <div class="scroll-area">
+              <!-- Group 1 -->
+              <div class="quest-group">
+                <div class="quest-group-header">
+                  <div class="quest-group-title">
+                    <div class="group-img"><div class="group-img-inner gbg2"></div></div>
+                    <div>
+                      <div class="group-name">Life Admin</div>
+                      <div class="group-count">1 / 2 Completed</div>
+                    </div>
+                  </div>
+                  <span class="chevron">▼</span>
+                </div>
+                <div class="quest-item">
+                  <div class="quest-checkbox"></div>
+                  <div class="quest-info">
+                    <div class="quest-name">Pay Utility Bills</div>
+                    <div class="quest-tags">
+                      <span class="tag tag-main">Main Story</span>
+                      <span class="tag-level">Lvl 2</span>
+                    </div>
+                  </div>
+                  <div class="quest-xp">
+                    <div class="xp-value">✦ +50 XP</div>
+                    <div class="xp-status">In Progress</div>
+                  </div>
+                </div>
+                <div class="quest-item completed">
+                  <div class="quest-checkbox checked">✓</div>
+                  <div class="quest-info">
+                    <div class="quest-name">Clean the Kitchen</div>
+                    <div class="quest-tags">
+                      <span class="tag tag-side">Side Quest</span>
+                      <span class="tag-level">Lvl 1</span>
+                    </div>
+                  </div>
+                  <div class="quest-xp">
+                    <div class="xp-value">✦ +25 XP</div>
+                    <div class="xp-status">Completed</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group 2 -->
+              <div class="quest-group">
+                <div class="quest-group-header">
+                  <div class="quest-group-title">
+                    <div class="group-img"><div class="group-img-inner gbg1"></div></div>
+                    <div>
+                      <div class="group-name">Project: Startup</div>
+                      <div class="group-count">1 / 3 Completed</div>
+                    </div>
+                  </div>
+                  <span class="chevron">▼</span>
+                </div>
+                <div class="quest-item">
+                  <div class="quest-checkbox"></div>
+                  <div class="quest-info">
+                    <div class="quest-name">Complete System Design Doc</div>
+                    <div class="quest-tags">
+                      <span class="tag tag-main">Main Story</span>
+                      <span class="tag-level">Lvl 12</span>
+                    </div>
+                  </div>
+                  <div class="quest-xp">
+                    <div class="xp-value">✦ +500 XP</div>
+                    <div class="xp-status">In Progress</div>
+                  </div>
+                </div>
+                <div class="quest-item">
+                  <div class="quest-checkbox"></div>
+                  <div class="quest-info">
+                    <div class="quest-name">Setup Database Schema</div>
+                    <div class="quest-tags">
+                      <span class="tag tag-main">Main Story</span>
+                      <span class="tag-level">Lvl 8</span>
+                    </div>
+                  </div>
+                  <div class="quest-xp">
+                    <div class="xp-value">✦ +300 XP</div>
+                    <div class="xp-status">In Progress</div>
+                  </div>
+                </div>
+                <div class="quest-item completed">
+                  <div class="quest-checkbox checked">✓</div>
+                  <div class="quest-info">
+                    <div class="quest-name">Refactor API Endpoints</div>
+                    <div class="quest-tags">
+                      <span class="tag tag-side">Side Quest</span>
+                      <span class="tag-level">Lvl 5</span>
+                    </div>
+                  </div>
+                  <div class="quest-xp">
+                    <div class="xp-value">✦ +150 XP</div>
+                    <div class="xp-status">Completed</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fab">+</div>
+
+            <div class="bottom-nav">
+              <div class="nav-item active"><div class="nav-icon">☰</div><div class="nav-label">Quests</div></div>
+              <div class="nav-item"><div class="nav-icon">⊞</div><div class="nav-label">Library</div></div>
+              <div class="nav-item"><div class="nav-icon">◯</div><div class="nav-label">Profile</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: LIBRARY -->
+      <div class="screen-wrap">
+        <div class="screen-label">Screen 2 — Library (Projects/Games)</div>
+        <div class="screen-body">
+          <div class="phone">
+            <div class="library-header">
+              <div class="library-title">Library</div>
+              <div class="library-subtitle">Your Active Projects</div>
+            </div>
+            <div class="divider"></div>
+
+            <div class="scroll-area" style="padding-top:4px">
+              <div class="games-grid">
+                <div class="game-card">
+                  <div class="game-card-img gbg2">
+                    <div class="game-active-badge">✓</div>
+                  </div>
+                  <div class="game-card-info">
+                    <div class="game-card-name">Life Admin</div>
+                    <div class="game-progress-row">
+                      <div class="game-progress-bar"><div class="game-progress-fill" style="width:82%"></div></div>
+                      <div class="game-progress-pct">82%</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="game-card">
+                  <div class="game-card-img gbg1">
+                    <div class="game-active-badge">✓</div>
+                  </div>
+                  <div class="game-card-info">
+                    <div class="game-card-name">Project: Startup</div>
+                    <div class="game-progress-row">
+                      <div class="game-progress-bar"><div class="game-progress-fill" style="width:45%"></div></div>
+                      <div class="game-progress-pct">45%</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="game-card">
+                  <div class="game-card-img gbg3">
+                    <div class="game-inactive-badge">○</div>
+                    <div style="position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent)">
+                      <div style="font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;color:#fff;letter-spacing:0.5px">Fitness Quest</div>
+                      <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+                        <div style="flex:1;height:2px;background:#1c2330;border-radius:1px"><div style="width:15%;height:100%;background:#4d9fdc;border-radius:1px"></div></div>
+                        <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:#8fa3b8">15%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="game-card-info" style="display:none"></div>
+                </div>
+                <div class="game-card" style="border:1px dashed rgba(99,140,180,0.2);background:rgba(30,42,58,0.3);display:flex;align-items:center;justify-content:center;aspect-ratio:0.7">
+                  <div style="text-align:center">
+                    <div style="font-size:24px;color:rgba(99,140,180,0.3)">+</div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(99,140,180,0.3);letter-spacing:1px;margin-top:4px">NEW</div>
+                  </div>
+                </div>
+              </div>
+              <div class="annotation">↑ Tap checkbox to toggle active. Tap card to open game view.</div>
+            </div>
+
+            <div class="bottom-nav">
+              <div class="nav-item"><div class="nav-icon">☰</div><div class="nav-label">Quests</div></div>
+              <div class="nav-item active"><div class="nav-icon">⊞</div><div class="nav-label">Library</div></div>
+              <div class="nav-item"><div class="nav-icon">◯</div><div class="nav-label">Profile</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: PROFILE -->
+      <div class="screen-wrap">
+        <div class="screen-label">Screen 3 — Profile</div>
+        <div class="screen-body">
+          <div class="phone">
+            <div class="profile-bg">
+              <div class="profile-bg-overlay"></div>
+              <div style="position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:2">
+                <div class="icon-btn">✏</div>
+                <div class="icon-btn">⚙</div>
+              </div>
+            </div>
+
+            <div class="profile-identity">
+              <div class="avatar-wrap">
+                <div class="avatar-img">🎮</div>
+                <div class="level-badge">LVL 42</div>
+              </div>
+              <div class="profile-name-block">
+                <div class="profile-username">PlayerOne</div>
+                <div class="profile-rank">Grandmaster Organizer</div>
+              </div>
+            </div>
+
+            <div class="xp-bar-wrap">
+              <div class="xp-bar-header">
+                <span class="xp-bar-label">Experience to Level 43</span>
+                <span class="xp-bar-value">34,500 / 35,000 XP</span>
+              </div>
+              <div class="xp-bar-track">
+                <div class="xp-bar-fill" style="width:98.5%"></div>
+              </div>
+            </div>
+
+            <div class="scroll-area">
+              <!-- Badges -->
+              <div class="profile-section">
+                <div class="ps-header">
+                  <span class="ps-icon">🏅</span>
+                  <span class="ps-title">Badges</span>
+                </div>
+                <div class="ps-body">
+                  <div class="badges-row">
+                    <div class="badge-item"><div class="badge-icon">⚡</div><div class="badge-name">Beta Tester</div></div>
+                    <div class="badge-item"><div class="badge-icon">📅</div><div class="badge-name">1 Year Service</div></div>
+                    <div class="badge-item"><div class="badge-icon">💯</div><div class="badge-name">100 Quests</div></div>
+                    <div class="badge-item" style="border:1px dashed rgba(99,140,180,0.2);opacity:0.4"><div class="badge-icon" style="opacity:0.3">?</div><div class="badge-name">Locked</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Completion Showcase -->
+              <div class="profile-section">
+                <div class="ps-header">
+                  <span class="ps-icon">🏆</span>
+                  <span class="ps-title">Completion Showcase</span>
+                </div>
+                <div class="ps-body">
+                  <div class="completion-row">
+                    <div class="completion-thumb"><div class="completion-thumb-inner gbg1"></div></div>
+                    <div class="completion-info">
+                      <div class="completion-name">Project: Startup</div>
+                      <div class="completion-sub">10 of 24 Achievements</div>
+                    </div>
+                    <div>
+                      <div class="completion-pct">45%</div>
+                      <div class="completion-pct-label">Completed</div>
+                    </div>
+                  </div>
+                  <div class="completion-row">
+                    <div class="completion-thumb"><div class="completion-thumb-inner gbg2"></div></div>
+                    <div class="completion-info">
+                      <div class="completion-name">Life Admin</div>
+                      <div class="completion-sub">41 of 50 Achievements</div>
+                    </div>
+                    <div>
+                      <div class="completion-pct">82%</div>
+                      <div class="completion-pct-label">Completed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-nav">
+              <div class="nav-item"><div class="nav-icon">☰</div><div class="nav-label">Quests</div></div>
+              <div class="nav-item"><div class="nav-icon">⊞</div><div class="nav-label">Library</div></div>
+              <div class="nav-item active"><div class="nav-icon">◯</div><div class="nav-label">Profile</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SUBPAGES -->
+  <div class="section">
+    <div class="section-label">04 — Sub Pages</div>
+    <div class="section-title">Pushed Routes (go_router)</div>
+    <p class="section-desc">These screens are pushed onto the navigation stack via go_router. They have back buttons and sit above the main PageView.</p>
+
+    <div class="screens-grid">
+
+      <!-- GAME VIEW -->
+      <div class="screen-wrap">
+        <div class="screen-label">Subpage — Game View (Project Detail)</div>
+        <div class="screen-body">
+          <div class="phone">
+            <div class="game-hero">
+              <div class="game-hero-img gbg2" style="opacity:0.6"></div>
+              <div class="game-hero-overlay"></div>
+              <div class="back-btn">←</div>
+              <div class="game-hero-identity">
+                <div class="game-play-icon">▶</div>
+                <div>
+                  <div class="game-hero-title">Life Admin</div>
+                  <div class="game-hero-sub">Latest Update Installed</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-stats-row">
+              <div class="game-stat">
+                <div class="game-stat-label">Play Time</div>
+                <div class="game-stat-value">2,045</div>
+                <div class="game-stat-sub">Hours on record</div>
+              </div>
+              <div class="game-stat">
+                <div class="game-stat-label">Achievements</div>
+                <div class="game-stat-value">41/50</div>
+                <div class="game-stat-sub">Unlocked</div>
+              </div>
+              <div class="game-stat">
+                <div class="game-stat-label">Completion</div>
+                <div class="game-stat-value" style="color:var(--accent-cyan)">82%</div>
+                <div class="game-stat-sub">Overall</div>
+              </div>
+            </div>
+
+            <div class="achievements-bar-wrap">
+              <div class="achievements-bar-header">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#8fa3b8">Achievements</span>
+                <span style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:#f4c842">41 / 50</span>
+              </div>
+              <div class="achievements-bar-track">
+                <div class="achievements-bar-fill" style="width:82%"></div>
+              </div>
+            </div>
+
+            <div style="padding:10px 18px 6px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff">Active Quests</div>
+
+            <div class="scroll-area">
+              <div class="quest-item">
+                <div class="quest-checkbox"></div>
+                <div class="quest-info">
+                  <div class="quest-name">Pay Utility Bills</div>
+                  <div class="quest-tags"><span class="tag tag-main">Main Story</span><span class="tag-level">Lvl 2</span></div>
+                </div>
+                <div class="quest-xp"><div class="xp-value">✦ +50 XP</div><div class="xp-status">In Progress</div></div>
+              </div>
+              <div class="quest-item completed">
+                <div class="quest-checkbox checked">✓</div>
+                <div class="quest-info">
+                  <div class="quest-name">Clean the Kitchen</div>
+                  <div class="quest-tags"><span class="tag tag-side">Side Quest</span><span class="tag-level">Lvl 1</span></div>
+                </div>
+                <div class="quest-xp"><div class="xp-value">✦ +25 XP</div><div class="xp-status">Completed</div></div>
+              </div>
+              <div class="annotation">↑ Scrollable quest list continues here</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="screen-wrap">
+        <div class="screen-label">Subpage — Settings</div>
+        <div class="screen-body">
+          <div class="phone">
+            <div class="app-bar">
+              <div class="app-bar-title"><span style="font-size:14px;color:#8fa3b8;cursor:pointer">←</span>&nbsp; Settings</div>
+            </div>
+            <div style="height:1px;background:var(--border-subtle);margin:0 0 16px"></div>
+
+            <div class="scroll-area">
+              <div class="settings-group">
+                <div class="settings-group-label">Account &amp; Preferences</div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">🔒</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Privacy &amp; Security</div>
+                    <div class="settings-item-desc">Manage who can see your profile</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">🔔</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Notifications</div>
+                    <div class="settings-item-desc">Push and email notifications</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">🌙</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Theme</div>
+                    <div class="settings-item-desc">Dark mode enforced by default</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+
+              <div class="settings-group">
+                <div class="settings-group-label">System &amp; Game Integration</div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">⚡</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Performance Mode</div>
+                    <div class="settings-item-desc">Optimize battery vs animations</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">📐</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Display Scaling</div>
+                    <div class="settings-item-desc">Adjust text size and UI scale</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-icon">🎮</div>
+                  <div class="settings-item-info">
+                    <div class="settings-item-name">Advanced Features</div>
+                    <div class="settings-item-desc">Enable experimental mechanics</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+
+              <div class="signout-btn">↪ Sign Out</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW QUEST DIALOG -->
+      <div class="screen-wrap">
+        <div class="screen-label">Dialog — New Quest</div>
+        <div class="screen-body">
+          <div class="phone dialog-screen">
+            <!-- Blurred background content -->
+            <div style="padding:16px 18px;opacity:0.25">
+              <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff">Active Quests</div>
+              <div class="quest-item" style="margin-top:12px">
+                <div class="quest-checkbox"></div>
+                <div class="quest-info"><div class="quest-name">Pay Utility Bills</div></div>
+              </div>
+            </div>
+
+            <div class="dialog-backdrop">
+              <div class="dialog">
+                <div class="dialog-header">
+                  <div class="dialog-title"><span class="dialog-title-icon">🛡</span> New Quest</div>
+                  <div class="dialog-close">✕</div>
+                </div>
+                <div class="dialog-body">
+                  <div class="form-field">
+                    <div class="form-label">Quest Title</div>
+                    <div class="form-input active-border" style="color:var(--text-muted)">E.g., Defeat the Laundry Monster</div>
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">Project / Campaign</div>
+                    <div class="form-input">Project: Startup</div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-field">
+                      <div class="form-label">Quest Type</div>
+                      <div class="form-input">Side Quest</div>
+                    </div>
+                    <div class="form-field">
+                      <div class="form-label">Level Difficulty</div>
+                      <div class="form-input">1 ▲▼</div>
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <div class="form-label">XP Reward</div>
+                    <div class="form-input" style="color:var(--xp-color);font-weight:600">50 ▲▼</div>
+                  </div>
+                  <div class="accept-btn">Accept Quest</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-nav" style="opacity:0.25">
+              <div class="nav-item active"><div class="nav-icon">☰</div><div class="nav-label">Quests</div></div>
+              <div class="nav-item"><div class="nav-icon">⊞</div><div class="nav-label">Library</div></div>
+              <div class="nav-item"><div class="nav-icon">◯</div><div class="nav-label">Profile</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SPACING & SPECS -->
+  <div class="section">
+    <div class="section-label">05 — Specs</div>
+    <div class="section-title">Key Measurements</div>
+    <p class="section-desc">Consistent spacing and sizing to reference while building Flutter layouts.</p>
+    <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden">
+      <table class="spec-table">
+        <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td>screen-padding</td><td>18px</td><td>Horizontal padding on all screen content</td></tr>
+          <tr><td>card-padding</td><td>14px</td><td>Internal padding on cards and sections</td></tr>
+          <tr><td>radius-sm</td><td>4px</td><td>Inputs, tags, small buttons</td></tr>
+          <tr><td>radius-md</td><td>6px</td><td>Cards, settings items, search bar</td></tr>
+          <tr><td>radius-lg</td><td>10px</td><td>Dialogs, bottom sheets</td></tr>
+          <tr><td>nav-height</td><td>~60px</td><td>Bottom navigation bar</td></tr>
+          <tr><td>app-bar-height</td><td>~56px</td><td>Top app bar</td></tr>
+          <tr><td>quest-row-height</td><td>~52px</td><td>Individual quest list item</td></tr>
+          <tr><td>avatar-size</td><td>60×60px</td><td>Profile avatar, 4px border-radius</td></tr>
+          <tr><td>game-card-aspect</td><td>0.7 (portrait)</td><td>Library game cards</td></tr>
+          <tr><td>fab-size</td><td>48×48px</td><td>Floating action button</td></tr>
+          <tr><td>xp-bar-height</td><td>6px</td><td>Profile XP progress bar</td></tr>
+          <tr><td>achievement-bar-height</td><td>8px</td><td>Game view achievement bar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
