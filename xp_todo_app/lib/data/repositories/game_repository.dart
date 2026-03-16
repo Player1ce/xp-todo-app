@@ -54,8 +54,31 @@ class GameRepository extends IFirestoreRepository {
     return documentExists(collection(userId), gameId);
   }
 
+  // ------Specific Actions to support app features------------------------------
+  Future<void> setGameActive(String userId, String gameId, bool isActive) {
+    return updateGame(userId, gameId, Game.createUpdateMap(isActive: isActive));
+  }
+
   // ------Streams-----------------------------------------------
   Stream<Game?> watchGame(String userId, String gameId) {
     return watchDocument(collection(userId), gameId, Game.fromFirestore);
+  }
+
+  Stream<List<Game>> watchGames(String userId) {
+    return collection(userId).snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Game.fromFirestore(doc.id, doc.data()))
+          .toList(growable: false);
+    });
+  }
+
+  Stream<List<Game>> watchActiveGames(String userId) {
+    return collection(
+      userId,
+    ).where('isActive', isEqualTo: true).snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Game.fromFirestore(doc.id, doc.data()))
+          .toList(growable: false);
+    });
   }
 }

@@ -28,13 +28,17 @@ abstract class IFirestoreRepository {
   }
 
   // --- Shared CRUD Methods ----------------------------
+  // TODO: implement time metadata on creation
   Future<void> createDocumentWithId(
     CollectionReference<Map<String, dynamic>> collection,
     String docId,
     IFirestoreModel model,
   ) async {
     try {
-      await collection.doc(docId).set(model.toFirestore());
+      final data = model.toFirestore();
+      data['createdAt'] = FieldValue.serverTimestamp();
+      data['updatedAt'] = FieldValue.serverTimestamp();
+      await collection.doc(docId).set(data);
     } on FirebaseException catch (e) {
       debugPrint(
         "$serviceName: error creating document ${collection.path}/$docId: $e",
@@ -48,7 +52,10 @@ abstract class IFirestoreRepository {
     IFirestoreModel model,
   ) async {
     try {
-      await collection.add(model.toFirestore());
+      final data = model.toFirestore();
+      data['createdAt'] = FieldValue.serverTimestamp();
+      data['updatedAt'] = FieldValue.serverTimestamp();
+      await collection.add(data);
     } on FirebaseException catch (e) {
       debugPrint(
         "$serviceName: error creating document ${collection.path}/unknownId: $e",

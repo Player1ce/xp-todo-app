@@ -28,7 +28,7 @@ class UserProfileRepository extends IFirestoreRepository {
     return createDocumentWithId(collection, profile.id, profile);
   }
 
-  // read user profile by ID
+  // read user profile by Id
   Future<UserProfile?> getUserProfile(String userId) {
     return getDocument(collection, userId, UserProfile.fromFirestore);
   }
@@ -46,32 +46,26 @@ class UserProfileRepository extends IFirestoreRepository {
 
   /// Accept privacy policy
   Future<void> acceptPrivacyPolicy(String userId, String policyVersion) {
-    return updateUserProfile(userId, {
-      'acceptedPrivacyPolicy': true,
-      'policyVersion': policyVersion,
-      'consentDate': DateTime.now(),
-    });
-  }
-
-  /// Mark survey as complete
-  Future<void> markSurveyComplete(String userId, String surveyVersion) {
-    return updateUserProfile(userId, {
-      'surveyCompleted': true,
-      'surveyVersion': surveyVersion,
-      'surveyCompletedAt': DateTime.now(),
-    });
+    return updateUserProfile(
+      userId,
+      UserProfile.createUpdateMap(
+        acceptedPrivacyPolicy: true,
+        policyVersion: policyVersion,
+        consentDate: DateTime.now(),
+      ),
+    );
   }
 
   /// Enable 2FA
   Future<void> enable2FA(String userId, {String? phoneNumber}) {
-    final updates = {
-      'twoFactorEnabled': true,
-      'twoFactorEnabledAt': DateTime.now(),
-    };
+    final updates = UserProfile.createUpdateMap(
+      twoFactorEnabled: true,
+      twoFactorEnabledAt: DateTime.now(),
+    );
 
     // Optionally save phone number if provided
     if (phoneNumber != null) {
-      updates['phoneNumber'] = phoneNumber;
+      updates.addAll(UserProfile.createUpdateMap(phoneNumber: phoneNumber));
     }
 
     return updateUserProfile(userId, updates);
@@ -79,10 +73,13 @@ class UserProfileRepository extends IFirestoreRepository {
 
   /// Disable 2FA
   Future<void> disable2FA(String userId) {
-    return updateUserProfile(userId, {
-      'twoFactorEnabled': false,
-      'twoFactorEnabledAt': null,
-    });
+    return updateUserProfile(
+      userId,
+      UserProfile.createUpdateMap(
+        twoFactorEnabled: false,
+        twoFactorEnabledAt: null,
+      ),
+    );
   }
 
   /// Check if user exists

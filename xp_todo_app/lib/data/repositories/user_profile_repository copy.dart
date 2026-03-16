@@ -175,7 +175,7 @@ class OldUserProfileService extends IFirestoreRepository {
     }, isDemo: isDemo);
   }
 
-  /// Add child to parent's childIDs
+  /// Add child to parent's childIds
   Future<bool> addChild(
     String userId,
     String childId, {
@@ -185,7 +185,7 @@ class OldUserProfileService extends IFirestoreRepository {
       await _repository.appendToArrayField(
         collectionName,
         userId,
-        'childIDs',
+        'childIds',
         childId,
       );
       return true;
@@ -195,7 +195,7 @@ class OldUserProfileService extends IFirestoreRepository {
     }
   }
 
-  /// Remove child from parent's childIDs
+  /// Remove child from parent's childIds
   // Future<bool> removeChild(
   //   String userId,
   //   String childId, {
@@ -209,11 +209,11 @@ class OldUserProfileService extends IFirestoreRepository {
   //     final profile = await getUserProfile(userId, isDemo: isDemo);
   //     if (profile == null) return false;
 
-  //     final updatedChildIDs = profile.childIDs
+  //     final updatedChildIds = profile.childIds
   //         .where((id) => id != childId)
   //         .toList();
   //     await _repository.update(collectionName, userId, {
-  //       'childIDs': updatedChildIDs,
+  //       'childIds': updatedChildIds,
   //     });
   //     notifyListeners();
   //     return true;

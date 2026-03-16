@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
 import 'package:xp_todo_app/data/models/i_firestore_model.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
@@ -16,12 +15,13 @@ class Quest extends IFirestoreModel {
   final int xpReward;
   final int level;
   final Difficulty difficulty;
-  final String gameID;
   final DateTime? expireDate;
 
-  // Metadata
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String userId;
+  final String gameId;
+
+  final bool completed;
+  final bool isActive;
 
   Quest({
     required this.id,
@@ -29,11 +29,16 @@ class Quest extends IFirestoreModel {
     required this.xpReward,
     required this.level,
     required this.difficulty,
-    required this.gameID,
+    required this.userId,
+    required this.gameId,
+    required this.completed,
+    required this.isActive,
     this.expireDate,
-    this.createdAt,
-    this.updatedAt,
-  });
+    super.createdAt,
+    super.updatedAt,
+  }) : assert(title.isNotEmpty, 'Quest title cannot be empty'),
+       assert(xpReward >= 0, 'XP reward cannot be negative'),
+       assert(level >= 0, 'Level cannot be negative');
 
   Quest copyWith({
     String? id,
@@ -41,8 +46,11 @@ class Quest extends IFirestoreModel {
     int? xpReward,
     int? level,
     Difficulty? difficulty,
-    String? gameID,
+    String? userId,
+    String? gameId,
     DateTime? expireDate,
+    bool? completed,
+    bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -52,14 +60,17 @@ class Quest extends IFirestoreModel {
       xpReward: xpReward ?? this.xpReward,
       level: level ?? this.level,
       difficulty: difficulty ?? this.difficulty,
-      gameID: gameID ?? this.gameID,
+      userId: userId ?? this.userId,
+      gameId: gameId ?? this.gameId,
       expireDate: expireDate ?? this.expireDate,
+      completed: completed ?? this.completed,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
-  // TODO: this version introduces a modification where ID is stored in the map.
+  // TODO: this version introduces a modification where Id is stored in the map.
   //  This will need to be stripped at uplaod for firestore repos.
   @override
   Map<String, dynamic> toMap() {
@@ -69,10 +80,12 @@ class Quest extends IFirestoreModel {
       'xpReward': xpReward,
       'level': level,
       'difficulty': difficulty.toStorage(),
-      'gameID': gameID,
       'expireDate': expireDate,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'userId': userId,
+      'gameId': gameId,
+      'completed': completed,
+      'isActive': isActive,
+      ...super.toMap(),
     };
   }
 
@@ -83,10 +96,13 @@ class Quest extends IFirestoreModel {
       xpReward: map['xpReward'] as int,
       level: map['level'] as int,
       difficulty: Difficulty.fromStorage(map['difficulty'] as String?),
-      gameID: map['gameID'] as String,
       expireDate: map['expireDate'] != null
           ? convertToDateTime(map['expireDate'])
           : null,
+      userId: map['userId'] as String,
+      gameId: map['gameId'] as String,
+      completed: map['completed'] as bool? ?? false,
+      isActive: map['isActive'] as bool? ?? true,
       createdAt: map['createdAt'] != null
           ? convertToDateTime(map['createdAt'])
           : null,
@@ -100,8 +116,6 @@ class Quest extends IFirestoreModel {
     map['id'] = id; // Ensure 'id' is included for model creation
     return Quest.fromMap(map);
   }
-
-  String toJson() => json.encode(toMap());
 
   factory Quest.fromJson(String source) =>
       Quest.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -117,16 +131,22 @@ class Quest extends IFirestoreModel {
     int? xpReward,
     int? level,
     Difficulty? difficulty,
-    String? gameID,
+    String? userId,
+    String? gameId,
     DateTime? expireDate,
+    bool? completed,
+    bool? isActive,
   }) {
-    Map<String, dynamic> map = {'updatedAt': FieldValue.serverTimestamp()};
+    Map<String, dynamic> map = {};
 
     if (title != null) map['title'] = title;
     if (xpReward != null) map['xpReward'] = xpReward;
     if (level != null) map['level'] = level;
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
-    if (gameID != null) map['gameID'] = gameID;
+    if (userId != null) map['userId'] = userId;
+    if (gameId != null) map['gameId'] = gameId;
+    if (completed != null) map['completed'] = completed;
+    if (isActive != null) map['isActive'] = isActive;
     if (expireDate != null) {
       map['expireDate'] = expireDate;
     }
@@ -136,7 +156,7 @@ class Quest extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, gameID: $gameID, expireDate: $expireDate)';
+    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, isActive: $isActive, expireDate: $expireDate)';
   }
 
   @override
@@ -147,7 +167,10 @@ class Quest extends IFirestoreModel {
         other.xpReward == xpReward &&
         other.level == level &&
         other.difficulty == difficulty &&
-        other.gameID == gameID &&
+        other.userId == userId &&
+        other.gameId == gameId &&
+        other.completed == completed &&
+        other.isActive == isActive &&
         other.expireDate == expireDate;
   }
 
@@ -157,7 +180,10 @@ class Quest extends IFirestoreModel {
         xpReward.hashCode ^
         level.hashCode ^
         difficulty.hashCode ^
-        gameID.hashCode ^
+        userId.hashCode ^
+        gameId.hashCode ^
+        completed.hashCode ^
+        isActive.hashCode ^
         expireDate.hashCode;
   }
 }

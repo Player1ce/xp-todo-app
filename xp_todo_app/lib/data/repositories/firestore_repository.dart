@@ -90,7 +90,7 @@ class FirestoreRepository {
       return subDoc;
     } catch (e) {
       debugPrint(
-        "Error creating subcollection document with ID in $collectionName/$docId/$subcollectionName: $e",
+        "Error creating subcollection document with Id in $collectionName/$docId/$subcollectionName: $e",
       );
       return null;
     }
@@ -256,7 +256,7 @@ class FirestoreRepository {
 
       // If no document is found in any collection, return null
       debugPrint(
-        "No document found with ID $documentId in collections: $collectionNames",
+        "No document found with Id $documentId in collections: $collectionNames",
       );
       return null;
     } catch (e) {
@@ -422,19 +422,19 @@ class FirestoreRepository {
 
   Future<bool> appendToArrayField(
     String collectionName,
-    String docID,
+    String docId,
     String field,
     dynamic value,
   ) async {
     try {
-      final docRef = database.collection(collectionName).doc(docID);
+      final docRef = database.collection(collectionName).doc(docId);
       await docRef.update({
         field: FieldValue.arrayUnion([value]),
       });
       return true;
     } catch (e) {
       debugPrint(
-        "Error appending to array field $field in document $collectionName/$docID: $e",
+        "Error appending to array field $field in document $collectionName/$docId: $e",
       );
       return false;
     }
@@ -443,24 +443,24 @@ class FirestoreRepository {
   Future<bool> appendToArrayFieldForSubcollection(
     String collectionName,
     String subCollection,
-    String docID,
-    String subID,
+    String docId,
+    String subId,
     String field,
     dynamic value,
   ) async {
     try {
       final docRef = database
           .collection(collectionName)
-          .doc(docID)
+          .doc(docId)
           .collection(subCollection)
-          .doc(subID);
+          .doc(subId);
       await docRef.update({
         field: FieldValue.arrayUnion([value]),
       });
       return true;
     } catch (e) {
       debugPrint(
-        "Error appending to array field $field in document $collectionName/$docID/$subCollection/$subID: $e",
+        "Error appending to array field $field in document $collectionName/$docId/$subCollection/$subId: $e",
       );
       return false;
     }
@@ -506,19 +506,19 @@ class FirestoreRepository {
 
   Future<bool> removeFromArrayField(
     String collectionName,
-    String docID,
+    String docId,
     String field,
     dynamic value,
   ) async {
     try {
-      final docRef = database.collection(collectionName).doc(docID);
+      final docRef = database.collection(collectionName).doc(docId);
       await docRef.update({
         field: FieldValue.arrayRemove([value]),
       });
       return true;
     } catch (e) {
       debugPrint(
-        "Error removing from array field $field in document $collectionName/$docID: $e",
+        "Error removing from array field $field in document $collectionName/$docId: $e",
       );
       return false;
     }
@@ -747,10 +747,10 @@ class FirestoreRepository {
 
       if (currentUserDataWithIdAndCollection == null) {
         debugPrint(
-          "FirestoreRepository: changeUserType() no user found with ID $userId. This may be an error, or the user may not yet have a document.",
+          "FirestoreRepository: changeUserType() no user found with Id $userId. This may be an error, or the user may not yet have a document.",
         );
         throw DocumentNotFoundException(
-          "No user found with ID $userId in collections: $possibleFromCollections",
+          "No user found with Id $userId in collections: $possibleFromCollections",
         );
       } else {
         if (currentUserDataWithIdAndCollection.second == newCollectionName) {

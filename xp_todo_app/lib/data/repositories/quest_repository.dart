@@ -40,7 +40,11 @@ class QuestRepository extends IFirestoreRepository {
   }
 
   Future<Quest?> getQuest(String userId, String gameId, String questId) {
-    return getDocument(collection(userId, gameId), questId, Quest.fromFirestore);
+    return getDocument(
+      collection(userId, gameId),
+      questId,
+      Quest.fromFirestore,
+    );
   }
 
   /// Update quest
@@ -64,6 +68,29 @@ class QuestRepository extends IFirestoreRepository {
 
   // ------Streams-----------------------------------------------
   Stream<Quest?> watchQuest(String userId, String gameId, String questId) {
-    return watchDocument(collection(userId, gameId), questId, Quest.fromFirestore);
+    return watchDocument(
+      collection(userId, gameId),
+      questId,
+      Quest.fromFirestore,
+    );
+  }
+
+  Stream<List<Quest>> watchQuests(String userId, String gameId) {
+    return collection(userId, gameId).snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+          .toList(growable: false);
+    });
+  }
+
+  Stream<List<Quest>> watchActiveQuests(String userId, String gameId) {
+    return collection(
+      userId,
+      gameId,
+    ).where('isActive', isEqualTo: true).snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+          .toList(growable: false);
+    });
   }
 }

@@ -37,10 +37,6 @@ class UserProfile extends IFirestoreModel {
   final bool nightlyNotificationsEnabled;
   final bool weeklyNotificationsEnabled;
 
-  // Metadata
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-
   UserProfile({
     required this.id,
     required this.role,
@@ -58,8 +54,8 @@ class UserProfile extends IFirestoreModel {
     this.notificationsEnabled = true,
     this.nightlyNotificationsEnabled = true,
     this.weeklyNotificationsEnabled = true,
-    this.createdAt,
-    this.updatedAt,
+    super.createdAt,
+    super.updatedAt,
   });
 
   // Helper getters
@@ -132,7 +128,7 @@ class UserProfile extends IFirestoreModel {
     );
   }
 
-  // TODO: this version introduces a modification where ID is stored in the map.
+  // TODO: this version introduces a modification where Id is stored in the map.
   //  This will need to be stripped at uplaod for firestore repos.
   @override
   Map<String, dynamic> toMap() {
@@ -195,8 +191,6 @@ class UserProfile extends IFirestoreModel {
     map['id'] = id; // Ensure 'id' is included for model creation
     return UserProfile.fromMap(map);
   }
-
-  String toJson() => json.encode(toMap());
 
   factory UserProfile.fromJson(String source) =>
       UserProfile.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -263,7 +257,7 @@ class UserProfile extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, role: ${role.name}, email: $email, name: $name, firstName: $firstName, lastName: $lastName)';
+    return 'UserProfile(id: $id, role: ${role.name}, email: $email, name: $name, firstName: $firstName, lastName: $lastName, $phoneNumber: $phoneNumber, emailVerified: $emailVerified, twoFactorEnabled: $twoFactorEnabled, acceptedPrivacyPolicy: $acceptedPrivacyPolicy)';
   }
 
   @override

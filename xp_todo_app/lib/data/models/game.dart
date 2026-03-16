@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:xp_todo_app/data/models/data_with_id.dart';
 import 'package:xp_todo_app/data/models/i_firestore_model.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
@@ -24,9 +23,8 @@ class Game extends IFirestoreModel {
   final int totalXP;
   final double completionPercentage;
 
-  // Metadata
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String userId;
+
   Game({
     required this.id,
     required this.title,
@@ -39,8 +37,9 @@ class Game extends IFirestoreModel {
     required this.availableXP,
     required this.totalXP,
     required this.completionPercentage,
-    this.createdAt,
-    this.updatedAt,
+    required this.userId,
+    super.createdAt,
+    super.updatedAt,
   });
 
   Game copyWith({
@@ -55,6 +54,7 @@ class Game extends IFirestoreModel {
     int? availableXP,
     int? totalXP,
     double? completionPercentage,
+    String? userId,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -70,6 +70,7 @@ class Game extends IFirestoreModel {
       availableXP: availableXP ?? this.availableXP,
       totalXP: totalXP ?? this.totalXP,
       completionPercentage: completionPercentage ?? this.completionPercentage,
+      userId: userId ?? this.userId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -89,6 +90,7 @@ class Game extends IFirestoreModel {
       'availableXP': availableXP,
       'totalXP': totalXP,
       'completionPercentage': completionPercentage,
+      'userId': userId,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -107,6 +109,7 @@ class Game extends IFirestoreModel {
       availableXP: map['availableXP'] as int,
       totalXP: map['totalXP'] as int,
       completionPercentage: map['completionPercentage'] as double,
+      userId: map['userId'] as String,
       createdAt: map['createdAt'] != null
           ? convertToDateTime(map['createdAt'])
           : null,
@@ -120,8 +123,6 @@ class Game extends IFirestoreModel {
     map['id'] = id; // Ensure 'id' is included for model creation
     return Game.fromMap(map);
   }
-
-  String toJson() => json.encode(toMap());
 
   factory Game.fromJson(String source) =>
       Game.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -143,8 +144,9 @@ class Game extends IFirestoreModel {
     int? availableXP,
     int? totalXP,
     double? completionPercentage,
+    String? userId,
   }) {
-    Map<String, dynamic> map = {'updatedAt': FieldValue.serverTimestamp()};
+    Map<String, dynamic> map = {};
 
     if (title != null) map['title'] = title;
     if (imageUrl != null) map['imageUrl'] = imageUrl;
@@ -158,13 +160,14 @@ class Game extends IFirestoreModel {
     if (completionPercentage != null) {
       map['completionPercentage'] = completionPercentage;
     }
+    if (userId != null) map['userId'] = userId;
 
     return map;
   }
 
   @override
   String toString() {
-    return 'Game(id: $id, title: $title, imageUrl: $imageUrl, description: $description, isActive: $isActive, totalQuests: $totalQuests, completedQuests: $completedQuests, difficulty: $difficulty, availableXP: $availableXP, totalXP: $totalXP, completionPercentage: $completionPercentage, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Game(id: $id, title: $title, imageUrl: $imageUrl, description: $description, isActive: $isActive, totalQuests: $totalQuests, completedQuests: $completedQuests, difficulty: $difficulty, availableXP: $availableXP, totalXP: $totalXP, completionPercentage: $completionPercentage)';
   }
 
   @override
@@ -182,8 +185,7 @@ class Game extends IFirestoreModel {
         other.availableXP == availableXP &&
         other.totalXP == totalXP &&
         other.completionPercentage == completionPercentage &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+        other.userId == userId;
   }
 
   @override
@@ -199,7 +201,6 @@ class Game extends IFirestoreModel {
         availableXP.hashCode ^
         totalXP.hashCode ^
         completionPercentage.hashCode ^
-        createdAt.hashCode ^
-        updatedAt.hashCode;
+        userId.hashCode;
   }
 }
