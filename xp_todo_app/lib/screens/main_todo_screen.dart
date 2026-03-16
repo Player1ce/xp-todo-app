@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:xp_todo_app/providers/user_profile_providers.dart';
+import 'package:xp_todo_app/widgets/todo_list_panel.dart';
 
-class MainTodoScreen extends ConsumerStatefulWidget {
+class MainTodoScreen extends ConsumerWidget {
   const MainTodoScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MainTodoScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeUserId = ref.watch(activeUserIdProvider);
 
-class _MainTodoScreenState extends ConsumerState<MainTodoScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      
-
-
-    ],);
+    return activeUserId.when(
+      data: (userId) {
+        if (userId == null) {
+          return const Center(
+            child: Text('Please sign in to view your quests.'),
+          );
+        }
+        return TodoListPanel(userId: userId);
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(child: Text('Failed to load user: $error')),
+    );
   }
 }

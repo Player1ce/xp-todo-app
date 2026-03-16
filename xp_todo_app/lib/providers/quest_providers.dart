@@ -13,9 +13,12 @@ Stream<List<Quest>> quests(Ref ref, String userId, String gameId) {
 @riverpod
 AsyncValue<List<Quest>> activeQuests(Ref ref, String userId, String gameId) {
   final questsAsync = ref.watch(questsProvider(userId, gameId));
-  return questsAsync.whenData(
-    (quests) => quests.where((quest) => quest.isActive).toList(),
-  );
+  final now = DateTime.now();
+  return questsAsync.whenData((quests) {
+    return quests
+        .where((quest) => quest.expireDate == null || quest.expireDate!.isAfter(now))
+        .toList(growable: false);
+  });
 }
 
 @riverpod

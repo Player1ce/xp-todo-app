@@ -1,32 +1,35 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/cupertino.dart';
-import 'package:xp_todo_app/screens/my_demo_home_screen.dart';
+import 'package:xp_todo_app/screens/games_screen.dart';
+import 'package:xp_todo_app/screens/main_todo_screen.dart';
+import 'package:xp_todo_app/screens/profile_screen.dart';
 
 import 'package:xp_todo_app/util/page_layout.dart';
 
 // mainPage
-Widget _buildMainPage_HomePage(BuildContext context) => MyDemoHomePage();
-Widget _buildMainPage_HomePage2(BuildContext context) => MyDemoHomePage();
+Widget _buildMainPage_Todo(BuildContext context) => const MainTodoScreen();
+Widget _buildMainPage_Games(BuildContext context) => const GamesScreen();
+Widget _buildMainPage_Profile(BuildContext context) => const ProfileScreen();
 
 const mainPageList = [
   PageData(
-    "gearshape.fill",
-    "Settings",
-    CupertinoIcons.settings,
-    _buildMainPage_HomePage,
+    'checkmark.square.fill',
+    'Quests',
+    CupertinoIcons.check_mark_circled_solid,
+    _buildMainPage_Todo,
   ),
   PageData(
-    "house.fill",
-    "Home",
-    CupertinoIcons.house,
-    _buildMainPage_HomePage2,
+    'square.grid.2x2.fill',
+    'Library',
+    CupertinoIcons.square_grid_2x2_fill,
+    _buildMainPage_Games,
   ),
   PageData(
-    "person.fill",
-    "Profile",
+    'person.crop.circle.fill',
+    'Profile',
     CupertinoIcons.person,
-    _buildMainPage_HomePage,
+    _buildMainPage_Profile,
   ),
 ];
 

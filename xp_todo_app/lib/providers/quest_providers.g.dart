@@ -147,7 +147,7 @@ final class ActiveQuestsProvider
   }
 }
 
-String _$activeQuestsHash() => r'c423299f63725f8feb4947579c630a4e77b21cf8';
+String _$activeQuestsHash() => r'64759efb672592d70059b2c14156f690ed03675a';
 
 final class ActiveQuestsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<Quest>>, (String, String)> {

@@ -1,7 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
-import 'package:xp_todo_app/providers/firebase_providers.dart';
 import 'package:xp_todo_app/providers/repository_providers.dart';
 
 part 'user_profile_providers.g.dart';
@@ -25,6 +24,17 @@ AsyncValue<UserProfile?> activeUser(Ref ref) {
       return ref.watch(userProfileProvider(user.uid));
     },
   );
+}
+
+@riverpod
+AsyncValue<String?> activeUserId(Ref ref) {
+  return ref
+      .watch(activeUserProvider)
+      .when(
+        loading: () => const AsyncValue.loading(),
+        error: (e, s) => AsyncValue.error(e, s),
+        data: (profile) => AsyncValue.data(profile?.id),
+      );
 }
 
 @riverpod

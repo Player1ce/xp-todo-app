@@ -131,6 +131,53 @@ final class ActiveUserProvider
 
 String _$activeUserHash() => r'691d95c3c896aaeeb0652ccb4f17f52ae6104b28';
 
+@ProviderFor(activeUserId)
+final activeUserIdProvider = ActiveUserIdProvider._();
+
+final class ActiveUserIdProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<String?>,
+          AsyncValue<String?>,
+          AsyncValue<String?>
+        >
+    with $Provider<AsyncValue<String?>> {
+  ActiveUserIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeUserIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<String?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<String?> create(Ref ref) {
+    return activeUserId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<String?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<String?>>(value),
+    );
+  }
+}
+
+String _$activeUserIdHash() => r'435a2bf48b4dc24614f9480451484f89f15a2eb6';
+
 @ProviderFor(UserProfileActionNotifier)
 final userProfileActionProvider = UserProfileActionNotifierProvider._();
 
