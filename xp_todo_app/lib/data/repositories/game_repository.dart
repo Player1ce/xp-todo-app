@@ -28,8 +28,16 @@ class GameRepository extends IFirestoreRepository {
 
   /// Create new game
   Future<void> createGame(String userId, Game game) {
-    // firestore.collection('userProfile').doc(userId).collection(collectionName);
-    return createDocument(collection(userId), game);
+    print(
+      "GameRepository: createGame called with userId: $userId, game: ${game.toString()}",
+    );
+    return createDocument(
+      firestore
+          .collection(UserProfile.collectionName)
+          .doc(userId)
+          .collection(Game.collectionName),
+      game,
+    );
   }
 
   Future<Game?> getGame(String userId, String gameId) {

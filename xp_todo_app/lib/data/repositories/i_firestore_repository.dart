@@ -55,6 +55,9 @@ abstract class IFirestoreRepository {
       final data = model.toFirestore();
       data['createdAt'] = FieldValue.serverTimestamp();
       data['updatedAt'] = FieldValue.serverTimestamp();
+      print(
+        "$serviceName: creating document in ${collection.path} with data: $data",
+      );
       await collection.add(data);
     } on FirebaseException catch (e) {
       debugPrint(

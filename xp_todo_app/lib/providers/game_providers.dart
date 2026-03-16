@@ -32,6 +32,9 @@ class GameActionNotifier extends _$GameActionNotifier {
   AsyncValue<void> build() => const AsyncValue.data(null);
 
   Future<void> createGame(String userId, Game game) async {
+    print(
+      "GameActionNotifier: createGame called with userId: $userId, game: ${game.toString()}",
+    );
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(
       () => ref.read(gameRepositoryProvider).createGame(userId, game),

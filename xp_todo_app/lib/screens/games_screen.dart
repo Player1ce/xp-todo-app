@@ -1,7 +1,9 @@
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/providers/user_profile_providers.dart';
 import 'package:xp_todo_app/widgets/game_card.dart';
+import 'package:xp_todo_app/widgets/game_creation_dialog.dart';
 
 class GamesScreen extends ConsumerWidget {
   const GamesScreen({super.key});
@@ -18,36 +20,50 @@ class GamesScreen extends ConsumerWidget {
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Library',
-                    style: TextStyle( // TODO: update this to actually use themes
-                      fontFamily: 'Rajdhani',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2.2,
+        return Scaffold(
+          appBar: AppBar(title: const Text('Library')),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Library',
+                      style: TextStyle(
+                        // TODO: update this to actually use themes
+                        fontFamily: 'Rajdhani',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.2,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Your active projects',
-                    style: TextStyle(
-                      fontFamily: 'ShareTechMono',
-                      fontSize: 10,
-                      letterSpacing: 1.2,
+                    Text(
+                      'Your active projects',
+                      style: TextStyle(
+                        fontFamily: 'ShareTechMono',
+                        fontSize: 10,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Expanded(child: GamesGridView(userId: userId)),
-          ],
+              Expanded(child: GamesGridView(userId: userId)),
+            ],
+          ),
+          floatingActionButton: AdaptiveFloatingActionButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => GameCreationDialog(userId: userId),
+              );
+            },
+            tooltip: 'Create New Game',
+            child: const Icon(Icons.add),
+          ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
