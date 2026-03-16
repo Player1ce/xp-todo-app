@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'firestore_providers.dart';
+part of 'firebase_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -56,50 +56,43 @@ final class FirestoreProvider
 
 String _$firestoreHash() => r'0e25e335c5657f593fc1baf3d9fd026e70bca7fa';
 
-@ProviderFor(firestoreRepository)
-final firestoreRepositoryProvider = FirestoreRepositoryProvider._();
+@ProviderFor(firebaseAuth)
+final firebaseAuthProvider = FirebaseAuthProvider._();
 
-final class FirestoreRepositoryProvider
-    extends
-        $FunctionalProvider<
-          FirestoreRepository,
-          FirestoreRepository,
-          FirestoreRepository
-        >
-    with $Provider<FirestoreRepository> {
-  FirestoreRepositoryProvider._()
+final class FirebaseAuthProvider
+    extends $FunctionalProvider<FirebaseAuth, FirebaseAuth, FirebaseAuth>
+    with $Provider<FirebaseAuth> {
+  FirebaseAuthProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'firestoreRepositoryProvider',
+        name: r'firebaseAuthProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$firestoreRepositoryHash();
+  String debugGetCreateSourceHash() => _$firebaseAuthHash();
 
   @$internal
   @override
-  $ProviderElement<FirestoreRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<FirebaseAuth> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  FirestoreRepository create(Ref ref) {
-    return firestoreRepository(ref);
+  FirebaseAuth create(Ref ref) {
+    return firebaseAuth(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(FirestoreRepository value) {
+  Override overrideWithValue(FirebaseAuth value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<FirestoreRepository>(value),
+      providerOverride: $SyncValueProvider<FirebaseAuth>(value),
     );
   }
 }
 
-String _$firestoreRepositoryHash() =>
-    r'5f5fa55ad290ae9040292719ad35eee7e8917a89';
+String _$firebaseAuthHash() => r'912368c3df3f72e4295bf7a8cda93b9c5749d923';
