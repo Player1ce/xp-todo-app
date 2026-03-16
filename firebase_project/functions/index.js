@@ -40,24 +40,18 @@ const {giveClaimByEmail, removeClaimByEmail} = require("./auth/claims");
 // eslint-disable-next-line max-len
 const {checkIsAtLeast} = require("./auth/auth.js");
 
-// Import migration functions
-const {migrateToUserProfile} = require("./migration");
-
 // functions
 // v1 functions
 const auth = require("firebase-functions/v1/auth");
 
 // v2 functions
 const https = require("firebase-functions/v2/https");
-const {onSchedule} = require("firebase-functions/v2/scheduler");
+// const {onSchedule} = require("firebase-functions/v2/scheduler");
 
 
 admin.initializeApp();
 
 const db = admin.firestore();
-
-// Export migration function
-exports.migrateToUserProfile = migrateToUserProfile;
 
 // TODO: make these functions more generic/concise
 
@@ -67,8 +61,8 @@ exports.migrateToUserProfile = migrateToUserProfile;
  */
 exports.addDefaultClaim = auth.user().onCreate(async (user) => {
   try {
-    // Set the custom claim 'parent' to true (default role)
-    await getAuth().setCustomUserClaims(user.uid, {parent: true});
+    // Set the custom claim 'base' to true (default role)
+    await getAuth().setCustomUserClaims(user.uid, {base: true});
     logger.log(`Custom claim set for user ${user.uid}`);
 
     const displayName = user.displayName || null;
@@ -86,7 +80,7 @@ exports.addDefaultClaim = auth.user().onCreate(async (user) => {
 
     // Create UserProfile document in Firestore
     await db.collection("UserProfile").doc(user.uid).set({
-      role: "parent", // Default role
+      role: "base", // Default role
       status: "active",
       email: user.email || null,
       name: user.displayName || null,
@@ -96,7 +90,6 @@ exports.addDefaultClaim = auth.user().onCreate(async (user) => {
       twoFactorEnabled: false,
       acceptedPrivacyPolicy: false,
       surveyCompleted: false,
-      childIDs: [],
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -119,7 +112,7 @@ function checkEmpty(variable, variableName) {
 }
 
 /**
- * Assigns the 'researcher' role to the target user
+ * Assigns the 'manager' role to the target user
  * @param {https.CallableResponse<unknown>} req the data object
  * @param {https.CallableResponse<unknown>} context the context object
  * @return {Promise<{message: string}>} the success message
@@ -127,29 +120,29 @@ function checkEmpty(variable, variableName) {
  * if the user is not authenticated,
  * or if the user does not have the minimum role
  */
-exports.giveResearcherClaim = https.onCall(async (req, context) => {
+exports.giveManagerClaim = https.onCall(async (req, context) => {
   const targetEmail = req.data.targetEmail;
   checkEmpty(targetEmail, "targetEmail");
 
-  // Assign the 'researcher' role to the target user
+  // Assign the 'manager' role to the target user
   try {
-    giveClaimByEmail(Role.researcher, Role.admin, targetEmail, req);
+    giveClaimByEmail(Role.manager, Role.admin, targetEmail, req);
   } catch (error) {
-    logger.error(`Failed to assign researcher role: ${error}`);
+    logger.error(`Failed to assign manager role: ${error}`);
     return {
-      message: `Failed to assign the ${Role.researcher.value.description}` +
+      message: `Failed to assign the ${Role.manager.value.description}` +
                 ` role to user with error: ${error}`,
     };
   }
 
   return {
     message: `User ${targetEmail} has been assigned the` +
-            ` ${Role.researcher.value.description} role.`,
+            ` ${Role.manager.value.description} role.`,
   };
 });
 
 /**
- * Removes the 'researcher' role from the target user
+ * Removes the 'manager' role from the target user
  * @param {https.CallableResponse<unknown>} req the data object
  * @param {https.CallableResponse<unknown>} context the context object
  * @return {Promise<{message: string}>} the success message
@@ -157,28 +150,28 @@ exports.giveResearcherClaim = https.onCall(async (req, context) => {
  * if the user is not authenticated,
  * or if the user does not have the minimum role
  */
-exports.removeResearcherClaim = https.onCall(async (req, context) => {
+exports.removeManagerClaim = https.onCall(async (req, context) => {
   const targetEmail = req.data.targetEmail;
   checkEmpty(targetEmail, "targetEmail");
 
   try {
-    removeClaimByEmail(Role.researcher, Role.admin, targetEmail, req);
+    removeClaimByEmail(Role.manager, Role.admin, targetEmail, req);
   } catch (error) {
-    logger.error(`Failed to remove researcher role: ${error}`);
+    logger.error(`Failed to remove manager role: ${error}`);
     return {
-      message: `Failed to remove the ${Role.researcher.value.description}` +
+      message: `Failed to remove the ${Role.manager.value.description}` +
                 ` role from user with error: ${error}`,
     };
   }
 
   return {
     message: `User ${targetEmail} has been removed from the` +
-            ` ${Role.researcher.value.description} role.`,
+            ` ${Role.manager.value.description} role.`,
   };
 });
 
 /**
- * Assigns the 'parent' role to the target user
+ * Assigns the 'base' role to the target user
  * @param {https.CallableResponse<unknown>} req the data object
  * @param {https.CallableResponse<unknown>} context the context object
  * @return {Promise<{message: string}>} the success message
@@ -186,28 +179,28 @@ exports.removeResearcherClaim = https.onCall(async (req, context) => {
  * if the user is not authenticated,
  * or if the user does not have the minimum role
  */
-exports.giveParentClaim = https.onCall(async (req, context) => {
+exports.giveBaseClaim = https.onCall(async (req, context) => {
   const targetEmail = req.data.targetEmail;
   checkEmpty(targetEmail, "targetEmail");
 
   try {
-    giveClaimByEmail(Role.parent, Role.admin, targetEmail, req);
+    giveClaimByEmail(Role.base, Role.admin, targetEmail, req);
   } catch (error) {
-    logger.error(`Failed to assign parent role: ${error}`);
+    logger.error(`Failed to assign base role: ${error}`);
     return {
-      message: `Failed to assign the ${Role.parent.value.description}` +
+      message: `Failed to assign the ${Role.base.value.description}` +
                 ` role to user with error: ${error}`,
     };
   }
 
   return {
     message: `User ${targetEmail} has been assigned the` +
-            ` ${Role.parent.value.description} role.`,
+            ` ${Role.base.value.description} role.`,
   };
 });
 
 /**
- * Removes the 'parent' role from the target user
+ * Removes the 'base' role from the target user
  * @param {https.CallableResponse<unknown>} req the data object
  * @param {https.CallableResponse<unknown>} context the context object
  * @return {Promise<{message: string}>} the success message
@@ -215,23 +208,23 @@ exports.giveParentClaim = https.onCall(async (req, context) => {
  * if the user is not authenticated,
  * or if the user does not have the minimum role
  */
-exports.removeParentClaim = https.onCall(async (req, context) => {
+exports.removeBaseClaim = https.onCall(async (req, context) => {
   const targetEmail = req.data.targetEmail;
   checkEmpty(targetEmail, "targetEmail");
 
   try {
-    removeClaimByEmail(Role.parent, Role.admin, targetEmail, req);
+    removeClaimByEmail(Role.base, Role.admin, targetEmail, req);
   } catch (error) {
-    logger.error(`Failed to remove parent role: ${error}`);
+    logger.error(`Failed to remove base role: ${error}`);
     return {
-      message: `Failed to remove the ${Role.parent.value.description}` +
+      message: `Failed to remove the ${Role.base.value.description}` +
                 ` role from user with error: ${error}`,
     };
   }
 
   return {
     message: `User ${targetEmail} has been removed from the` +
-            ` ${Role.parent.value.description} role.`,
+            ` ${Role.base.value.description} role.`,
   };
 });
 
@@ -295,98 +288,98 @@ exports.removeAdminClaim = https.onCall(async (req, context) => {
 
 
 // TODO: this is extremely insecure.
-//       we need to check if the user is a parent of the child
-// TODO: test if a parent can add a child they don't own to someone else
+//       we need to check if the user is a base of the child
+// TODO: test if a base can add a child they don't own to someone else
 /**
- * Assigns a child to another parent
+ * Assigns a child to another base
  * @param {https.CallableResponse<unknown>} req the data object
  * @param {https.CallableResponse<unknown>} context the context object
  * @return {Promise<{message: string}>} the success message
  * @throws {https.HttpsError} if the target email or child UID is not provided,
  * if the user is not authenticated,
- * if the is not already a parent of the child,
+ * if the is not already a base of the child,
  * or if the user does not have the minimum role
  */
-exports.addChildToOtherParent = https.onCall(async (req, context) => {
-  const targetEmail = req.data.targetEmail;
-  const childUid = req.data.childUid;
+// exports.addChildToOtherBase = https.onCall(async (req, context) => {
+//   const targetEmail = req.data.targetEmail;
+//   const childUid = req.data.childUid;
 
-  checkEmpty(targetEmail, "targetEmail");
-  checkEmpty(childUid, "childUid");
+//   checkEmpty(targetEmail, "targetEmail");
+//   checkEmpty(childUid, "childUid");
 
-  if (targetEmail.length > 100) {
-    throw new https.HttpsError(
-        "invalid-argument",
-        "Target email is too long",
-    );
-  }
+//   if (targetEmail.length > 100) {
+//     throw new https.HttpsError(
+//         "invalid-argument",
+//         "Target email is too long",
+//     );
+//   }
 
-  try {
-    checkIsAtLeast(req, Role.parent);
+//   try {
+//     checkIsAtLeast(req, Role.base);
 
-    const parentCollection = db.collection("Parent");
+//     const baseCollection = db.collection("Base");
 
-    // const parentQuerySnapshot = await parentCollection
-    //     .where("email", "==", targetEmail)
-    //     .get();
+//     // const baseQuerySnapshot = await baseCollection
+//     //     .where("email", "==", targetEmail)
+//     //     .get();
 
-    let targetUid;
-    try {
-      const userRecord = await getAuth().getUserByEmail(targetEmail);
-      targetUid = userRecord.uid;
-    } catch (error) {
-      throw new https.HttpsError("not-found", `Parent was not found: ${error}`);
-    }
+//     let targetUid;
+//     try {
+//       const userRecord = await getAuth().getUserByEmail(targetEmail);
+//       targetUid = userRecord.uid;
+//     } catch (error) {
+//      throw new https.HttpsError("not-found", `Base was not found: ${error}`);
+//     }
 
 
-    await db.runTransaction(async (transaction) => {
-      const userRef = parentCollection.doc(req.auth.uid);
-      const userSnaphot = await transaction.get(userRef);
+//     await db.runTransaction(async (transaction) => {
+//       const userRef = baseCollection.doc(req.auth.uid);
+//       const userSnaphot = await transaction.get(userRef);
 
-      if (!userSnaphot.exists ||
-                !userSnaphot.data().childIDs.includes(childUid)) {
-        throw new https.HttpsError(
-            "permission-denied",
-            // eslint-disable-next-line max-len
-            "You do must be a parent of the child to assign them to another parent",
-        );
-      }
+//       if (!userSnaphot.exists ||
+//                 !userSnaphot.data().childIDs.includes(childUid)) {
+//         throw new https.HttpsError(
+//             "permission-denied",
+//             // eslint-disable-next-line max-len
+//          "You do must be a base of the child to assign them to another base",
+//         );
+//       }
 
-      const parentRef = parentCollection.doc(targetUid);
-      const parentUID = parentRef.id;
+//       const baseRef = baseCollection.doc(targetUid);
+//       const baseUID = baseRef.id;
 
-      const childCollection = db.collection("Child");
-      const childRef = childCollection.doc(childUid);
-      const childSnapshot = await transaction.get(childRef);
+//       const childCollection = db.collection("Child");
+//       const childRef = childCollection.doc(childUid);
+//       const childSnapshot = await transaction.get(childRef);
 
-      if (!childSnapshot.exists) {
-        throw new https.HttpsError(
-            "not-found",
-            "Child document not found",
-        );
-      }
+//       if (!childSnapshot.exists) {
+//         throw new https.HttpsError(
+//             "not-found",
+//             "Child document not found",
+//         );
+//       }
 
-      transaction.update(parentRef, {
-        childIDs: admin.firestore.FieldValue.arrayUnion(childUid),
-      });
+//       transaction.update(baseRef, {
+//         childIDs: admin.firestore.FieldValue.arrayUnion(childUid),
+//       });
 
-      transaction.update(childRef, {
-        parentIDs: admin.firestore.FieldValue.arrayUnion(parentUID),
-      });
-    });
-  } catch (error) {
-    logger.error(`Failed to assign child to other parent: ${error}`);
-    return {
-      message: `Failed to assign child` +
-                ` to parent with email: ${targetEmail}` +
-                ` because of error: ${error}`,
-    };
-  }
+//       transaction.update(childRef, {
+//         baseIDs: admin.firestore.FieldValue.arrayUnion(baseUID),
+//       });
+//     });
+//   } catch (error) {
+//     logger.error(`Failed to assign child to other base: ${error}`);
+//     return {
+//       message: `Failed to assign child` +
+//                 ` to base with email: ${targetEmail}` +
+//                 ` because of error: ${error}`,
+//     };
+//   }
 
-  return {
-    message: `User ${targetEmail} has been given the child.`,
-  };
-});
+//   return {
+//     message: `User ${targetEmail} has been given the child.`,
+//   };
+// });
 
 exports.getUserIdByEmail = https.onCall(async (req, context) => {
   const targetEmail = req.data.targetEmail;
@@ -507,101 +500,104 @@ exports.getEmailUIDTable = https.onCall(async (req, context) => {
   }
 });
 
+
+// ---- Notifications -----------------------
+
 /**
  * Nightly Notification Job
  * Runs every day at 8:00 PM (America/Chicago)
  * Checks for users with 'nightlyNotificationsEnabled' and sends a prompt.
  */
-exports.sendNightlyNotifications = onSchedule({
-  schedule: "every day 20:00",
-  timeZone: "America/Chicago",
-}, async (event) => {
-  logger.log("Starting nightly notification job...");
+// exports.sendNightlyNotifications = onSchedule({
+//   schedule: "every day 20:00",
+//   timeZone: "America/Chicago",
+// }, async (event) => {
+//   logger.log("Starting nightly notification job...");
 
-  try {
-    const snapshot = await db.collection("UserProfile")
-        .where("notificationsEnabled", "==", true)
-        .where("nightlyNotificationsEnabled", "==", true)
-        .get();
+//   try {
+//     const snapshot = await db.collection("UserProfile")
+//         .where("notificationsEnabled", "==", true)
+//         .where("nightlyNotificationsEnabled", "==", true)
+//         .get();
 
-    if (snapshot.empty) {
-      logger.log("No users found for nightly notifications.");
-      return;
-    }
+//     if (snapshot.empty) {
+//       logger.log("No users found for nightly notifications.");
+//       return;
+//     }
 
-    logger.log(`Found ${snapshot.size} users for nightly notifications.`);
+//     logger.log(`Found ${snapshot.size} users for nightly notifications.`);
 
-    const messages = [];
-    snapshot.docs.forEach((doc) => {
-      const user = doc.data();
-      if (user.fcmToken) {
-        messages.push({
-          token: user.fcmToken,
-          notification: {
-            title: "Nightly Word Check",
-            body: "Time to log your little one's words for today!",
-          },
-        });
-      }
-    });
+//     const messages = [];
+//     snapshot.docs.forEach((doc) => {
+//       const user = doc.data();
+//       if (user.fcmToken) {
+//         messages.push({
+//           token: user.fcmToken,
+//           notification: {
+//             title: "Nightly Word Check",
+//             body: "Time to log your little one's words for today!",
+//           },
+//         });
+//       }
+//     });
 
-    if (messages.length > 0) {
-      const response = await admin.messaging().sendEach(messages);
-      logger.log(`Nightly: Sent ${response.successCount} messages, ` +
-                `${response.failureCount} failed.`);
-    }
-  } catch (error) {
-    logger.error("Error in nightly notification job:", error);
-  }
-});
+//     if (messages.length > 0) {
+//       const response = await admin.messaging().sendEach(messages);
+//       logger.log(`Nightly: Sent ${response.successCount} messages, ` +
+//                 `${response.failureCount} failed.`);
+//     }
+//   } catch (error) {
+//     logger.error("Error in nightly notification job:", error);
+//   }
+// });
 
 /**
  * Weekly Notification Job
  * Runs every Monday at 9:00 AM (America/Chicago)
  * Checks for users with 'weeklyNotificationsEnabled' and sends a summary.
  */
-exports.sendWeeklyNotifications = onSchedule({
-  schedule: "every monday 9:00",
-  timeZone: "America/Chicago",
-}, async (event) => {
-  logger.log("Starting weekly notification job...");
+// exports.sendWeeklyNotifications = onSchedule({
+//   schedule: "every monday 9:00",
+//   timeZone: "America/Chicago",
+// }, async (event) => {
+//   logger.log("Starting weekly notification job...");
 
-  try {
-    const snapshot = await db.collection("UserProfile")
-        .where("notificationsEnabled", "==", true)
-        .where("weeklyNotificationsEnabled", "==", true)
-        .get();
+//   try {
+//     const snapshot = await db.collection("UserProfile")
+//         .where("notificationsEnabled", "==", true)
+//         .where("weeklyNotificationsEnabled", "==", true)
+//         .get();
 
-    if (snapshot.empty) {
-      logger.log("No users found for weekly notifications.");
-      return;
-    }
+//     if (snapshot.empty) {
+//       logger.log("No users found for weekly notifications.");
+//       return;
+//     }
 
-    logger.log(`Found ${snapshot.size} users for weekly notifications.`);
+//     logger.log(`Found ${snapshot.size} users for weekly notifications.`);
 
-    const messages = [];
-    snapshot.docs.forEach((doc) => {
-      const user = doc.data();
-      if (user.fcmToken) {
-        messages.push({
-          token: user.fcmToken,
-          notification: {
-            title: "Weekly Summary",
-            body: "Check out your child's progress from last week!",
-          },
-        });
-      }
-    });
+//     const messages = [];
+//     snapshot.docs.forEach((doc) => {
+//       const user = doc.data();
+//       if (user.fcmToken) {
+//         messages.push({
+//           token: user.fcmToken,
+//           notification: {
+//             title: "Weekly Summary",
+//             body: "Check out your child's progress from last week!",
+//           },
+//         });
+//       }
+//     });
 
-    if (messages.length > 0) {
-      const response = await admin.messaging().sendEach(messages);
-      logger.log(`Weekly: Sent ${response.successCount} messages, ` +
-                `${response.failureCount} failed.`);
-    }
-  } catch (error) {
-    logger.error("Error in weekly notification job:", error);
-  }
-});
+//     if (messages.length > 0) {
+//       const response = await admin.messaging().sendEach(messages);
+//       logger.log(`Weekly: Sent ${response.successCount} messages, ` +
+//                 `${response.failureCount} failed.`);
+//     }
+//   } catch (error) {
+//     logger.error("Error in weekly notification job:", error);
+//   }
+// });
 
 /**
  * Debug Notification Job

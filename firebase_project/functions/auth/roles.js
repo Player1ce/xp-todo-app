@@ -4,8 +4,8 @@
  */
 const UserRole = Object.freeze({
   admin: {name: "admin", priority: 0},
-  researcher: {name: "researcher", priority: 3},
-  parent: {name: "parent", priority: 5},
+  manager: {name: "manager", priority: 3},
+  base: {name: "base", priority: 5},
 });
 
 /**
@@ -24,8 +24,8 @@ const UserStatus = Object.freeze({
  */
 function getRoleFromToken(token) {
   if (token.admin === true) return UserRole.admin;
-  if (token.researcher === true) return UserRole.researcher;
-  if (token.parent === true) return UserRole.parent;
+  if (token.manager === true) return UserRole.manager;
+  if (token.base === true) return UserRole.base;
   return null; // No role assigned
 }
 
@@ -54,8 +54,8 @@ function hasPermission(userRole, requiredRole) {
 // Export legacy Role for backward compatibility
 const Role = Object.freeze({
   admin: {value: Symbol("admin"), order: 0},
-  researcher: {value: Symbol("researcher"), order: 3},
-  parent: {value: Symbol("parent"), order: 5},
+  manager: {value: Symbol("manager"), order: 3},
+  base: {value: Symbol("base"), order: 5},
   unauthenticated: {value: Symbol("unauthenticated"), order: 100},
 });
 
