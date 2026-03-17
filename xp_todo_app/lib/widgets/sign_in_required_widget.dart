@@ -10,20 +10,23 @@ class SignInRequiredWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.warning_amber_outlined, size: 48),
-          const SizedBox(height: 8),
-          Text(message, style: Theme.of(context).textTheme.headlineMedium),
-          AdaptiveButton(
-            onPressed: () {
-              context.go(RouteConstants.login);
-            },
-            label: "Sign In",
-          ),
-        ],
+    return AdaptiveScaffold(
+      // ← add this
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.warning_amber_outlined, size: 48),
+            const SizedBox(height: 8),
+            Text(message, style: Theme.of(context).textTheme.headlineMedium),
+            AdaptiveButton(
+              onPressed: () {
+                context.go(RouteConstants.login);
+              },
+              label: "Sign In",
+            ),
+          ],
+        ),
       ),
     );
   }

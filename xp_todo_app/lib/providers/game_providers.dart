@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/providers/repository_providers.dart';
@@ -32,6 +31,16 @@ class GameActionNotifier extends _$GameActionNotifier {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
+  Future<Game?> createGame(String userId, Game game) async {
+    state = const AsyncValue.loading();
+    Game? created;
+    state = await AsyncValue.guard(
+      () async => created = await ref
+          .read(gameRepositoryProvider)
+          .createGame(userId, game),
+    );
+    return created;
+  }
 
   Future<void> setGameActive({
     required String userId,

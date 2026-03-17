@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/screens/games_screen.dart';
 import 'package:xp_todo_app/screens/login_screen.dart';
-import 'package:xp_todo_app/screens/quest_screen.dart';
 import 'package:xp_todo_app/screens/page_view_home_screen.dart';
 import 'package:xp_todo_app/screens/profile_screen.dart';
+import 'package:xp_todo_app/screens/quest_screen.dart';
 import 'package:xp_todo_app/screens/settings_screen.dart';
 
 part 'go_router_provider.g.dart';
@@ -79,10 +80,6 @@ GoRouter goRouter(Ref ref) {
         path: RouteConstants.login,
         builder: (context, state) => const LoginScreen(),
       ),
-      GoRoute(
-        path: RouteConstants.settings,
-        builder: (context, state) => const SettingsScreen(),
-      ),
       // GoRoute(
       //   path: RouteConstants.gameView,
       //   builder: (context, state) {
@@ -96,9 +93,4 @@ GoRouter goRouter(Ref ref) {
       // ),
     ],
   );
-}
-
-@riverpod
-String? providerMatchedLocation(Ref ref) {
-  return ref.watch(goRouterProvider).state.matchedLocation;
 }

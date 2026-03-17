@@ -10,3 +10,8 @@ part 'auth_providers.g.dart';
 Stream<User?> authState(Ref ref) {
   return ref.watch(firebaseAuthProvider).authStateChanges();
 }
+
+@riverpod
+User requiredAuthState(Ref ref) {
+  return ref.watch(authStateProvider).requireValue!;
+}

@@ -41,3 +41,44 @@ final class AuthStateProvider
 }
 
 String _$authStateHash() => r'afdf515e14d0bb725ca181867cf6d626a5d85246';
+
+@ProviderFor(requiredAuthState)
+final requiredAuthStateProvider = RequiredAuthStateProvider._();
+
+final class RequiredAuthStateProvider
+    extends $FunctionalProvider<User, User, User>
+    with $Provider<User> {
+  RequiredAuthStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'requiredAuthStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$requiredAuthStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<User> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  User create(Ref ref) {
+    return requiredAuthState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(User value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<User>(value),
+    );
+  }
+}
+
+String _$requiredAuthStateHash() => r'840724fc01b8106c6f0c57f885070eae22beffeb';

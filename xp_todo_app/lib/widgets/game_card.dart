@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 
@@ -180,7 +181,6 @@ class ProviderGameCard extends ConsumerWidget {
 }
 
 class GamesGridView extends ConsumerWidget {
-  final String userId;
   final bool activeOnly;
   final EdgeInsetsGeometry padding;
   final ValueChanged<Game>? onGameTap;
@@ -188,7 +188,6 @@ class GamesGridView extends ConsumerWidget {
 
   const GamesGridView({
     super.key,
-    required this.userId,
     this.activeOnly = false,
     this.padding = const EdgeInsets.all(12),
     this.onGameTap,
@@ -197,9 +196,12 @@ class GamesGridView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(requiredAuthStateProvider);
     final gameNotifier = ref.read(gameActionProvider.notifier);
     final gamesAsync = ref.watch(
-      activeOnly ? activeGamesProvider(userId) : gamesProvider(userId),
+      activeOnly
+          ? activeGamesProvider(authState.uid)
+          : gamesProvider(authState.uid),
     );
 
     return gamesAsync.when(
@@ -229,7 +231,7 @@ class GamesGridView extends ConsumerWidget {
                 }
 
                 gameNotifier.setGameActive(
-                  userId: userId,
+                  userId: authState.uid,
                   gameId: game.id,
                   isActive: nextActive,
                 );

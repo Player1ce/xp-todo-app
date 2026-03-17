@@ -1,12 +1,15 @@
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/const/page_view_configurations.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/util/page_layout.dart';
 import 'package:xp_todo_app/widgets/custom_page_view_navigation_bar.dart';
 
 // providers
 import 'package:xp_todo_app/providers/go_router_provider.dart';
+import 'package:xp_todo_app/widgets/sign_in_required_widget.dart';
 
 class PageViewHomeScreen extends ConsumerStatefulWidget {
   final PageLayout pageLayout;
@@ -46,25 +49,40 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveScaffold(
-      extendBodyBehindAppBar: true,
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          ref
-              .read(goRouterProvider)
-              .go(widget.pageLayout.pageList[index].route);
-        },
-        children: widget.pageLayout.pageList
-            .map((pageData) => pageData.builder(context))
-            .toList(),
+    final authState = ref.watch(authStateProvider);
+
+    return authState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => SignInRequiredWidget(
+        message: "Failed to load user. Please sign in again.",
       ),
-      bottomNavigationBar: getCustomPageViewNavigationBar(
-        context,
-        ref,
-        switchPageViewPage,
-        mainPageLayout,
-      ),
+      data: (user) {
+        if (user == null) {
+          return SignInRequiredWidget(
+            message: 'Please sign in to view your library.',
+          );
+        }
+        return AdaptiveScaffold(
+          extendBodyBehindAppBar: true,
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              ref
+                  .read(goRouterProvider)
+                  .go(widget.pageLayout.pageList[index].route);
+            },
+            children: widget.pageLayout.pageList
+                .map((pageData) => pageData.builder(context))
+                .toList(),
+          ),
+          bottomNavigationBar: getCustomPageViewNavigationBar(
+            context,
+            ref,
+            switchPageViewPage,
+            mainPageLayout,
+          ),
+        );
+      },
     );
   }
 }

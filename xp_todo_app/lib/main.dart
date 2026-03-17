@@ -11,13 +11,17 @@ import 'package:xp_todo_app/firebase_options.dart';
 import 'package:xp_todo_app/providers/go_router_provider.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 
-// go_router
-// router code
-import 'routing/router_config.dart' as router_config;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // TODO: use this to implement top level error catching and display a nice error screen instead of crashing
+  // ErrorWidget.builder = (FlutterErrorDetails details) {
+  //   // In debug mode, show the normal red screen
+  //   if (kDebugMode) return ErrorWidget(details.exception);
+  //   // In release, show something clean
+  //   return const _AppErrorWidget();
+  // };
   runApp(ProviderScope(child: const MyApp()));
 }
 

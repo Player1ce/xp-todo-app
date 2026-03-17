@@ -12,7 +12,9 @@ abstract class IFirestoreModel {
   }
 
   Map<String, dynamic> toFirestore() {
-    return toMap().remove('id'); // Remove 'id' for Firestore storage
+    final map = toMap();
+    map.remove('id'); // Remove 'id' for Firestore storage
+    return map;
   }
 
   String toJson() => json.encode(toMap());

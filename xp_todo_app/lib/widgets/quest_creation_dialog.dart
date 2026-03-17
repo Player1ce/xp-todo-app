@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/user_profile_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
+import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
 
 class QuestCreationDialog extends ConsumerStatefulWidget {
   const QuestCreationDialog({super.key});
@@ -28,23 +30,17 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final questAction = ref.watch(questActionProvider);
     final questActionNotifier = ref.read(questActionProvider.notifier);
-
-    final String? userId = ref.watch(activeUserIdProvider).asData?.value;
-
-    if (userId == null) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: const Color(0xFF1a2035), // matches design reference
-        child: const Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('Please sign in to create a quest.'),
-        ),
-      );
-    }
-
+    final String userId = ref.watch(
+      requiredAuthStateProvider.select((authState) => authState.uid),
+    )!;
     final activeGamesAsync = ref.watch(activeGamesProvider(userId));
+
+    listenForProviderErrors(
+      widgetRef: ref,
+      context: context,
+      provider: questActionProvider,
+    );
 
     if (activeGamesAsync.isLoading) {
       return Dialog(

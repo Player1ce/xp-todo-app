@@ -29,11 +29,11 @@ class GameRepository extends IFirestoreRepository {
 
   /// Create new game
   Future<Game> createGame(String userId, Game game) async {
-    debugPrint(
-      "GameRepository: createGame called with userId: $userId, game: ${game.toString()}",
-    );
-
     try {
+      debugPrint("GameRepository: createGame called with userId: $userId, ");
+      debugPrint("    game data: ${game.toString()}");
+      debugPrint("    after game data");
+
       return game.copyWith(
         id: await createDocument(
           collection(userId),
@@ -48,13 +48,6 @@ class GameRepository extends IFirestoreRepository {
       );
       rethrow;
     }
-    // return createDocument(
-    //   firestore
-    //       .collection(UserProfile.collectionName)
-    //       .doc(userId)
-    //       .collection(Game.collectionName),
-    //   game.copyWith(userId: userId),
-    // );
   }
 
   Future<Game?> getGame(String userId, String gameId) {

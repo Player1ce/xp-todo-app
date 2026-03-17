@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
+import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
 
+/// Requires an authenticated user to be present in the widget tree.
+/// Must be used within an auth gate or after [authStateProvider] has
+/// resolved to a non-null user. See [PageViewHomeScreen] for the
+/// canonical auth gate in this app.
 class GameCreationDialog extends ConsumerStatefulWidget {
-  final String userId;
-  const GameCreationDialog({required this.userId, super.key});
+  const GameCreationDialog({super.key});
 
   @override
   ConsumerState<GameCreationDialog> createState() => _GameCreationDialogState();
@@ -23,8 +28,14 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final gameAction = ref.watch(gameActionProvider);
+    final authState = ref.watch(requiredAuthStateProvider);
     final gameActionNotifier = ref.read(gameActionProvider.notifier);
+
+    listenForProviderErrors(
+      widgetRef: ref,
+      context: context,
+      provider: gameActionProvider,
+    );
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -176,12 +187,12 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                             availableXP: 0,
                             totalXP: 0,
                             completionPercentage: 0.0,
-                            userId: widget.userId,
+                            userId: authState.uid,
                             dateCreated: DateTime.now(),
                             dateUpdated: DateTime.now(),
                           );
                           await gameActionNotifier.createGame(
-                            widget.userId,
+                            authState.uid,
                             game,
                           );
                           setState(() => _isSubmitting = false);

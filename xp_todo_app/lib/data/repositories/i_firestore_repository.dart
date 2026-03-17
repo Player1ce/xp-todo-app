@@ -64,7 +64,7 @@ abstract class IFirestoreRepository {
       data['dateCreated'] = FieldValue.serverTimestamp();
       data['dateUpdated'] = FieldValue.serverTimestamp();
       debugPrint(
-        "$serviceName: creating document in ${collection.path} with data: $data",
+        "$serviceName: creating document in ${collection.path} with data: ${data.toString()}",
       );
       return (await collection.add(data)).id;
     } on FirebaseException catch (e) {

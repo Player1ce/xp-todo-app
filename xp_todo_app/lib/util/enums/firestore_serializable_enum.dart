@@ -7,5 +7,4 @@ mixin FirestoreSerializableEnum on Enum {
   String get displayName {
     return name[0].toUpperCase() + name.substring(1); // 'Trivial', 'Easy', etc.
   }
-
 }
