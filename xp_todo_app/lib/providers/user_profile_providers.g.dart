@@ -178,6 +178,75 @@ final class ActiveUserIdProvider
 
 String _$activeUserIdHash() => r'435a2bf48b4dc24614f9480451484f89f15a2eb6';
 
+@ProviderFor(userExists)
+final userExistsProvider = UserExistsFamily._();
+
+final class UserExistsProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  UserExistsProvider._({
+    required UserExistsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'userExistsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$userExistsHash();
+
+  @override
+  String toString() {
+    return r'userExistsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    final argument = this.argument as String;
+    return userExists(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UserExistsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$userExistsHash() => r'19ff95e53a0ab438ce965cd17d8f7896a3f939fd';
+
+final class UserExistsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<bool>, String> {
+  UserExistsFamily._()
+    : super(
+        retry: null,
+        name: r'userExistsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  UserExistsProvider call(String userId) =>
+      UserExistsProvider._(argument: userId, from: this);
+
+  @override
+  String toString() => r'userExistsProvider';
+}
+
 @ProviderFor(UserProfileActionNotifier)
 final userProfileActionProvider = UserProfileActionNotifierProvider._();
 

@@ -38,6 +38,12 @@ AsyncValue<String?> activeUserId(Ref ref) {
 }
 
 @riverpod
+Future<bool> userExists(Ref ref, String userId) {
+  final repository = ref.watch(userProfileRepositoryProvider);
+  return repository.userExists(userId);
+}
+
+@riverpod
 class UserProfileActionNotifier extends _$UserProfileActionNotifier {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);

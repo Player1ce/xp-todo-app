@@ -2,13 +2,13 @@ import 'dart:convert';
 
 abstract class IFirestoreModel {
   // Metadata
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
 
-  IFirestoreModel({this.createdAt, this.updatedAt});
+  IFirestoreModel({this.dateCreated, this.dateUpdated});
 
   Map<String, dynamic> toMap() {
-    return {'createdAt': createdAt, 'updatedAt': updatedAt};
+    return {'dateCreated': dateCreated, 'dateUpdated': dateUpdated};
   }
 
   Map<String, dynamic> toFirestore() {
@@ -19,7 +19,7 @@ abstract class IFirestoreModel {
 
   @override
   String toString() {
-    return 'IFirestoreModel(createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'IFirestoreModel(dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
   }
 
   @override
@@ -27,10 +27,11 @@ abstract class IFirestoreModel {
     if (identical(this, other)) return true;
 
     return other is IFirestoreModel &&
-        other.createdAt == createdAt &&
-        other.updatedAt == updatedAt;
+        other.dateCreated == dateCreated &&
+        other.dateUpdated == dateUpdated;
   }
 
   @override
-  int get hashCode => super.hashCode ^ createdAt.hashCode ^ updatedAt.hashCode;
+  int get hashCode =>
+      super.hashCode ^ dateCreated.hashCode ^ dateUpdated.hashCode;
 }

@@ -19,7 +19,7 @@ enum Difficulty {
   static Difficulty fromStorage(String? value) {
     if (value == null) {
       debugPrint(
-        'Difficulty value is null in fromStorage, defaulting to normal',
+        'Warning: Difficulty value is null in fromStorage, defaulting to normal',
       );
     }
     return Difficulty.values.byName(value ?? defaultValue.name);

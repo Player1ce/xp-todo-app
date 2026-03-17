@@ -15,6 +15,7 @@ class Quest extends IFirestoreModel {
   final int xpReward;
   final int level;
   final Difficulty difficulty;
+  final String description;
   final DateTime? expireDate;
 
   final String userId;
@@ -29,13 +30,14 @@ class Quest extends IFirestoreModel {
     required this.xpReward,
     required this.level,
     required this.difficulty,
+    required this.description,
     required this.userId,
     required this.gameId,
     required this.completed,
     required this.isActive,
     this.expireDate,
-    super.createdAt,
-    super.updatedAt,
+    super.dateCreated,
+    super.dateUpdated,
   }) : assert(title.isNotEmpty, 'Quest title cannot be empty'),
        assert(xpReward >= 0, 'XP reward cannot be negative'),
        assert(level >= 0, 'Level cannot be negative');
@@ -46,13 +48,14 @@ class Quest extends IFirestoreModel {
     int? xpReward,
     int? level,
     Difficulty? difficulty,
+    String? description,
     String? userId,
     String? gameId,
     DateTime? expireDate,
     bool? completed,
     bool? isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? dateCreated,
+    DateTime? dateUpdated,
   }) {
     return Quest(
       id: id ?? this.id,
@@ -60,13 +63,14 @@ class Quest extends IFirestoreModel {
       xpReward: xpReward ?? this.xpReward,
       level: level ?? this.level,
       difficulty: difficulty ?? this.difficulty,
+      description: description ?? this.description,
       userId: userId ?? this.userId,
       gameId: gameId ?? this.gameId,
       expireDate: expireDate ?? this.expireDate,
       completed: completed ?? this.completed,
       isActive: isActive ?? this.isActive,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      dateCreated: dateCreated ?? this.dateCreated,
+      dateUpdated: dateUpdated ?? this.dateUpdated,
     );
   }
 
@@ -81,6 +85,7 @@ class Quest extends IFirestoreModel {
       'level': level,
       'difficulty': difficulty.toStorage(),
       'expireDate': expireDate,
+      'description': description,
       'userId': userId,
       'gameId': gameId,
       'completed': completed,
@@ -101,13 +106,14 @@ class Quest extends IFirestoreModel {
           : null,
       userId: map['userId'] as String,
       gameId: map['gameId'] as String,
+      description: map['description'] as String,
       completed: map['completed'] as bool? ?? false,
       isActive: map['isActive'] as bool? ?? true,
-      createdAt: map['createdAt'] != null
-          ? convertToDateTime(map['createdAt'])
+      dateCreated: map['dateCreated'] != null
+          ? convertToDateTime(map['dateCreated'])
           : null,
-      updatedAt: map['updatedAt'] != null
-          ? convertToDateTime(map['updatedAt'])
+      dateUpdated: map['dateUpdated'] != null
+          ? convertToDateTime(map['dateUpdated'])
           : null,
     );
   }
@@ -131,6 +137,7 @@ class Quest extends IFirestoreModel {
     int? xpReward,
     int? level,
     Difficulty? difficulty,
+    String? description,
     String? userId,
     String? gameId,
     DateTime? expireDate,
@@ -143,6 +150,7 @@ class Quest extends IFirestoreModel {
     if (xpReward != null) map['xpReward'] = xpReward;
     if (level != null) map['level'] = level;
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
+    if (description != null) map['description'] = description;
     if (userId != null) map['userId'] = userId;
     if (gameId != null) map['gameId'] = gameId;
     if (completed != null) map['completed'] = completed;
@@ -156,7 +164,7 @@ class Quest extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, isActive: $isActive, expireDate: $expireDate)';
+    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, isActive: $isActive, expireDate: $expireDate, description: $description, dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
   }
 
   @override
@@ -167,6 +175,7 @@ class Quest extends IFirestoreModel {
         other.xpReward == xpReward &&
         other.level == level &&
         other.difficulty == difficulty &&
+        other.description == description &&
         other.userId == userId &&
         other.gameId == gameId &&
         other.completed == completed &&
@@ -180,6 +189,7 @@ class Quest extends IFirestoreModel {
         xpReward.hashCode ^
         level.hashCode ^
         difficulty.hashCode ^
+        description.hashCode ^
         userId.hashCode ^
         gameId.hashCode ^
         completed.hashCode ^

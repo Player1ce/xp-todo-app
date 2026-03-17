@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
 import 'package:xp_todo_app/data/repositories/i_firestore_repository.dart';
@@ -27,17 +28,33 @@ class GameRepository extends IFirestoreRepository {
   // --- Document Management Methods ----------------------------
 
   /// Create new game
-  Future<void> createGame(String userId, Game game) {
-    print(
+  Future<Game> createGame(String userId, Game game) async {
+    debugPrint(
       "GameRepository: createGame called with userId: $userId, game: ${game.toString()}",
     );
-    return createDocument(
-      firestore
-          .collection(UserProfile.collectionName)
-          .doc(userId)
-          .collection(Game.collectionName),
-      game,
-    );
+
+    try {
+      return game.copyWith(
+        id: await createDocument(
+          collection(userId),
+          game.copyWith(userId: userId),
+        ),
+        dateCreated: DateTime.now(),
+        dateUpdated: DateTime.now(),
+      );
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected repository error creating game for user $userId: $e",
+      );
+      rethrow;
+    }
+    // return createDocument(
+    //   firestore
+    //       .collection(UserProfile.collectionName)
+    //       .doc(userId)
+    //       .collection(Game.collectionName),
+    //   game.copyWith(userId: userId),
+    // );
   }
 
   Future<Game?> getGame(String userId, String gameId) {

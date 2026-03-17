@@ -90,8 +90,8 @@ exports.addDefaultClaim = auth.user().onCreate(async (user) => {
       twoFactorEnabled: false,
       acceptedPrivacyPolicy: false,
       surveyCompleted: false,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
+      dateCreated: FieldValue.serverTimestamp(),
+      dateUpdated: FieldValue.serverTimestamp(),
     });
     logger.log(`UserProfile created for user ${user.uid}`);
   } catch (error) {

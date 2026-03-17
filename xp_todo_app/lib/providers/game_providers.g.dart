@@ -268,7 +268,7 @@ final class GameActionNotifierProvider
 }
 
 String _$gameActionNotifierHash() =>
-    r'5e92097ab735991d76cbcf6e6874e20aa7bce5dc';
+    r'2b07be586cf6dabd01e7b280e26321c9bf14f820';
 
 abstract class _$GameActionNotifier extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

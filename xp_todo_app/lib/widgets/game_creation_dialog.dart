@@ -106,7 +106,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                     borderSide: BorderSide(color: Color(0xFF2a3550)),
                   ),
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _description = value),
@@ -177,8 +177,8 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                             totalXP: 0,
                             completionPercentage: 0.0,
                             userId: widget.userId,
-                            createdAt: DateTime.now(),
-                            updatedAt: DateTime.now(),
+                            dateCreated: DateTime.now(),
+                            dateUpdated: DateTime.now(),
                           );
                           await gameActionNotifier.createGame(
                             widget.userId,

@@ -38,8 +38,8 @@ class Game extends IFirestoreModel {
     required this.totalXP,
     required this.completionPercentage,
     required this.userId,
-    super.createdAt,
-    super.updatedAt,
+    super.dateCreated,
+    super.dateUpdated,
   });
 
   Game copyWith({
@@ -55,8 +55,8 @@ class Game extends IFirestoreModel {
     int? totalXP,
     double? completionPercentage,
     String? userId,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? dateCreated,
+    DateTime? dateUpdated,
   }) {
     return Game(
       id: id ?? this.id,
@@ -71,8 +71,8 @@ class Game extends IFirestoreModel {
       totalXP: totalXP ?? this.totalXP,
       completionPercentage: completionPercentage ?? this.completionPercentage,
       userId: userId ?? this.userId,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      dateCreated: dateCreated ?? this.dateCreated,
+      dateUpdated: dateUpdated ?? this.dateUpdated,
     );
   }
 
@@ -91,8 +91,8 @@ class Game extends IFirestoreModel {
       'totalXP': totalXP,
       'completionPercentage': completionPercentage,
       'userId': userId,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'dateCreated': dateCreated,
+      'dateUpdated': dateUpdated,
     };
   }
 
@@ -110,11 +110,11 @@ class Game extends IFirestoreModel {
       totalXP: map['totalXP'] as int,
       completionPercentage: map['completionPercentage'] as double,
       userId: map['userId'] as String,
-      createdAt: map['createdAt'] != null
-          ? convertToDateTime(map['createdAt'])
+      dateCreated: map['dateCreated'] != null
+          ? convertToDateTime(map['dateCreated'])
           : null,
-      updatedAt: map['updatedAt'] != null
-          ? convertToDateTime(map['updatedAt'])
+      dateUpdated: map['dateUpdated'] != null
+          ? convertToDateTime(map['dateUpdated'])
           : null,
     );
   }

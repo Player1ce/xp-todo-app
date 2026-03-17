@@ -36,34 +36,47 @@ abstract class IFirestoreRepository {
   ) async {
     try {
       final data = model.toFirestore();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
+      data['dateCreated'] = FieldValue.serverTimestamp();
+      data['dateUpdated'] = FieldValue.serverTimestamp();
+      debugPrint(
+        "$serviceName: creating document with id: $docId in ${collection.path} with data: $data",
+      );
       await collection.doc(docId).set(data);
     } on FirebaseException catch (e) {
       debugPrint(
         "$serviceName: error creating document ${collection.path}/$docId: $e",
       );
       throw handleFirebaseException(e);
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected error creating document ${collection.path}/$docId: $e",
+      );
+      rethrow;
     }
   }
 
-  Future<void> createDocument(
+  Future<String> createDocument(
     CollectionReference<Map<String, dynamic>> collection,
     IFirestoreModel model,
   ) async {
     try {
       final data = model.toFirestore();
-      data['createdAt'] = FieldValue.serverTimestamp();
-      data['updatedAt'] = FieldValue.serverTimestamp();
-      print(
+      data['dateCreated'] = FieldValue.serverTimestamp();
+      data['dateUpdated'] = FieldValue.serverTimestamp();
+      debugPrint(
         "$serviceName: creating document in ${collection.path} with data: $data",
       );
-      await collection.add(data);
+      return (await collection.add(data)).id;
     } on FirebaseException catch (e) {
       debugPrint(
         "$serviceName: error creating document ${collection.path}/unknownId: $e",
       );
       throw handleFirebaseException(e);
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected error creating document ${collection.path}/unknownId: $e",
+      );
+      rethrow;
     }
   }
 
@@ -73,6 +86,9 @@ abstract class IFirestoreRepository {
     T Function(String, Map<String, dynamic>) fromFirestore,
   ) async {
     try {
+      debugPrint(
+        "$serviceName: getting document in ${collection.path} with id: $docId",
+      );
       final doc = await collection.doc(docId).get();
       if (!doc.exists || doc.data() == null) return null;
       return fromFirestore(docId, doc.data()!);
@@ -81,6 +97,11 @@ abstract class IFirestoreRepository {
         "$serviceName: error fetching document ${collection.path}/$docId: $e",
       );
       throw handleFirebaseException(e);
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected error fetching document ${collection.path}/$docId: $e",
+      );
+      rethrow;
     }
   }
 
@@ -89,8 +110,12 @@ abstract class IFirestoreRepository {
     String docId,
     Map<String, dynamic> updates,
   ) async {
-    updates['updatedAt'] = FieldValue.serverTimestamp();
+    updates['dateUpdated'] = FieldValue.serverTimestamp();
     updates.remove('id');
+
+    debugPrint(
+      "$serviceName: updating document in ${collection.path} with id: $docId and updates: $updates",
+    );
     try {
       await collection.doc(docId).update(updates);
     } on FirebaseException catch (e) {
@@ -98,6 +123,11 @@ abstract class IFirestoreRepository {
         "$serviceName: error updating document ${collection.path}/$docId: $e",
       );
       throw handleFirebaseException(e);
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected error updating document ${collection.path}/$docId: $e",
+      );
+      rethrow;
     }
   }
 
@@ -105,6 +135,9 @@ abstract class IFirestoreRepository {
     CollectionReference<Map<String, dynamic>> collection,
     String docId,
   ) async {
+    debugPrint(
+      "$serviceName: deleting document in ${collection.path} with id: $docId",
+    );
     try {
       await collection.doc(docId).delete();
     } on FirebaseException catch (e) {
@@ -112,6 +145,11 @@ abstract class IFirestoreRepository {
         "$serviceName: error deleting document ${collection.path}/$docId: $e",
       );
       throw handleFirebaseException(e);
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected error deleting document ${collection.path}/$docId: $e",
+      );
+      rethrow;
     }
   }
 
@@ -119,6 +157,9 @@ abstract class IFirestoreRepository {
     CollectionReference<Map<String, dynamic>> collection,
     String docId,
   ) async {
+    debugPrint(
+      "$serviceName: checking existance of document in ${collection.path} with id: $docId",
+    );
     try {
       final doc = await collection.doc(docId).get();
       return doc.exists;

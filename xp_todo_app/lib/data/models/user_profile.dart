@@ -54,8 +54,8 @@ class UserProfile extends IFirestoreModel {
     this.notificationsEnabled = true,
     this.nightlyNotificationsEnabled = true,
     this.weeklyNotificationsEnabled = true,
-    super.createdAt,
-    super.updatedAt,
+    super.dateCreated,
+    super.dateUpdated,
   });
 
   // Helper getters
@@ -100,8 +100,8 @@ class UserProfile extends IFirestoreModel {
     bool? notificationsEnabled,
     bool? nightlyNotificationsEnabled,
     bool? weeklyNotificationsEnabled,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? dateCreated,
+    DateTime? dateUpdated,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -123,8 +123,8 @@ class UserProfile extends IFirestoreModel {
           nightlyNotificationsEnabled ?? this.nightlyNotificationsEnabled,
       weeklyNotificationsEnabled:
           weeklyNotificationsEnabled ?? this.weeklyNotificationsEnabled,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      dateCreated: dateCreated ?? this.dateCreated,
+      dateUpdated: dateUpdated ?? this.dateUpdated,
     );
   }
 
@@ -149,8 +149,8 @@ class UserProfile extends IFirestoreModel {
       'notificationsEnabled': notificationsEnabled,
       'nightlyNotificationsEnabled': nightlyNotificationsEnabled,
       'weeklyNotificationsEnabled': weeklyNotificationsEnabled,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'dateCreated': dateCreated,
+      'dateUpdated': dateUpdated,
     };
   }
 
@@ -178,11 +178,11 @@ class UserProfile extends IFirestoreModel {
           map['nightlyNotificationsEnabled'] as bool? ?? true,
       weeklyNotificationsEnabled:
           map['weeklyNotificationsEnabled'] as bool? ?? true,
-      createdAt: map['createdAt'] != null
-          ? convertToDateTime(map['createdAt'])
+      dateCreated: map['dateCreated'] != null
+          ? convertToDateTime(map['dateCreated'])
           : null,
-      updatedAt: map['updatedAt'] != null
-          ? convertToDateTime(map['updatedAt'])
+      dateUpdated: map['dateUpdated'] != null
+          ? convertToDateTime(map['dateUpdated'])
           : null,
     );
   }
