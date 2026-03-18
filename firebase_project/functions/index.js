@@ -42,7 +42,9 @@ const {checkIsAtLeast} = require("./auth/auth.js");
 
 // functions
 // v1 functions
-const auth = require("firebase-functions/v1/auth");
+// const auth = require("firebase-functions/v1/auth");
+const functions = require("firebase-functions/v1");
+
 
 // v2 functions
 const https = require("firebase-functions/v2/https");
@@ -59,45 +61,49 @@ const db = admin.firestore();
  * Creates UserProfile and sets default claims when a new user is created
  * @param {auth.UserRecord} user the user object
  */
-exports.addDefaultClaim = auth.user().onCreate(async (user) => {
-  try {
-    // Set the custom claim 'base' to true (default role)
-    await getAuth().setCustomUserClaims(user.uid, {base: true});
-    logger.log(`Custom claim set for user ${user.uid}`);
+exports.addDefaultClaim = functions
+    .runWith({maxInstances: 10})
+    .auth
+    .user()
+    .onCreate(async (user) => {
+      try {
+        // Set the custom claim 'base' to true (default role)
+        await getAuth().setCustomUserClaims(user.uid, {base: true});
+        logger.log(`Custom claim set for user ${user.uid}`);
 
-    const displayName = user.displayName || null;
-    let firstName = null;
-    let lastName = null;
-    if (displayName) {
-      const parts = displayName.trim().split(/\s+/);
-      if (parts.length > 0) {
-        firstName = parts.shift();
-        if (parts.length > 0) {
-          lastName = parts.join(" ");
+        const displayName = user.displayName || null;
+        let firstName = null;
+        let lastName = null;
+        if (displayName) {
+          const parts = displayName.trim().split(/\s+/);
+          if (parts.length > 0) {
+            firstName = parts.shift();
+            if (parts.length > 0) {
+              lastName = parts.join(" ");
+            }
+          }
         }
-      }
-    }
 
-    // Create UserProfile document in Firestore
-    await db.collection("UserProfile").doc(user.uid).set({
-      role: "base", // Default role
-      status: "active",
-      email: user.email || null,
-      name: user.displayName || null,
-      firstName,
-      lastName,
-      emailVerified: user.emailVerified || false,
-      twoFactorEnabled: false,
-      acceptedPrivacyPolicy: false,
-      surveyCompleted: false,
-      dateCreated: FieldValue.serverTimestamp(),
-      dateUpdated: FieldValue.serverTimestamp(),
+        // Create UserProfile document in Firestore
+        await db.collection("UserProfile").doc(user.uid).set({
+          role: "base", // Default role
+          status: "active",
+          email: user.email || null,
+          name: user.displayName || null,
+          firstName,
+          lastName,
+          emailVerified: user.emailVerified || false,
+          twoFactorEnabled: false,
+          acceptedPrivacyPolicy: false,
+          surveyCompleted: false,
+          dateCreated: FieldValue.serverTimestamp(),
+          dateUpdated: FieldValue.serverTimestamp(),
+        });
+        logger.log(`UserProfile created for user ${user.uid}`);
+      } catch (error) {
+        logger.error(`Error setting up new user ${user.uid}: ${error}`);
+      }
     });
-    logger.log(`UserProfile created for user ${user.uid}`);
-  } catch (error) {
-    logger.error(`Error setting up new user ${user.uid}: ${error}`);
-  }
-});
 
 /**
  * Checks if the uid value is set and thows an exception if not
