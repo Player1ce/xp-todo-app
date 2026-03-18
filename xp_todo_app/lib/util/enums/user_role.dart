@@ -49,7 +49,7 @@ enum UserRole {
     return role.index <= targetRole.index;
   }
 
-  static List<UserRole> getUserRolesFromClaims(Map<String, dynamic> claims) {
+  static List<UserRole> getRolesFromClaims(Map<String, dynamic> claims) {
     List<UserRole> roles = [];
 
     if (claims[UserRole.admin.name] == true) {

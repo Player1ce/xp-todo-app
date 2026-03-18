@@ -19,10 +19,14 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = AppColors.bgCard(context);
     final borderColor = AppColors.border(context);
     final textColor = AppColors.textPrimary(context);
     final dimColor = AppColors.textDim(context);
+    final shadowColor = isDark
+        ? Colors.black.withValues(alpha: 0.22)
+        : Colors.black.withValues(alpha: 0.10);
     final progress = _normalizedCompletion(game.completionPercentage);
 
     return GestureDetector(
@@ -35,9 +39,7 @@ class GameCard extends StatelessWidget {
           border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(
-                alpha: 0.22,
-              ), // TODO: theme-based shadow color
+              color: shadowColor,
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -154,7 +156,6 @@ class ProviderGameCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gameNotifier = ref.read(gameActionProvider.notifier);
     final gameAsync = ref.watch(gameProvider(userId, gameId));
 
     return gameAsync.when(
@@ -167,11 +168,13 @@ class ProviderGameCard extends ConsumerWidget {
           onTap: onTap,
           onActiveChanged:
               onActiveChanged ??
-              (nextActive) => gameNotifier.setGameActive(
-                userId: userId,
-                gameId: game.id,
-                isActive: nextActive,
-              ),
+              (nextActive) => ref
+                  .read(gameActionProvider.notifier)
+                  .setGameActive(
+                    userId: userId,
+                    gameId: game.id,
+                    isActive: nextActive,
+                  ),
         );
       },
       loading: () => const _GameCardSkeleton(),
@@ -197,12 +200,28 @@ class GamesGridView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(requiredAuthStateProvider);
-    final gameNotifier = ref.read(gameActionProvider.notifier);
     final gamesAsync = ref.watch(
       activeOnly
           ? activeGamesProvider(authState.uid)
           : gamesProvider(authState.uid),
     );
+
+    // ref.listen<AsyncValue<Game?>>(gameActionProvider, (previous, next) {
+    //   next.whenOrNull(
+    //     data: (game) {
+    //       if (game != null) {
+    //         // createGame completed — navigate to new game
+    //         context.push(game.id);
+    //       }
+    //       // game == null means another action completed — no navigation needed
+    //     },
+    //     error: (e, _) => AdaptiveSnackBar.show(
+    //       context,
+    //       message: 'Something went wrong',
+    //       type: AdaptiveSnackBarType.error,
+    //     ),
+    //   );
+    // });
 
     return gamesAsync.when(
       data: (games) {
@@ -230,11 +249,13 @@ class GamesGridView extends ConsumerWidget {
                   return;
                 }
 
-                gameNotifier.setGameActive(
-                  userId: authState.uid,
-                  gameId: game.id,
-                  isActive: nextActive,
-                );
+                ref
+                    .read(gameActionProvider.notifier)
+                    .setGameActive(
+                      userId: authState.uid,
+                      gameId: game.id,
+                      isActive: nextActive,
+                    );
               },
             );
           },
@@ -269,34 +290,39 @@ class _GameCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imageUrl.trim().isEmpty) {
-      return _gradientPlaceholder();
+      return _gradientPlaceholder(context);
     }
 
     return Image.network(
       imageUrl,
       fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => _gradientPlaceholder(),
+      errorBuilder: (_, _, _) => _gradientPlaceholder(context),
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
-        return _gradientPlaceholder();
+        return _gradientPlaceholder(context);
       },
     );
   }
 
-  Widget _gradientPlaceholder() {
+  Widget _gradientPlaceholder(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gradientColors = isDark
+        ? const [Color(0xFF1A2A50), Color(0xFF0E1520)]
+        : const [Color(0xFFDCE8FF), Color(0xFFEEF3FF)];
+
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF1A2A50), Color(0xFF0E1520)],
+          colors: gradientColors,
         ),
       ),
-      child: const Center(
+      child: Center(
         child: Icon(
           Icons.videogame_asset_rounded,
           size: 22,
-          color: AppColors.textDimDark,
+          color: AppColors.textDim(context),
         ),
       ),
     );

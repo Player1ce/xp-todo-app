@@ -1,7 +1,6 @@
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/widgets/game_card.dart';
 import 'package:xp_todo_app/widgets/game_creation_dialog.dart';
 

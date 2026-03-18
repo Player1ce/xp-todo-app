@@ -29,17 +29,16 @@ Stream<Game?> game(Ref ref, String userId, String gameId) {
 @riverpod
 class GameActionNotifier extends _$GameActionNotifier {
   @override
-  AsyncValue<void> build() => const AsyncValue.data(null);
+  AsyncValue<Game?> build() => const AsyncValue.data(null);
 
-  Future<Game?> createGame(String userId, Game game) async {
+  Future<void> createGame(String userId, Game game) async {
     state = const AsyncValue.loading();
-    Game? created;
-    state = await AsyncValue.guard(
-      () async => created = await ref
-          .read(gameRepositoryProvider)
-          .createGame(userId, game),
-    );
-    return created;
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      return await ref.read(gameRepositoryProvider).createGame(userId, game);
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 
   Future<void> setGameActive({
@@ -48,18 +47,26 @@ class GameActionNotifier extends _$GameActionNotifier {
     required bool isActive,
   }) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () => ref
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      await ref
           .read(gameRepositoryProvider)
-          .setGameActive(userId, gameId, isActive),
-    );
+          .setGameActive(userId, gameId, isActive);
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 
   Future<void> deleteGame(String userId, String gameId) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () => ref.read(gameRepositoryProvider).deleteGame(userId, gameId),
-    );
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      await ref.read(gameRepositoryProvider).deleteGame(userId, gameId);
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 
   Future<void> updateGame(
@@ -68,9 +75,14 @@ class GameActionNotifier extends _$GameActionNotifier {
     Map<String, dynamic> updates,
   ) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-      () =>
-          ref.read(gameRepositoryProvider).updateGame(userId, gameId, updates),
-    );
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      await ref
+          .read(gameRepositoryProvider)
+          .updateGame(userId, gameId, updates);
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 }

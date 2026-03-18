@@ -27,6 +27,8 @@ class PageLayout {
     required this.initialPage,
   }) : _pageList = pageList;
 
+  List<String> get routes => _pageList.map((page) => page.route).toList();
+
   List<PageData> get pageList => _pageList;
   int get length => _pageList.length;
   PageData operator [](int index) => _pageList[index];

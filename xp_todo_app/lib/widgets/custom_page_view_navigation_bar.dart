@@ -11,16 +11,18 @@ import 'package:xp_todo_app/util/page_layout.dart';
 AdaptiveBottomNavigationBar getCustomPageViewNavigationBar(
   BuildContext context,
   WidgetRef ref,
-  void Function(int) switchPageViewPage,
+  void Function(int) onTap,
   PageLayout pageLayout,
+  int currentIndex,
 ) {
   return AdaptiveBottomNavigationBar(
     useNativeBottomBar: true,
     bottomNavigationBar: getCustomPageViewAndroidNavigationBar(
       context,
       ref,
-      switchPageViewPage,
+      onTap,
       pageLayout,
+      currentIndex,
     ),
     items: pageLayout.pageList
         .map(
@@ -31,24 +33,24 @@ AdaptiveBottomNavigationBar getCustomPageViewNavigationBar(
         )
         .toList(),
 
-    onTap: (index) {
-      switchPageViewPage(index);
-    },
-    selectedIndex: ref.watch(
-      goRouterProvider.select(
-        (router) => pageLayout.pageList.indexWhere(
-          (pageData) => pageData.route == router.state.matchedLocation,
-        ),
-      ),
-    ),
+    onTap: onTap,
+    selectedIndex: currentIndex,
+    // ref.watch(
+    //   goRouterProvider.select(
+    //     (router) => pageLayout.pageList.indexWhere(
+    //       (pageData) => pageData.route == router.state.matchedLocation,
+    //     ),
+    //   ),
+    // ),
   );
 }
 
 BottomNavigationBar getCustomPageViewAndroidNavigationBar(
   BuildContext context,
   WidgetRef ref,
-  void Function(int) switchPageViewPage,
+  void Function(int) onTap,
   PageLayout pageLayout,
+  int currentIndex,
 ) {
   return BottomNavigationBar(
     backgroundColor:
@@ -62,15 +64,14 @@ BottomNavigationBar getCustomPageViewAndroidNavigationBar(
           ),
         )
         .toList(),
-    currentIndex: ref.watch(
-      goRouterProvider.select(
-        (router) => pageLayout.pageList.indexWhere(
-          (pageData) => pageData.route == router.state.matchedLocation,
-        ),
-      ),
-    ),
-    onTap: (index) {
-      switchPageViewPage(index);
-    },
+    currentIndex: currentIndex,
+    //  ref.watch(
+    //   goRouterProvider.select(
+    //     (router) => pageLayout.pageList.indexWhere(
+    //       (pageData) => pageData.route == router.state.matchedLocation,
+    //     ),
+    //   ),
+    // ),
+    onTap: onTap,
   );
 }

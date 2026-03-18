@@ -16,7 +16,9 @@ AsyncValue<List<Quest>> activeQuests(Ref ref, String userId, String gameId) {
   final now = DateTime.now();
   return questsAsync.whenData((quests) {
     return quests
-        .where((quest) => quest.expireDate == null || quest.expireDate!.isAfter(now))
+        .where(
+          (quest) => quest.expireDate == null || quest.expireDate!.isAfter(now),
+        )
         .toList(growable: false);
   });
 }
@@ -34,10 +36,13 @@ class QuestActionNotifier extends _$QuestActionNotifier {
 
   Future<void> createQuest(String userId, String gameId, Quest quest) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
+    final nextState = await AsyncValue.guard<void>(
       () =>
           ref.read(questRepositoryProvider).createQuest(userId, gameId, quest),
     );
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 
   Future<void> updateQuest(
@@ -47,19 +52,25 @@ class QuestActionNotifier extends _$QuestActionNotifier {
     Map<String, dynamic> updates,
   ) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
+    final nextState = await AsyncValue.guard<void>(
       () => ref
           .read(questRepositoryProvider)
           .updateQuest(userId, gameId, questId, updates),
     );
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 
   Future<void> deleteQuest(String userId, String gameId, String questId) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
+    final nextState = await AsyncValue.guard<void>(
       () => ref
           .read(questRepositoryProvider)
           .deleteQuest(userId, gameId, questId),
     );
+    if (ref.mounted) {
+      state = nextState;
+    }
   }
 }

@@ -38,6 +38,7 @@ class UserProfileRepository extends IFirestoreRepository {
     return updateDocument(collection, userId, updates);
   }
 
+  // TODO: Implement delete with proper cascading deletes of any related data (e.g. games, quests)
   Future<void> deleteUserProfile(String userId) {
     return deleteDocument(collection, userId);
   }

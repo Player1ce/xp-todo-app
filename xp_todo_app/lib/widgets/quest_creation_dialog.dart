@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
-import 'package:xp_todo_app/providers/user_profile_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/util/listen_for_provider_errors.dart';

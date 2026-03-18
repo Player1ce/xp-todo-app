@@ -11,6 +11,9 @@ class RouteConstants {
   static const gameView = '/library/:gameId';
   static const editProfile = '/profile/edit';
 
+  static const adminPage = '/adminPage';
+
   // Helper to build parameterised paths
   static String gameViewPath(String gameId) => '/library/$gameId';
+  static String questViewPath(String questId) => '/quest/$questId';
 }

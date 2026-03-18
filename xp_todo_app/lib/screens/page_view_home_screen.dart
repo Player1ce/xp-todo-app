@@ -2,6 +2,7 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/util/page_layout.dart';
@@ -23,13 +24,38 @@ class PageViewHomeScreen extends ConsumerStatefulWidget {
 
 class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
   late PageController _pageController;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(
-      initialPage: widget.pageLayout.initialPage,
+    debugPrint(
+      "Initializing PageViewHomeScreen with pageLayout: ${widget.pageLayout.id}",
     );
+    debugPrint(
+      "GoRouterProvider state on init: ${ref.read(goRouterProvider).state.matchedLocation}",
+    );
+    int initialPageIndex = ref.read(
+      goRouterProvider.select(
+        (router) => widget.pageLayout.pageList.indexWhere(
+          (pageData) => pageData.route == router.state.matchedLocation,
+        ),
+      ),
+    );
+
+    if (initialPageIndex == -1) {
+      debugPrint(
+        "Warning: Initial route ${ref.read(goRouterProvider).state.matchedLocation} not found in pageLayout ${widget.pageLayout.id}. Defaulting to initialPage ${widget.pageLayout.initialPage}",
+      );
+      initialPageIndex = widget.pageLayout.initialPage;
+    }
+
+    _pageController = PageController(initialPage: initialPageIndex);
+
+    // ref
+    //     .read(goRouterProvider)
+    //     .routeInformationProvider
+    //     .addListener(_onRouteChanged);
   }
 
   @override
@@ -38,18 +64,55 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
     super.dispose();
   }
 
+  void _onPageChanged(int index) {
+    // setState(() => _currentIndex = index);
+    if (context.mounted) {
+      context.go(widget.pageLayout[index].route);
+    }
+  }
+
+  void _onNavTap(int index) {
+    // setState(() => _currentIndex = index);
+    // switchPageViewPage(index);
+    if (context.mounted) {
+      context.go(widget.pageLayout[index].route);
+    }
+  }
+
   void switchPageViewPage(int index) {
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
-    ref.read(goRouterProvider).go(widget.pageLayout.pageList[index].route);
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateProvider);
+
+    final location = GoRouterState.of(context).matchedLocation;
+    final locationIndex = widget.pageLayout.routes.indexOf(location);
+    debugPrint(
+      "Current index: $_currentIndex, GoRouter location: $location, matched index in pageLayout: $locationIndex",
+    );
+    if (locationIndex != -1 && locationIndex != _currentIndex) {
+      // Valid tab route changed externally — sync state and controller
+      debugPrint(
+        "Syncing PageView to new location index: $locationIndex for route: $location",
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        debugPrint(
+          "Post frame callback: syncing PageView to index: $locationIndex for route: $location",
+        );
+        if (!mounted) {
+          debugPrint("context not mounted, skipping page sync");
+          return;
+        }
+        setState(() => _currentIndex = locationIndex);
+        switchPageViewPage(locationIndex);
+      });
+    }
 
     return authState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -66,11 +129,12 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
           extendBodyBehindAppBar: true,
           body: PageView(
             controller: _pageController,
-            onPageChanged: (index) {
-              ref
-                  .read(goRouterProvider)
-                  .go(widget.pageLayout.pageList[index].route);
-            },
+            onPageChanged: _onPageChanged,
+            // (index) {
+            //   ref
+            //       .read(goRouterProvider)
+            //       .go(widget.pageLayout.pageList[index].route);
+            // },
             children: widget.pageLayout.pageList
                 .map((pageData) => pageData.builder(context))
                 .toList(),
@@ -78,8 +142,9 @@ class _PageViewHomeScreenState extends ConsumerState<PageViewHomeScreen> {
           bottomNavigationBar: getCustomPageViewNavigationBar(
             context,
             ref,
-            switchPageViewPage,
+            _onNavTap,
             mainPageLayout,
+            _currentIndex,
           ),
         );
       },

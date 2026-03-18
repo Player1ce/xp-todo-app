@@ -30,10 +30,9 @@ class GameRepository extends IFirestoreRepository {
   /// Create new game
   Future<Game> createGame(String userId, Game game) async {
     try {
-      debugPrint("GameRepository: createGame called with userId: $userId, ");
-      debugPrint("    game data: ${game.toString()}");
-      debugPrint("    after game data");
-
+      debugPrint(
+        "GameRepository: createGame called with userId: $userId, game data: ${game.toString()}",
+      );
       return game.copyWith(
         id: await createDocument(
           collection(userId),
@@ -63,6 +62,7 @@ class GameRepository extends IFirestoreRepository {
     return updateDocument(collection(userId), gameId, updates);
   }
 
+  // TODO: update this to also delete all subcollection documents (quests)
   Future<void> deleteGame(String userId, String gameId) {
     return deleteDocument(collection(userId), gameId);
   }

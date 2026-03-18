@@ -239,7 +239,7 @@ final class GameFamily extends $Family
 final gameActionProvider = GameActionNotifierProvider._();
 
 final class GameActionNotifierProvider
-    extends $NotifierProvider<GameActionNotifier, AsyncValue<void>> {
+    extends $NotifierProvider<GameActionNotifier, AsyncValue<Game?>> {
   GameActionNotifierProvider._()
     : super(
         from: null,
@@ -259,28 +259,28 @@ final class GameActionNotifierProvider
   GameActionNotifier create() => GameActionNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<void> value) {
+  Override overrideWithValue(AsyncValue<Game?> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<Game?>>(value),
     );
   }
 }
 
 String _$gameActionNotifierHash() =>
-    r'fbfeb2a5f2e5432e7ef32ac5298c3cf6a49ad67e';
+    r'fe0aec11da5d6684dc343901db6e1fa7a4da19b3';
 
-abstract class _$GameActionNotifier extends $Notifier<AsyncValue<void>> {
-  AsyncValue<void> build();
+abstract class _$GameActionNotifier extends $Notifier<AsyncValue<Game?>> {
+  AsyncValue<Game?> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<void>, AsyncValue<void>>;
+    final ref = this.ref as $Ref<AsyncValue<Game?>, AsyncValue<Game?>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, AsyncValue<void>>,
-              AsyncValue<void>,
+              AnyNotifier<AsyncValue<Game?>, AsyncValue<Game?>>,
+              AsyncValue<Game?>,
               Object?,
               Object?
             >;

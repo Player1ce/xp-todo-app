@@ -29,7 +29,8 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(requiredAuthStateProvider);
-    final gameActionNotifier = ref.read(gameActionProvider.notifier);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     listenForProviderErrors(
       widgetRef: ref,
@@ -39,7 +40,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: const Color(0xFF1a2035), // matches design reference
+      backgroundColor: colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -50,15 +51,14 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.add_box, color: Color(0xFF4d9fff)),
+                  Icon(Icons.add_box, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     'Create New Game',
-                    style: TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontFamily: 'Rajdhani',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFe8eaf2),
                       letterSpacing: 2,
                     ),
                   ),
@@ -66,57 +66,21 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
               ),
               const SizedBox(height: 18),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFF161b27),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Title'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _title = value),
               ),
               const SizedBox(height: 12),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Image URL',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFF161b27),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Image URL'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _imageUrl = value),
               ),
               const SizedBox(height: 12),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFF161b27),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 1,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
@@ -125,19 +89,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
               const SizedBox(height: 12),
               DropdownButtonFormField<Difficulty>(
                 initialValue: _difficulty,
-                decoration: InputDecoration(
-                  labelText: 'Difficulty',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFF161b27),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Difficulty'),
                 items: Difficulty.values
                     .map(
                       (d) => DropdownMenuItem(
@@ -157,8 +109,8 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4d9fff),
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -191,15 +143,27 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                             dateCreated: DateTime.now(),
                             dateUpdated: DateTime.now(),
                           );
-                          await gameActionNotifier.createGame(
-                            authState.uid,
-                            game,
-                          );
+                          await ref
+                              .read(gameActionProvider.notifier)
+                              .createGame(authState.uid, game);
+                          if (!context.mounted) return;
                           setState(() => _isSubmitting = false);
-                          if (context.mounted) Navigator.of(context).pop();
+                          if (!ref.read(gameActionProvider).hasError) {
+                            if (context.mounted) Navigator.of(context).pop();
+                          }
+                          else {
+
+                          }
                         },
                   child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: colorScheme.onPrimary,
+                          ),
+                        )
                       : const Text('Create Game'),
                 ),
               ),

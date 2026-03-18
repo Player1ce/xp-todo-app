@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
+import 'package:xp_todo_app/screens/admin_page.dart';
 import 'package:xp_todo_app/screens/games_screen.dart';
 import 'package:xp_todo_app/screens/login_screen.dart';
 import 'package:xp_todo_app/screens/page_view_home_screen.dart';
@@ -58,15 +59,15 @@ GoRouter goRouter(Ref ref) {
         routes: [
           GoRoute(
             path: RouteConstants.home,
-            builder: (context, state) => const TodoScreen(),
+            builder: (context, state) => const Text("Home"),
           ),
           GoRoute(
             path: RouteConstants.gameLibrary,
-            builder: (context, state) => const GamesScreen(),
+            builder: (context, state) => const Text("Game Library"),
           ),
           GoRoute(
             path: RouteConstants.profile,
-            builder: (context, state) => const ProfileScreen(),
+            builder: (context, state) => const Text("Profile"),
           ),
         ],
       ),
@@ -79,6 +80,10 @@ GoRouter goRouter(Ref ref) {
       GoRoute(
         path: RouteConstants.login,
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.adminPage,
+        builder: (context, state) => const AdminPage(),
       ),
       // GoRoute(
       //   path: RouteConstants.gameView,

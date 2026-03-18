@@ -269,7 +269,7 @@ final class QuestActionNotifierProvider
 }
 
 String _$questActionNotifierHash() =>
-    r'1c612fb382a17f99aec5aa1b80ef6f0532fbd043';
+    r'c6e2ced1d02fb6fb59ebde8bc8caba591c4b14bd';
 
 abstract class _$QuestActionNotifier extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
