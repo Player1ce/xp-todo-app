@@ -69,7 +69,7 @@ firebase deploy --only hosting
 After deploying, Firebase prints your live URL:
 
 ``` text
-Hosting URL: https://your-project-id.web.app
+Hosting URL: https://xp-todo-app-672ff.web.app
 ```
 
 ### Deploy Only Hosting (Not Functions)
