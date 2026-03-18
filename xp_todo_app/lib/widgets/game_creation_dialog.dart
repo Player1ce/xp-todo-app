@@ -150,10 +150,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                           setState(() => _isSubmitting = false);
                           if (!ref.read(gameActionProvider).hasError) {
                             if (context.mounted) Navigator.of(context).pop();
-                          }
-                          else {
-
-                          }
+                          } else {}
                         },
                   child: _isSubmitting
                       ? SizedBox(
