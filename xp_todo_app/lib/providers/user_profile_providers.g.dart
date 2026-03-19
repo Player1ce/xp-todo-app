@@ -84,10 +84,10 @@ final class UserProfileFamily extends $Family
   String toString() => r'userProfileProvider';
 }
 
-@ProviderFor(activeUser)
-final activeUserProvider = ActiveUserProvider._();
+@ProviderFor(activeUserProfile)
+final activeUserProfileProvider = ActiveUserProfileProvider._();
 
-final class ActiveUserProvider
+final class ActiveUserProfileProvider
     extends
         $FunctionalProvider<
           AsyncValue<UserProfile?>,
@@ -95,19 +95,19 @@ final class ActiveUserProvider
           AsyncValue<UserProfile?>
         >
     with $Provider<AsyncValue<UserProfile?>> {
-  ActiveUserProvider._()
+  ActiveUserProfileProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'activeUserProvider',
-        isAutoDispose: true,
+        name: r'activeUserProfileProvider',
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$activeUserHash();
+  String debugGetCreateSourceHash() => _$activeUserProfileHash();
 
   @$internal
   @override
@@ -117,7 +117,7 @@ final class ActiveUserProvider
 
   @override
   AsyncValue<UserProfile?> create(Ref ref) {
-    return activeUser(ref);
+    return activeUserProfile(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -129,54 +129,7 @@ final class ActiveUserProvider
   }
 }
 
-String _$activeUserHash() => r'691d95c3c896aaeeb0652ccb4f17f52ae6104b28';
-
-@ProviderFor(activeUserId)
-final activeUserIdProvider = ActiveUserIdProvider._();
-
-final class ActiveUserIdProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<String?>,
-          AsyncValue<String?>,
-          AsyncValue<String?>
-        >
-    with $Provider<AsyncValue<String?>> {
-  ActiveUserIdProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'activeUserIdProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$activeUserIdHash();
-
-  @$internal
-  @override
-  $ProviderElement<AsyncValue<String?>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  AsyncValue<String?> create(Ref ref) {
-    return activeUserId(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<String?> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<String?>>(value),
-    );
-  }
-}
-
-String _$activeUserIdHash() => r'435a2bf48b4dc24614f9480451484f89f15a2eb6';
+String _$activeUserProfileHash() => r'4c816d3c08cee28029d8a598497a947395ecb5a2';
 
 @ProviderFor(userExists)
 final userExistsProvider = UserExistsFamily._();

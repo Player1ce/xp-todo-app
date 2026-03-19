@@ -55,6 +55,7 @@ class GameCard extends StatelessWidget {
                   _GameCover(imageUrl: game.imageUrl),
                   Positioned(
                     top: 6,
+                    // bottom: 6,
                     right: 6,
                     child: _ActiveBadge(
                       isActive: game.isActive,
@@ -73,12 +74,8 @@ class GameCard extends StatelessWidget {
                     game.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Rajdhani',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
+                    style: theme.textTheme.titleSmall?.copyWith(
                       color: textColor,
-                      letterSpacing: 0.6,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -109,18 +106,14 @@ class GameCard extends StatelessWidget {
                     children: [
                       Text(
                         '${(progress * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(
-                          fontFamily: 'ShareTechMono',
-                          fontSize: 9,
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: dimColor,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         '${game.completedQuests}/${game.totalQuests}',
-                        style: TextStyle(
-                          fontFamily: 'ShareTechMono',
-                          fontSize: 9,
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: dimColor,
                         ),
                       ),
@@ -141,15 +134,13 @@ class GameCard extends StatelessWidget {
   }
 }
 
-class ProviderGameCard extends ConsumerWidget {
-  final String userId;
+class ActiveUSerProviderGameCard extends ConsumerWidget {
   final String gameId;
   final VoidCallback? onTap;
   final ValueChanged<bool>? onActiveChanged;
 
-  const ProviderGameCard({
+  const ActiveUSerProviderGameCard({
     super.key,
-    required this.userId,
     required this.gameId,
     this.onTap,
     this.onActiveChanged,
@@ -157,7 +148,8 @@ class ProviderGameCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gameAsync = ref.watch(gameProvider(userId, gameId));
+    final userId = ref.watch(requiredActiveUserIdProvider);
+    final gameAsync = ref.watch(activeUserGameProvider(gameId));
 
     return gameAsync.when(
       data: (game) {
@@ -200,11 +192,9 @@ class GamesGridView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(requiredAuthStateProvider);
+    final activeUid = ref.watch(requiredActiveUserIdProvider);
     final gamesAsync = ref.watch(
-      activeOnly
-          ? activeGamesProvider(authState.uid)
-          : gamesProvider(authState.uid),
+      activeOnly ? activeUserActiveGamesProvider : activeUserGamesProvider,
     );
 
     // ref.listen<AsyncValue<Game?>>(gameActionProvider, (previous, next) {
@@ -226,7 +216,7 @@ class GamesGridView extends ConsumerWidget {
 
     return gamesAsync.when(
       data: (games) {
-        if (games.isEmpty) {
+        if (games == null || games.isEmpty) {
           return const Center(child: Text('No games yet.'));
         }
 
@@ -253,7 +243,7 @@ class GamesGridView extends ConsumerWidget {
                 ref
                     .read(gameActionProvider.notifier)
                     .setGameActive(
-                      userId: authState.uid,
+                      userId: activeUid,
                       gameId: game.id,
                       isActive: nextActive,
                     );
@@ -351,19 +341,19 @@ class _ActiveBadge extends StatelessWidget {
 
     return InkWell(
       onTap: onTap == null ? null : () => onTap!(!isActive),
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(22),
       child: Ink(
-        width: 20,
-        height: 20,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: colorScheme.surface.withValues(alpha: 0.86),
           shape: BoxShape.circle,
-          border: Border.all(color: borderColor),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: Center(
           child: Icon(
             isActive ? Icons.check : Icons.circle_outlined,
-            size: 11,
+            size: 20,
             color: iconColor,
           ),
         ),

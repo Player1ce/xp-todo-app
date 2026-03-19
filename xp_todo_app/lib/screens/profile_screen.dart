@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/firebase_providers.dart';
-import 'package:xp_todo_app/providers/go_router_provider.dart';
 import 'package:xp_todo_app/util/enums/user_role.dart';
 import 'package:xp_todo_app/widgets/profile_overview_panel.dart';
 import 'package:xp_todo_app/widgets/sign_in_required_widget.dart';

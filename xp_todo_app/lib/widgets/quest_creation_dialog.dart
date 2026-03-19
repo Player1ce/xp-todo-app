@@ -60,9 +60,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
               SizedBox(width: 12),
               Text(
                 'Loading active games...',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
+                style: theme.textTheme.bodyLarge,
               ),
             ],
           ),
@@ -78,9 +76,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
           padding: EdgeInsets.all(24),
           child: Text(
             'Failed to load games. Please try again.',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurface,
-            ),
+            style: theme.textTheme.bodyLarge,
           ),
         ),
       );
@@ -95,9 +91,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
           padding: EdgeInsets.all(24),
           child: Text(
             'No active games found. Activate a game first.',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurface,
-            ),
+            style: theme.textTheme.bodyLarge,
           ),
         ),
       );
@@ -128,50 +122,20 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                   const SizedBox(width: 8),
                   Text(
                     'Create New Quest',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontFamily: 'Rajdhani',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
-                      letterSpacing: 2,
-                    ),
+                    style: theme.textTheme.headlineSmall,
                   ),
                 ],
               ),
               const SizedBox(height: 18),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: colorScheme.outline),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Title'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _title = value),
               ),
               const SizedBox(height: 12),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: colorScheme.outline),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 1,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
@@ -180,27 +144,12 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: effectiveGameId,
-                decoration: InputDecoration(
-                  labelText: 'Game',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: colorScheme.outline),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Game'),
                 items: activeGames
                     .map(
                       (game) => DropdownMenuItem(
                         value: game.id,
-                        child: Text(
-                          game.title,
-                          style: const TextStyle(fontFamily: 'Rajdhani'),
-                        ),
+                        child: Text(game.title),
                       ),
                     )
                     .toList(growable: false),
@@ -209,27 +158,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
               const SizedBox(height: 12),
               DropdownButtonFormField<Difficulty>(
                 initialValue: _difficulty,
-                decoration: InputDecoration(
-                  labelText: 'Difficulty',
-                  labelStyle: TextStyle(
-                    fontFamily: 'Rajdhani',
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: colorScheme.outline),
-                  ),
-                ),
+                // TODO: make sure this styles correctly (and in both modeS)
+                decoration: const InputDecoration(labelText: 'Difficulty'),
                 items: Difficulty.values
                     .map(
                       (d) => DropdownMenuItem(
                         value: d,
-                        child: Text(
-                          d.name[0].toUpperCase() + d.name.substring(1),
-                          style: const TextStyle(fontFamily: 'Rajdhani'),
-                        ),
+                        child: Text(d.name[0].toUpperCase() + d.name.substring(1)),
                       ),
                     )
                     .toList(),
@@ -243,19 +178,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                     child: TextFormField(
                       initialValue: _xpReward,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'XP Reward',
-                        labelStyle: TextStyle(
-                          fontFamily: 'Rajdhani',
-                          color: colorScheme.onSurface.withValues(alpha: 0.72),
-                        ),
-                        filled: true,
-                        fillColor: colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: colorScheme.outline),
-                        ),
-                      ),
+                      decoration: const InputDecoration(labelText: 'XP Reward'),
                       validator: (value) {
                         final parsed = int.tryParse(value ?? '');
                         if (parsed == null || parsed < 0) {
@@ -271,19 +194,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                     child: TextFormField(
                       initialValue: _level,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Level',
-                        labelStyle: TextStyle(
-                          fontFamily: 'Rajdhani',
-                          color: colorScheme.onSurface.withValues(alpha: 0.72),
-                        ),
-                        filled: true,
-                        fillColor: colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: colorScheme.outline),
-                        ),
-                      ),
+                      decoration: const InputDecoration(labelText: 'Level'),
                       validator: (value) {
                         final parsed = int.tryParse(value ?? '');
                         if (parsed == null || parsed < 0) {
@@ -304,10 +215,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                       _expireDate == null
                           ? 'No expiration date selected'
                           : 'Expires: ${MaterialLocalizations.of(context).formatMediumDate(_expireDate!)}',
-                      style: TextStyle(
-                        fontFamily: 'Rajdhani',
-                        color: colorScheme.onSurface.withValues(alpha: 0.72),
-                      ),
+                      style: theme.textTheme.labelMedium,
                     ),
                   ),
                   TextButton(
@@ -339,20 +247,6 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Rajdhani',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
                   onPressed: _isSubmitting
                       ? null
                       : () async {
@@ -364,7 +258,6 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                             id: '', // will be set by Firestore
                             title: _title,
                             description: _description,
-                            isActive: true,
                             difficulty: _difficulty,
                             completed: false,
                             xpReward: parsedXpReward,

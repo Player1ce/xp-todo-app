@@ -9,6 +9,7 @@ import 'package:xp_todo_app/util/time_utils.dart';
 
 class Quest extends IFirestoreModel {
   static String collectionName = 'Quest';
+  static String completeFieldName = 'completed';
 
   final String id;
   final String title;
@@ -22,7 +23,6 @@ class Quest extends IFirestoreModel {
   final String gameId;
 
   final bool completed;
-  final bool isActive;
 
   Quest({
     required this.id,
@@ -34,7 +34,6 @@ class Quest extends IFirestoreModel {
     required this.userId,
     required this.gameId,
     required this.completed,
-    required this.isActive,
     this.expireDate,
     super.dateCreated,
     super.dateUpdated,
@@ -53,7 +52,6 @@ class Quest extends IFirestoreModel {
     String? gameId,
     DateTime? expireDate,
     bool? completed,
-    bool? isActive,
     DateTime? dateCreated,
     DateTime? dateUpdated,
   }) {
@@ -68,7 +66,6 @@ class Quest extends IFirestoreModel {
       gameId: gameId ?? this.gameId,
       expireDate: expireDate ?? this.expireDate,
       completed: completed ?? this.completed,
-      isActive: isActive ?? this.isActive,
       dateCreated: dateCreated ?? this.dateCreated,
       dateUpdated: dateUpdated ?? this.dateUpdated,
     );
@@ -88,8 +85,7 @@ class Quest extends IFirestoreModel {
       'description': description,
       'userId': userId,
       'gameId': gameId,
-      'completed': completed,
-      'isActive': isActive,
+      completeFieldName: completed,
       ...super.toMap(),
     };
   }
@@ -107,8 +103,7 @@ class Quest extends IFirestoreModel {
       userId: map['userId'] as String,
       gameId: map['gameId'] as String,
       description: map['description'] as String,
-      completed: map['completed'] as bool? ?? false,
-      isActive: map['isActive'] as bool? ?? true,
+      completed: map[completeFieldName] as bool? ?? false,
       dateCreated: map['dateCreated'] != null
           ? convertToDateTime(map['dateCreated'])
           : null,
@@ -142,7 +137,6 @@ class Quest extends IFirestoreModel {
     String? gameId,
     DateTime? expireDate,
     bool? completed,
-    bool? isActive,
   }) {
     Map<String, dynamic> map = {};
 
@@ -153,8 +147,7 @@ class Quest extends IFirestoreModel {
     if (description != null) map['description'] = description;
     if (userId != null) map['userId'] = userId;
     if (gameId != null) map['gameId'] = gameId;
-    if (completed != null) map['completed'] = completed;
-    if (isActive != null) map['isActive'] = isActive;
+    if (completed != null) map[completeFieldName] = completed;
     if (expireDate != null) {
       map['expireDate'] = expireDate;
     }
@@ -164,7 +157,7 @@ class Quest extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, isActive: $isActive, expireDate: $expireDate, description: $description, dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
+    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, expireDate: $expireDate, description: $description, dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
   }
 
   @override
@@ -179,7 +172,6 @@ class Quest extends IFirestoreModel {
         other.userId == userId &&
         other.gameId == gameId &&
         other.completed == completed &&
-        other.isActive == isActive &&
         other.expireDate == expireDate;
   }
 
@@ -193,7 +185,6 @@ class Quest extends IFirestoreModel {
         userId.hashCode ^
         gameId.hashCode ^
         completed.hashCode ^
-        isActive.hashCode ^
         expireDate.hashCode;
   }
 }

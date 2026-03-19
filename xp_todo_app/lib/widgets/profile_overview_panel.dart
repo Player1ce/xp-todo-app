@@ -10,8 +10,8 @@ class ProfileOverviewPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profileAsync = ref.watch(userProfileProvider(userId));
-    final gamesAsync = ref.watch(gamesProvider(userId));
+    final profileAsync = ref.watch(activeUserProfileProvider);
+    final gamesAsync = ref.watch(activeUserGamesProvider);
 
     return profileAsync.when(
       data: (profile) {
@@ -21,7 +21,7 @@ class ProfileOverviewPanel extends ConsumerWidget {
 
         final totalProgress = gamesAsync.maybeWhen(
           data: (games) {
-            if (games.isEmpty) return 0.0;
+            if (games == null || games.isEmpty) return 0.0;
             final value =
                 games
                     .map((g) => g.completionPercentage)
@@ -33,7 +33,7 @@ class ProfileOverviewPanel extends ConsumerWidget {
         );
 
         final gameCount = gamesAsync.maybeWhen(
-          data: (games) => games.length,
+          data: (games) => games?.length ?? 0,
           orElse: () => 0,
         );
 
@@ -119,19 +119,13 @@ class _ProfileHeroCard extends StatelessWidget {
               children: [
                 Text(
                   displayName,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontFamily: 'Rajdhani',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                  style: theme.textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onSurface,
-                    letterSpacing: 1,
                   ),
                 ),
                 Text(
                   roleLabel,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'ShareTechMono',
-                    fontSize: 10,
+                  style: theme.textTheme.labelMedium?.copyWith(
                     color: colorScheme.primary,
                   ),
                 ),
@@ -139,7 +133,6 @@ class _ProfileHeroCard extends StatelessWidget {
                 Text(
                   email,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    fontSize: 11,
                     color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                 ),
@@ -176,11 +169,8 @@ class _ProgressCard extends StatelessWidget {
         children: [
           Text(
             'Overall Completion',
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: theme.textTheme.labelMedium?.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.72),
-              fontFamily: 'ShareTechMono',
-              fontSize: 10,
-              letterSpacing: 1.2,
             ),
           ),
           const SizedBox(height: 8),
@@ -198,10 +188,8 @@ class _ProgressCard extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               '$pct%',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontFamily: 'ShareTechMono',
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: colorScheme.secondary,
-                fontSize: 10,
               ),
             ),
           ),
@@ -235,16 +223,12 @@ class _StatCard extends StatelessWidget {
             title,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSurface.withValues(alpha: 0.72),
-              fontSize: 12,
             ),
           ),
           Text(
             value,
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.titleSmall?.copyWith(
               color: colorScheme.onSurface,
-              fontFamily: 'Rajdhani',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
             ),
           ),
         ],

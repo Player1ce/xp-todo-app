@@ -21,7 +21,7 @@ final class AuthStateProvider
         argument: null,
         retry: null,
         name: r'authStateProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -40,7 +40,48 @@ final class AuthStateProvider
   }
 }
 
-String _$authStateHash() => r'94003fcbfb286d3673c300bf83eefc753517a89b';
+String _$authStateHash() => r'b70cdeef76207aae7866922c017307454a710c8a';
+
+@ProviderFor(activeUserId)
+final activeUserIdProvider = ActiveUserIdProvider._();
+
+final class ActiveUserIdProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  ActiveUserIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeUserIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return activeUserId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$activeUserIdHash() => r'46d79baafc73e935c36b30d3ba506e741bd12b9f';
 
 @ProviderFor(requiredAuthState)
 final requiredAuthStateProvider = RequiredAuthStateProvider._();
@@ -82,6 +123,48 @@ final class RequiredAuthStateProvider
 }
 
 String _$requiredAuthStateHash() => r'840724fc01b8106c6f0c57f885070eae22beffeb';
+
+@ProviderFor(requiredActiveUserId)
+final requiredActiveUserIdProvider = RequiredActiveUserIdProvider._();
+
+final class RequiredActiveUserIdProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  RequiredActiveUserIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'requiredActiveUserIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$requiredActiveUserIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return requiredActiveUserId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$requiredActiveUserIdHash() =>
+    r'bd67ad91540c8d4f1b5c56b5a881c931a2d04d2f';
 
 @ProviderFor(idTokenResult)
 final idTokenResultProvider = IdTokenResultFamily._();

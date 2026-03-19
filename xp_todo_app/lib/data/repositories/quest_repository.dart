@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
@@ -34,9 +35,22 @@ class QuestRepository extends IFirestoreRepository {
   // --- Document Management Methods ----------------------------
 
   /// Create new quest
-  Future<void> createQuest(String userId, String gameId, Quest quest) {
-    // firestore.collection('userProfile').doc(userId).collection(collectionName);
-    return createDocument(collection(userId, gameId), quest);
+  Future<Quest> createQuest(String userId, String gameId, Quest quest) async {
+    try {
+      debugPrint(
+        "QuestRepository: createGame called with userId: $userId, game data: ${quest.toString()}",
+      );
+      return quest.copyWith(
+        id: await createDocument(collection(userId, gameId), quest),
+        dateCreated: DateTime.now(),
+        dateUpdated: DateTime.now(),
+      );
+    } on Exception catch (e) {
+      debugPrint(
+        "$serviceName: unexpected repository error creating quest for user $userId and game $gameId: $e",
+      );
+      rethrow;
+    }
   }
 
   Future<Quest?> getQuest(String userId, String gameId, String questId) {
@@ -57,6 +71,20 @@ class QuestRepository extends IFirestoreRepository {
     return updateDocument(collection(userId, gameId), questId, updates);
   }
 
+  Future<void> setQuestCompleted(
+    String userId,
+    String gameId,
+    String questId,
+    bool completed,
+  ) {
+    return updateQuest(
+      userId,
+      gameId,
+      questId,
+      Quest.createUpdateMap(completed: completed),
+    );
+  }
+
   Future<void> deleteQuest(String userId, String gameId, String questId) {
     return deleteDocument(collection(userId, gameId), questId);
   }
@@ -75,7 +103,7 @@ class QuestRepository extends IFirestoreRepository {
     );
   }
 
-  Stream<List<Quest>> watchQuests(String userId, String gameId) {
+  Stream<List<Quest>> watchGameQuests(String userId, String gameId) {
     return collection(userId, gameId).snapshots().map((snapshot) {
       return snapshot.docs
           .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
@@ -83,14 +111,33 @@ class QuestRepository extends IFirestoreRepository {
     });
   }
 
-  Stream<List<Quest>> watchActiveQuests(String userId, String gameId) {
-    return collection(
-      userId,
-      gameId,
-    ).where('isActive', isEqualTo: true).snapshots().map((snapshot) {
+  Stream<List<Quest>> watchUSerQuests(String userId) {
+    return collection(userId, '').snapshots().map((snapshot) {
       return snapshot.docs
           .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
           .toList(growable: false);
     });
+  }
+
+  Stream<List<Quest>> watchIncompleteUserQuests(String userId) {
+    return collection(userId, '')
+        .where(Quest.completeFieldName, isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+              .toList(growable: false);
+        });
+  }
+
+  Stream<List<Quest>> watchIncompleteGameQuests(String userId, String gameId) {
+    return collection(userId, gameId)
+        .where(Quest.completeFieldName, isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+              .toList(growable: false);
+        });
   }
 }

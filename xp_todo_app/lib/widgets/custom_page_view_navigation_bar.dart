@@ -2,9 +2,6 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// providers
-import 'package:xp_todo_app/providers/go_router_provider.dart';
-
 // consts
 import 'package:xp_todo_app/util/page_layout.dart';
 

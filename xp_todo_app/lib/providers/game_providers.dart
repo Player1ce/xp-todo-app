@@ -1,5 +1,7 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/data/models/game.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/repository_providers.dart';
 
 part 'game_providers.g.dart';
@@ -15,6 +17,37 @@ AsyncValue<List<Game>> activeGames(Ref ref, String userId) {
   final gamesAsync = ref.watch(gamesProvider(userId));
   return gamesAsync.whenData(
     (games) => games.where((game) => game.isActive).toList(),
+  );
+}
+
+@Riverpod(keepAlive: true)
+AsyncValue<List<Game>?> activeUserGames(Ref ref) {
+  final activeUserId = ref.watch(activeUserIdProvider);
+  if (activeUserId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(gamesProvider(activeUserId));
+}
+
+@riverpod
+AsyncValue<List<Game>?> activeUserActiveGames(Ref ref) {
+  return ref.watch(
+    activeUserGamesProvider.select(
+      (gamesAsync) => gamesAsync.whenData(
+        (games) => games?.where((game) => game.isActive).toList(),
+      ),
+    ),
+  );
+}
+
+@riverpod
+AsyncValue<Game?> activeUserGame(Ref ref, String gameId) {
+  return ref.watch(
+    activeUserGamesProvider.select(
+      (gamesAsync) => gamesAsync.whenData(
+        (games) => games?.where((game) => game.id == gameId).firstOrNull,
+      ),
+    ),
   );
 }
 
@@ -79,6 +112,33 @@ class GameActionNotifier extends _$GameActionNotifier {
       await ref
           .read(gameRepositoryProvider)
           .updateGame(userId, gameId, updates);
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
+  }
+
+  Future<void> setGameProgressCache({
+    required String userId,
+    required String gameId,
+    required int totalQuests,
+    required int completedQuests,
+    required int availableXP,
+    required int totalXP,
+  }) async {
+    state = const AsyncValue.loading();
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      await ref
+          .read(gameRepositoryProvider)
+          .setGameProgressCache(
+            userId: userId,
+            gameId: gameId,
+            totalQuests: totalQuests,
+            completedQuests: completedQuests,
+            availableXP: availableXP,
+            totalXP: totalXP,
+          );
       return null;
     });
     if (ref.mounted) {

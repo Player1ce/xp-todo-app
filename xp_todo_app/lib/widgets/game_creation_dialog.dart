@@ -53,15 +53,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                 children: [
                   Icon(Icons.add_box, color: colorScheme.primary),
                   const SizedBox(width: 8),
-                  Text(
-                    'Create New Game',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontFamily: 'Rajdhani',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
-                  ),
+                  Text('Create New Game', style: theme.textTheme.headlineSmall),
                 ],
               ),
               const SizedBox(height: 18),
@@ -96,7 +88,8 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                         value: d,
                         child: Text(
                           d.name[0].toUpperCase() + d.name.substring(1),
-                          style: const TextStyle(fontFamily: 'Rajdhani'),
+                          // TODO: make sure this styles correctly (and in both modeS)
+                          // style: theme.textTheme.bodyLarge,
                         ),
                       ),
                     )
@@ -108,20 +101,21 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Rajdhani',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
+                  // TODO: make sure this styles correctly (and in both modeS)
+                  // style: ElevatedButton.styleFrom(
+                  //   backgroundColor: colorScheme.primary,
+                  //   foregroundColor: colorScheme.onPrimary,
+                  //   shape: RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.circular(6),
+                  //   ),
+                  //   padding: const EdgeInsets.symmetric(vertical: 14),
+                  //   textStyle: const TextStyle(
+                  //     fontFamily: 'Rajdhani',
+                  //     fontWeight: FontWeight.w700,
+                  //     fontSize: 15,
+                  //     letterSpacing: 1.5,
+                  //   ),
+                  // ),
                   onPressed: _isSubmitting
                       ? null
                       : () async {

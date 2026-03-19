@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
+import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/providers/todo_ui_providers.dart';
-import 'package:xp_todo_app/providers/user_profile_providers.dart';
-import 'package:xp_todo_app/util/enums/difficulty.dart';
+import 'package:xp_todo_app/widgets/quest_preview_dialog.dart';
 import 'package:xp_todo_app/widgets/todo_item_card.dart';
 
 class TodoListPanel extends ConsumerStatefulWidget {
@@ -23,13 +23,12 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
   @override
   Widget build(BuildContext context) {
     // userID is not null here we handle that in the above widget (maybe move that here)
-    final userId = ref.watch(activeUserIdProvider).value!;
-
-    final gamesAsync = ref.watch(activeGamesProvider(userId));
+    final userId = ref.watch(requiredAuthStateProvider).uid;
+    final gamesAsync = ref.watch(activeUserGamesProvider);
 
     return gamesAsync.when(
       data: (games) {
-        if (games.isEmpty) {
+        if (games == null || games.isEmpty) {
           return _EmptyTodoState(userId: userId);
         }
 
@@ -52,12 +51,13 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
   }
 }
 
-class _TodoListContent extends ConsumerWidget {
+class _TodoListContent extends ConsumerStatefulWidget {
   final String userId;
   final List<Game> games;
   final Game selectedGame;
   final ValueChanged<String> onGameChanged;
 
+  // TODO: remove pass in of userID here
   const _TodoListContent({
     required this.userId,
     required this.games,
@@ -66,10 +66,20 @@ class _TodoListContent extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_TodoListContent> createState() => _TodoListContentState();
+}
+
+class _TodoListContentState extends ConsumerState<_TodoListContent> {
+  final Set<String> _busyQuestIds = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final questsAsync = ref.watch(questsProvider(userId, selectedGame.id));
+    final questsAsync = ref.watch(
+      activeUserGameQuestsProvider(widget.selectedGame.id),
+    );
+    // TODO: this state probably shouldn't be persisted
     final segment = ref.watch(todoFilterProvider);
 
     return Column(
@@ -81,29 +91,22 @@ class _TodoListContent extends ConsumerWidget {
             children: [
               Text(
                 'Active Quests',
-                style: theme.textTheme.displayLarge?.copyWith(
-                  fontFamily: 'Rajdhani',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2.2,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 3),
               Text(
                 'Track and complete your current objectives',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'ShareTechMono',
-                  fontSize: 10,
-                  letterSpacing: 1.2,
+                style: theme.textTheme.labelMedium?.copyWith(
                   color: colorScheme.onSurface.withValues(alpha: 0.72),
                 ),
               ),
               const SizedBox(height: 10),
               _GameSelector(
-                games: games,
-                selectedGameId: selectedGame.id,
-                onChanged: onGameChanged,
+                games: widget.games,
+                selectedGameId: widget.selectedGame.id,
+                onChanged: widget.onGameChanged,
               ),
               const SizedBox(height: 10),
               _TodoSegmentControl(current: segment),
@@ -113,8 +116,90 @@ class _TodoListContent extends ConsumerWidget {
         Expanded(
           child: questsAsync.when(
             data: (quests) {
+              quests ??= []; // Could be null so set to empty list in that case
               final filtered = _filterQuests(quests, segment);
-              return _TodoListView(quests: filtered);
+              return _TodoListView(
+                quests: filtered,
+                isQuestBusy: (questId) => _busyQuestIds.contains(questId),
+                onQuestTap: (quest) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) {
+                      return QuestPreviewDialog(
+                        userId: widget.userId,
+                        gameId: widget.selectedGame.id,
+                        quest: quest,
+                      );
+                    },
+                  );
+                },
+                onQuestCompletionChanged: (quest, nextCompleted) async {
+                  if (_busyQuestIds.contains(quest.id)) {
+                    return;
+                  }
+
+                  setState(() => _busyQuestIds.add(quest.id));
+
+                  try {
+                    await _setQuestCompletedAndRefreshCache(
+                      quest: quest,
+                      allQuests: quests!,
+                      completed: nextCompleted,
+                    );
+                  } catch (_) {
+                    if (context.mounted) {
+                      final theme = Theme.of(context);
+                      final colorScheme = theme.colorScheme;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: colorScheme.errorContainer,
+                          content: Text(
+                            'Unable to update quest completion right now.',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onErrorContainer,
+                            ),
+                          ),
+                          action: SnackBarAction(
+                            label: 'Dismiss',
+                            textColor: colorScheme.onErrorContainer,
+                            onPressed: () {},
+                          ),
+                        ),
+                      );
+                    }
+                    return;
+                  } finally {
+                    if (mounted) {
+                      setState(() => _busyQuestIds.remove(quest.id));
+                    }
+                  }
+
+                  final previousCompleted = !nextCompleted;
+                  final snackBar = SnackBar(
+                    content: Text(
+                      nextCompleted
+                          ? 'Quest marked complete.'
+                          : 'Quest marked incomplete.',
+                    ),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () async {
+                        await _setQuestCompletedAndRefreshCache(
+                          quest: quest,
+                          allQuests: quests!,
+                          completed: previousCompleted,
+                        );
+                      },
+                    ),
+                  );
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(snackBar);
+                  }
+                },
+              );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) =>
@@ -123,6 +208,53 @@ class _TodoListContent extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _setQuestCompletedAndRefreshCache({
+    required Quest quest,
+    required List<Quest> allQuests,
+    required bool completed,
+  }) async {
+    await ref
+        .read(questActionProvider.notifier)
+        .setQuestCompleted(
+          userId: widget.userId,
+          gameId: widget.selectedGame.id,
+          questId: quest.id,
+          completed: completed,
+        );
+
+    final updatedQuests = allQuests
+        .map((currentQuest) {
+          if (currentQuest.id != quest.id) {
+            return currentQuest;
+          }
+          return currentQuest.copyWith(completed: completed);
+        })
+        .toList(growable: false);
+
+    final completedQuests = updatedQuests
+        .where((currentQuest) => currentQuest.completed)
+        .length;
+    final totalQuests = updatedQuests.length;
+    final totalXp = updatedQuests.fold<int>(
+      0,
+      (sum, currentQuest) => sum + currentQuest.xpReward,
+    );
+    final availableXp = updatedQuests
+        .where((currentQuest) => currentQuest.completed)
+        .fold<int>(0, (sum, currentQuest) => sum + currentQuest.xpReward);
+
+    await ref
+        .read(gameActionProvider.notifier)
+        .setGameProgressCache(
+          userId: widget.userId,
+          gameId: widget.selectedGame.id,
+          totalQuests: totalQuests,
+          completedQuests: completedQuests,
+          availableXP: availableXp,
+          totalXP: totalXp,
+        );
   }
 
   List<Quest> _filterQuests(List<Quest> quests, TodoSegment segment) {
@@ -159,19 +291,29 @@ class _TodoListContent extends ConsumerWidget {
 
 class _TodoListView extends StatelessWidget {
   final List<Quest> quests;
+  final ValueChanged<Quest> onQuestTap;
+  final bool Function(String questId) isQuestBusy;
+  final Future<void> Function(Quest quest, bool nextCompleted)
+  onQuestCompletionChanged;
 
-  const _TodoListView({required this.quests});
+  const _TodoListView({
+    required this.quests,
+    required this.onQuestTap,
+    required this.isQuestBusy,
+    required this.onQuestCompletionChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (quests.isEmpty) {
-      final color = Theme.of(context).colorScheme.onSurface.withValues(
-        alpha: 0.72,
-      );
+      final color = Theme.of(
+        context,
+      ).colorScheme.onSurface.withValues(alpha: 0.72);
+      final textTheme = Theme.of(context).textTheme;
       return Center(
         child: Text(
           'No quests in this segment.',
-          style: TextStyle(color: color),
+          style: textTheme.bodyMedium?.copyWith(color: color),
         ),
       );
     }
@@ -179,7 +321,17 @@ class _TodoListView extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       itemCount: quests.length,
-      itemBuilder: (context, index) => TodoItemCard(quest: quests[index]),
+      itemBuilder: (context, index) {
+        final quest = quests[index];
+        return TodoItemCard(
+          quest: quest,
+          isBusy: isQuestBusy(quest.id),
+          onTap: () => onQuestTap(quest),
+          onCompletedChanged: (nextCompleted) {
+            onQuestCompletionChanged(quest, nextCompleted);
+          },
+        );
+      },
     );
   }
 }
@@ -234,7 +386,7 @@ class _GameSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: selectedGameId,
+      initialValue: selectedGameId,
       isExpanded: true,
       decoration: const InputDecoration(labelText: 'Current game'),
       items: games
@@ -256,16 +408,17 @@ class _EmptyTodoState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onSurface.withValues(
-      alpha: 0.72,
-    );
+    final color = Theme.of(
+      context,
+    ).colorScheme.onSurface.withValues(alpha: 0.72);
+    final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Text(
           'No active games found. Create and activate a game in Library first.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: color),
+          style: textTheme.bodyMedium?.copyWith(color: color),
         ),
       ),
     );

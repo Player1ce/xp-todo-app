@@ -9,10 +9,10 @@ part of 'quest_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(quests)
-final questsProvider = QuestsFamily._();
+@ProviderFor(userQuests)
+final userQuestsProvider = UserQuestsFamily._();
 
-final class QuestsProvider
+final class UserQuestsProvider
     extends
         $FunctionalProvider<
           AsyncValue<List<Quest>>,
@@ -20,23 +20,174 @@ final class QuestsProvider
           Stream<List<Quest>>
         >
     with $FutureModifier<List<Quest>>, $StreamProvider<List<Quest>> {
-  QuestsProvider._({
-    required QuestsFamily super.from,
-    required (String, String) super.argument,
+  UserQuestsProvider._({
+    required UserQuestsFamily super.from,
+    required String super.argument,
   }) : super(
          retry: null,
-         name: r'questsProvider',
+         name: r'userQuestsProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$questsHash();
+  String debugGetCreateSourceHash() => _$userQuestsHash();
 
   @override
   String toString() {
-    return r'questsProvider'
+    return r'userQuestsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Quest>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Quest>> create(Ref ref) {
+    final argument = this.argument as String;
+    return userQuests(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UserQuestsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$userQuestsHash() => r'c888d49293828db64a9285864c69cb499590dfa7';
+
+final class UserQuestsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Quest>>, String> {
+  UserQuestsFamily._()
+    : super(
+        retry: null,
+        name: r'userQuestsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  UserQuestsProvider call(String userId) =>
+      UserQuestsProvider._(argument: userId, from: this);
+
+  @override
+  String toString() => r'userQuestsProvider';
+}
+
+@ProviderFor(incompleteUserQuests)
+final incompleteUserQuestsProvider = IncompleteUserQuestsFamily._();
+
+final class IncompleteUserQuestsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Quest>>,
+          List<Quest>,
+          Stream<List<Quest>>
+        >
+    with $FutureModifier<List<Quest>>, $StreamProvider<List<Quest>> {
+  IncompleteUserQuestsProvider._({
+    required IncompleteUserQuestsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'incompleteUserQuestsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$incompleteUserQuestsHash();
+
+  @override
+  String toString() {
+    return r'incompleteUserQuestsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Quest>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Quest>> create(Ref ref) {
+    final argument = this.argument as String;
+    return incompleteUserQuests(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IncompleteUserQuestsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$incompleteUserQuestsHash() =>
+    r'1c38dc31e17e533dbac0b39ce8b121e6ceeed29d';
+
+final class IncompleteUserQuestsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Quest>>, String> {
+  IncompleteUserQuestsFamily._()
+    : super(
+        retry: null,
+        name: r'incompleteUserQuestsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  IncompleteUserQuestsProvider call(String userId) =>
+      IncompleteUserQuestsProvider._(argument: userId, from: this);
+
+  @override
+  String toString() => r'incompleteUserQuestsProvider';
+}
+
+@ProviderFor(gameQuests)
+final gameQuestsProvider = GameQuestsFamily._();
+
+final class GameQuestsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Quest>>,
+          List<Quest>,
+          Stream<List<Quest>>
+        >
+    with $FutureModifier<List<Quest>>, $StreamProvider<List<Quest>> {
+  GameQuestsProvider._({
+    required GameQuestsFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'gameQuestsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$gameQuestsHash();
+
+  @override
+  String toString() {
+    return r'gameQuestsProvider'
         ''
         '$argument';
   }
@@ -50,12 +201,12 @@ final class QuestsProvider
   @override
   Stream<List<Quest>> create(Ref ref) {
     final argument = this.argument as (String, String);
-    return quests(ref, argument.$1, argument.$2);
+    return gameQuests(ref, argument.$1, argument.$2);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is QuestsProvider && other.argument == argument;
+    return other is GameQuestsProvider && other.argument == argument;
   }
 
   @override
@@ -64,81 +215,73 @@ final class QuestsProvider
   }
 }
 
-String _$questsHash() => r'4fdfa52c6f268c65f060de320f3beefa91d029b4';
+String _$gameQuestsHash() => r'66651db431a7e680e05af8c3fefec6ace0c2aa84';
 
-final class QuestsFamily extends $Family
+final class GameQuestsFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Quest>>, (String, String)> {
-  QuestsFamily._()
+  GameQuestsFamily._()
     : super(
         retry: null,
-        name: r'questsProvider',
+        name: r'gameQuestsProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  QuestsProvider call(String userId, String gameId) =>
-      QuestsProvider._(argument: (userId, gameId), from: this);
+  GameQuestsProvider call(String userId, String gameId) =>
+      GameQuestsProvider._(argument: (userId, gameId), from: this);
 
   @override
-  String toString() => r'questsProvider';
+  String toString() => r'gameQuestsProvider';
 }
 
-@ProviderFor(activeQuests)
-final activeQuestsProvider = ActiveQuestsFamily._();
+@ProviderFor(incompleteGameQuests)
+final incompleteGameQuestsProvider = IncompleteGameQuestsFamily._();
 
-final class ActiveQuestsProvider
+final class IncompleteGameQuestsProvider
     extends
         $FunctionalProvider<
           AsyncValue<List<Quest>>,
-          AsyncValue<List<Quest>>,
-          AsyncValue<List<Quest>>
+          List<Quest>,
+          Stream<List<Quest>>
         >
-    with $Provider<AsyncValue<List<Quest>>> {
-  ActiveQuestsProvider._({
-    required ActiveQuestsFamily super.from,
+    with $FutureModifier<List<Quest>>, $StreamProvider<List<Quest>> {
+  IncompleteGameQuestsProvider._({
+    required IncompleteGameQuestsFamily super.from,
     required (String, String) super.argument,
   }) : super(
          retry: null,
-         name: r'activeQuestsProvider',
+         name: r'incompleteGameQuestsProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$activeQuestsHash();
+  String debugGetCreateSourceHash() => _$incompleteGameQuestsHash();
 
   @override
   String toString() {
-    return r'activeQuestsProvider'
+    return r'incompleteGameQuestsProvider'
         ''
         '$argument';
   }
 
   @$internal
   @override
-  $ProviderElement<AsyncValue<List<Quest>>> $createElement(
+  $StreamProviderElement<List<Quest>> $createElement(
     $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  ) => $StreamProviderElement(pointer);
 
   @override
-  AsyncValue<List<Quest>> create(Ref ref) {
+  Stream<List<Quest>> create(Ref ref) {
     final argument = this.argument as (String, String);
-    return activeQuests(ref, argument.$1, argument.$2);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Quest>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Quest>>>(value),
-    );
+    return incompleteGameQuests(ref, argument.$1, argument.$2);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ActiveQuestsProvider && other.argument == argument;
+    return other is IncompleteGameQuestsProvider && other.argument == argument;
   }
 
   @override
@@ -147,24 +290,157 @@ final class ActiveQuestsProvider
   }
 }
 
-String _$activeQuestsHash() => r'64759efb672592d70059b2c14156f690ed03675a';
+String _$incompleteGameQuestsHash() =>
+    r'93abd6dfd089cd732bffcca4641c74f02dab2fd0';
 
-final class ActiveQuestsFamily extends $Family
-    with $FunctionalFamilyOverride<AsyncValue<List<Quest>>, (String, String)> {
-  ActiveQuestsFamily._()
+final class IncompleteGameQuestsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Quest>>, (String, String)> {
+  IncompleteGameQuestsFamily._()
     : super(
         retry: null,
-        name: r'activeQuestsProvider',
+        name: r'incompleteGameQuestsProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  ActiveQuestsProvider call(String userId, String gameId) =>
-      ActiveQuestsProvider._(argument: (userId, gameId), from: this);
+  IncompleteGameQuestsProvider call(String userId, String gameId) =>
+      IncompleteGameQuestsProvider._(argument: (userId, gameId), from: this);
 
   @override
-  String toString() => r'activeQuestsProvider';
+  String toString() => r'incompleteGameQuestsProvider';
+}
+
+@ProviderFor(activeUserAllQuests)
+final activeUserAllQuestsProvider = ActiveUserAllQuestsProvider._();
+
+final class ActiveUserAllQuestsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Quest>?>,
+          AsyncValue<List<Quest>?>,
+          AsyncValue<List<Quest>?>
+        >
+    with $Provider<AsyncValue<List<Quest>?>> {
+  ActiveUserAllQuestsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeUserAllQuestsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserAllQuestsHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<Quest>?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<Quest>?> create(Ref ref) {
+    return activeUserAllQuests(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<Quest>?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<Quest>?>>(value),
+    );
+  }
+}
+
+String _$activeUserAllQuestsHash() =>
+    r'caa233c068f7cf9adda2dff0f0874421966f84a2';
+
+@ProviderFor(activeUserGameQuests)
+final activeUserGameQuestsProvider = ActiveUserGameQuestsFamily._();
+
+final class ActiveUserGameQuestsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Quest>?>,
+          AsyncValue<List<Quest>?>,
+          AsyncValue<List<Quest>?>
+        >
+    with $Provider<AsyncValue<List<Quest>?>> {
+  ActiveUserGameQuestsProvider._({
+    required ActiveUserGameQuestsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'activeUserGameQuestsProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserGameQuestsHash();
+
+  @override
+  String toString() {
+    return r'activeUserGameQuestsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<Quest>?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<Quest>?> create(Ref ref) {
+    final argument = this.argument as String;
+    return activeUserGameQuests(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<Quest>?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<Quest>?>>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ActiveUserGameQuestsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$activeUserGameQuestsHash() =>
+    r'0f15bb3d09cec320b4ff84fb5fb172014dde7940';
+
+final class ActiveUserGameQuestsFamily extends $Family
+    with $FunctionalFamilyOverride<AsyncValue<List<Quest>?>, String> {
+  ActiveUserGameQuestsFamily._()
+    : super(
+        retry: null,
+        name: r'activeUserGameQuestsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  ActiveUserGameQuestsProvider call(String gameId) =>
+      ActiveUserGameQuestsProvider._(argument: gameId, from: this);
+
+  @override
+  String toString() => r'activeUserGameQuestsProvider';
 }
 
 @ProviderFor(quest)
@@ -240,7 +516,7 @@ final class QuestFamily extends $Family
 final questActionProvider = QuestActionNotifierProvider._();
 
 final class QuestActionNotifierProvider
-    extends $NotifierProvider<QuestActionNotifier, AsyncValue<void>> {
+    extends $NotifierProvider<QuestActionNotifier, AsyncValue<Quest?>> {
   QuestActionNotifierProvider._()
     : super(
         from: null,
@@ -260,28 +536,28 @@ final class QuestActionNotifierProvider
   QuestActionNotifier create() => QuestActionNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<void> value) {
+  Override overrideWithValue(AsyncValue<Quest?> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<Quest?>>(value),
     );
   }
 }
 
 String _$questActionNotifierHash() =>
-    r'c6e2ced1d02fb6fb59ebde8bc8caba591c4b14bd';
+    r'c7b1d8660bc969f11d6fbd5ddef4b71ac4cf4d71';
 
-abstract class _$QuestActionNotifier extends $Notifier<AsyncValue<void>> {
-  AsyncValue<void> build();
+abstract class _$QuestActionNotifier extends $Notifier<AsyncValue<Quest?>> {
+  AsyncValue<Quest?> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<void>, AsyncValue<void>>;
+    final ref = this.ref as $Ref<AsyncValue<Quest?>, AsyncValue<Quest?>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, AsyncValue<void>>,
-              AsyncValue<void>,
+              AnyNotifier<AsyncValue<Quest?>, AsyncValue<Quest?>>,
+              AsyncValue<Quest?>,
               Object?,
               Object?
             >;

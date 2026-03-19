@@ -166,6 +166,184 @@ final class ActiveGamesFamily extends $Family
   String toString() => r'activeGamesProvider';
 }
 
+@ProviderFor(activeUserGames)
+final activeUserGamesProvider = ActiveUserGamesProvider._();
+
+final class ActiveUserGamesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Game>?>,
+          AsyncValue<List<Game>?>,
+          AsyncValue<List<Game>?>
+        >
+    with $Provider<AsyncValue<List<Game>?>> {
+  ActiveUserGamesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeUserGamesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserGamesHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<Game>?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<Game>?> create(Ref ref) {
+    return activeUserGames(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<Game>?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<Game>?>>(value),
+    );
+  }
+}
+
+String _$activeUserGamesHash() => r'5548d5c11c466e486dac1ecd5fe5795a14721cbe';
+
+@ProviderFor(activeUserActiveGames)
+final activeUserActiveGamesProvider = ActiveUserActiveGamesProvider._();
+
+final class ActiveUserActiveGamesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Game>?>,
+          AsyncValue<List<Game>?>,
+          AsyncValue<List<Game>?>
+        >
+    with $Provider<AsyncValue<List<Game>?>> {
+  ActiveUserActiveGamesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeUserActiveGamesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserActiveGamesHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<Game>?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<Game>?> create(Ref ref) {
+    return activeUserActiveGames(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<Game>?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<Game>?>>(value),
+    );
+  }
+}
+
+String _$activeUserActiveGamesHash() =>
+    r'bcb4b4001976b0341cc923d2adef9e4aff6702db';
+
+@ProviderFor(activeUserGame)
+final activeUserGameProvider = ActiveUserGameFamily._();
+
+final class ActiveUserGameProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Game?>,
+          AsyncValue<Game?>,
+          AsyncValue<Game?>
+        >
+    with $Provider<AsyncValue<Game?>> {
+  ActiveUserGameProvider._({
+    required ActiveUserGameFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'activeUserGameProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeUserGameHash();
+
+  @override
+  String toString() {
+    return r'activeUserGameProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<Game?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<Game?> create(Ref ref) {
+    final argument = this.argument as String;
+    return activeUserGame(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<Game?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<Game?>>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ActiveUserGameProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$activeUserGameHash() => r'86efcf1b31bb145d658744021239d65ef9a4be87';
+
+final class ActiveUserGameFamily extends $Family
+    with $FunctionalFamilyOverride<AsyncValue<Game?>, String> {
+  ActiveUserGameFamily._()
+    : super(
+        retry: null,
+        name: r'activeUserGameProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ActiveUserGameProvider call(String gameId) =>
+      ActiveUserGameProvider._(argument: gameId, from: this);
+
+  @override
+  String toString() => r'activeUserGameProvider';
+}
+
 @ProviderFor(game)
 final gameProvider = GameFamily._();
 
@@ -268,7 +446,7 @@ final class GameActionNotifierProvider
 }
 
 String _$gameActionNotifierHash() =>
-    r'fe0aec11da5d6684dc343901db6e1fa7a4da19b3';
+    r'132ed7c2f21096296db0e6426e83ae9e34dd6638';
 
 abstract class _$GameActionNotifier extends $Notifier<AsyncValue<Game?>> {
   AsyncValue<Game?> build();

@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:xp_todo_app/providers/firebase_providers.dart';
@@ -7,14 +8,26 @@ import 'package:xp_todo_app/util/enums/user_role.dart';
 
 part 'auth_providers.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<User?> authState(Ref ref) {
   return ref.watch(firebaseAuthProvider).userChanges();
 }
 
 @riverpod
+String? activeUserId(Ref ref) {
+  return ref.watch(
+    authStateProvider.select((authState) => authState.asData?.value?.uid),
+  );
+}
+
+@riverpod
 User requiredAuthState(Ref ref) {
   return ref.watch(authStateProvider).requireValue!;
+}
+
+@riverpod
+String requiredActiveUserId(Ref ref) {
+  return ref.watch(requiredAuthStateProvider).uid;
 }
 
 // Step 2 — get the ID token result whenever auth state changes

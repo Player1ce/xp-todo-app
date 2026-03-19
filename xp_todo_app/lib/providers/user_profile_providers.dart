@@ -11,30 +11,14 @@ Stream<UserProfile?> userProfile(Ref ref, String userId) {
   return repository.watchUserProfile(userId);
 }
 
-@riverpod
-AsyncValue<UserProfile?> activeUser(Ref ref) {
-  final authAsync = ref.watch(authStateProvider);
+@Riverpod(keepAlive: true)
+AsyncValue<UserProfile?> activeUserProfile(Ref ref) {
+  final userId = ref.watch(activeUserIdProvider);
 
-  return authAsync.when(
-    loading: () => const AsyncValue.loading(),
-    error: (e, s) => AsyncValue.error(e, s),
-    data: (user) {
-      if (user == null) return const AsyncValue.data(null);
-      // Watch the profile stream for this user
-      return ref.watch(userProfileProvider(user.uid));
-    },
-  );
-}
-
-@riverpod
-AsyncValue<String?> activeUserId(Ref ref) {
-  return ref
-      .watch(activeUserProvider)
-      .when(
-        loading: () => const AsyncValue.loading(),
-        error: (e, s) => AsyncValue.error(e, s),
-        data: (profile) => AsyncValue.data(profile?.id),
-      );
+  if (userId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(userProfileProvider(userId));
 }
 
 @riverpod

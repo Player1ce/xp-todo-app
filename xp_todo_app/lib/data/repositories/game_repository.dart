@@ -77,6 +77,31 @@ class GameRepository extends IFirestoreRepository {
     return updateGame(userId, gameId, Game.createUpdateMap(isActive: isActive));
   }
 
+  Future<void> setGameProgressCache({
+    required String userId,
+    required String gameId,
+    required int totalQuests,
+    required int completedQuests,
+    required int availableXP,
+    required int totalXP,
+  }) {
+    final completionPercentage = totalQuests == 0
+        ? 0.0
+        : completedQuests / totalQuests;
+
+    return updateGame(
+      userId,
+      gameId,
+      Game.createUpdateMap(
+        totalQuests: totalQuests,
+        completedQuests: completedQuests,
+        availableXP: availableXP,
+        totalXP: totalXP,
+        completionPercentage: completionPercentage,
+      ),
+    );
+  }
+
   // ------Streams-----------------------------------------------
   Stream<Game?> watchGame(String userId, String gameId) {
     return watchDocument(collection(userId), gameId, Game.fromFirestore);

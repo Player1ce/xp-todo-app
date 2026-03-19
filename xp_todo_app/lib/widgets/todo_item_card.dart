@@ -4,8 +4,16 @@ import 'package:xp_todo_app/data/models/quest.dart';
 class TodoItemCard extends StatelessWidget {
   final Quest quest;
   final VoidCallback? onTap;
+  final ValueChanged<bool>? onCompletedChanged;
+  final bool isBusy;
 
-  const TodoItemCard({super.key, required this.quest, this.onTap});
+  const TodoItemCard({
+    super.key,
+    required this.quest,
+    this.onTap,
+    this.onCompletedChanged,
+    this.isBusy = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +21,10 @@ class TodoItemCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final dueDate = quest.expireDate;
     final isOverdue = dueDate != null && dueDate.isBefore(DateTime.now());
+    final isCompleted = quest.completed;
+    final textColor = isCompleted
+      ? colorScheme.onSurface.withValues(alpha: 0.56)
+      : colorScheme.onSurface;
 
     return InkWell(
       onTap: onTap,
@@ -21,19 +33,68 @@ class TodoItemCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.fromLTRB(11, 10, 11, 10),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: isCompleted
+              ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.35)
+              : colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: colorScheme.outline),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: InkWell(
+                onTap: onCompletedChanged == null || isBusy
+                    ? null
+                    : () => onCompletedChanged!(!isCompleted),
+                borderRadius: BorderRadius.circular(12),
+                child: Ink(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface.withValues(alpha: 0.86),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isCompleted
+                          ? colorScheme.primary
+                          : colorScheme.outline,
+                    ),
+                  ),
+                  child: Center(
+                    child: isBusy
+                        ? SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.primary,
+                            ),
+                          )
+                        : Icon(
+                            isCompleted
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                            size: 16,
+                            color: isCompleted
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withValues(alpha: 0.56),
+                          ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
             Container(
               width: 3,
               height: 36,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2),
-                color: isOverdue ? colorScheme.error : colorScheme.primary,
+                color: isCompleted
+                    ? colorScheme.outline
+                    : isOverdue
+                    ? colorScheme.error
+                    : colorScheme.primary,
               ),
             ),
             const SizedBox(width: 10),
@@ -46,10 +107,10 @@ class TodoItemCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontFamily: 'ExoTwo',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface,
+                      color: textColor,
+                      decoration: isCompleted
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -62,9 +123,7 @@ class TodoItemCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         'LVL ${quest.level}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          fontFamily: 'ShareTechMono',
-                          fontSize: 9,
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: colorScheme.onSurface.withValues(alpha: 0.56),
                         ),
                       ),
@@ -79,10 +138,10 @@ class TodoItemCard extends StatelessWidget {
               children: [
                 Text(
                   '+${quest.xpReward} XP',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'ShareTechMono',
-                    fontSize: 11,
-                    color: colorScheme.secondary,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: isCompleted
+                        ? colorScheme.onSurface.withValues(alpha: 0.56)
+                        : colorScheme.secondary,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -90,9 +149,7 @@ class TodoItemCard extends StatelessWidget {
                   dueDate == null
                       ? 'No due date'
                       : '${_monthLabel(dueDate.month)} ${dueDate.day}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'ShareTechMono',
-                    fontSize: 9,
+                  style: theme.textTheme.labelSmall?.copyWith(
                     color: isOverdue
                         ? colorScheme.error
                         : colorScheme.onSurface.withValues(alpha: 0.56),
@@ -115,6 +172,7 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -124,11 +182,7 @@ class _Tag extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: TextStyle(
-          fontFamily: 'Rajdhani',
-          fontSize: 8,
-          letterSpacing: 0.8,
-          fontWeight: FontWeight.w700,
+        style: theme.textTheme.labelSmall?.copyWith(
           color: color,
         ),
       ),
