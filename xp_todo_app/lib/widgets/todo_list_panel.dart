@@ -30,7 +30,7 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
   Widget build(BuildContext context) {
     // userID is not null here we handle that in the above widget (maybe move that here)
     final userId = ref.watch(requiredAuthStateProvider).uid;
-    final gamesAsync = ref.watch(activeUserGamesProvider);
+    final gamesAsync = ref.watch(activeUserActiveGamesProvider);
     final selectedGameId = ref.watch(selectedTodoGameIdProvider);
 
     return gamesAsync.when(
