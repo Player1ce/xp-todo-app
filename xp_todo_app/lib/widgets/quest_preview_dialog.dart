@@ -26,6 +26,7 @@ class QuestPreviewDialog extends ConsumerStatefulWidget {
 class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
   static const Duration _textDebounce = Duration(milliseconds: 350);
 
+  late String _selectedGameId;
   late String _title;
   late String _description;
   late String _xpReward;
@@ -42,6 +43,7 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
   @override
   void initState() {
     super.initState();
+    _selectedGameId = widget.gameId;
     _title = widget.quest.title;
     _description = widget.quest.description;
     _xpReward = widget.quest.xpReward.toString();
@@ -60,6 +62,7 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final gamesAsync = ref.watch(activeUserGamesProvider);
 
     return PopScope(
       canPop: false,
@@ -130,6 +133,43 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
                   },
                 ),
                 const SizedBox(height: 12),
+                gamesAsync.when(
+                  data: (games) {
+                    if (games == null || games.isEmpty) {
+                      return const Text('No games available');
+                    }
+
+                    //TODO: update this to use the gameID from the quest page
+                    if (!games.any((game) => game.id == _selectedGameId)) {
+                      _selectedGameId = games.first.id;
+                    }
+
+                    return DropdownButtonFormField<String>(
+                      key: ValueKey<String>(_selectedGameId),
+                      initialValue: _selectedGameId,
+                      decoration: const InputDecoration(labelText: 'Game'),
+                      items: games
+                          .map(
+                            (game) => DropdownMenuItem<String>(
+                              value: game.id,
+                              child: Text(game.title),
+                            ),
+                          )
+                          .toList(growable: false),
+                      onChanged: _isSaving
+                          ? null
+                          : (nextGameId) {
+                              if (nextGameId == null) {
+                                return;
+                              }
+                              unawaited(_transferQuestToGame(nextGameId));
+                            },
+                    );
+                  },
+                  loading: () => const LinearProgressIndicator(),
+                  error: (_, _) => const Text('Unable to load games.'),
+                ),
+                const SizedBox(height: 8),
                 DropdownButtonFormField<Difficulty>(
                   initialValue: _difficulty,
                   decoration: const InputDecoration(labelText: 'Difficulty'),
@@ -244,9 +284,14 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
     try {
       await ref
           .read(questActionProvider.notifier)
-          .updateQuest(widget.userId, widget.gameId, widget.quest.id, updates);
+          .updateQuest(
+            widget.userId,
+            _selectedGameId,
+            widget.quest.id,
+            updates,
+          );
       if (refreshCache) {
-        await _refreshGameProgressCache();
+        await _refreshGameProgressCache(_selectedGameId);
       }
     } catch (_) {
       if (mounted) {
@@ -263,9 +308,9 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
     }
   }
 
-  Future<void> _refreshGameProgressCache() async {
+  Future<void> _refreshGameProgressCache(String gameId) async {
     final quests = await ref.read(
-      gameQuestsProvider(widget.userId, widget.gameId).future,
+      gameQuestsProvider(widget.userId, gameId).future,
     );
     final completedQuests = quests.where((quest) => quest.completed).length;
     final totalQuests = quests.length;
@@ -278,12 +323,68 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
         .read(gameActionProvider.notifier)
         .setGameProgressCache(
           userId: widget.userId,
-          gameId: widget.gameId,
+          gameId: gameId,
           totalQuests: totalQuests,
           completedQuests: completedQuests,
           availableXP: availableXp,
           totalXP: totalXp,
         );
+  }
+
+  Future<void> _transferQuestToGame(String nextGameId) async {
+    if (nextGameId == _selectedGameId) {
+      return;
+    }
+
+    final previousGameId = _selectedGameId;
+    setState(() {
+      _selectedGameId = nextGameId;
+      _errorMessage = null;
+    });
+
+    _debounceTimer?.cancel();
+    await _flushTextUpdates();
+    await _saveQueue;
+
+    _saveQueue = _saveQueue.then((_) async {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isSaving = true;
+        _errorMessage = null;
+      });
+
+      try {
+        await ref
+            .read(questActionProvider.notifier)
+            .transferQuestToGame(
+              userId: widget.userId,
+              fromGameId: previousGameId,
+              toGameId: nextGameId,
+              questId: widget.quest.id,
+            );
+        await _refreshGameProgressCache(previousGameId);
+        await _refreshGameProgressCache(nextGameId);
+      } catch (_) {
+        if (mounted) {
+          setState(() {
+            _selectedGameId = previousGameId;
+            _errorMessage =
+                'Failed to move quest to another game. Please retry.';
+          });
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isSaving = false;
+          });
+        }
+      }
+    });
+
+    await _saveQueue;
   }
 
   Future<bool> _requestClose() async {

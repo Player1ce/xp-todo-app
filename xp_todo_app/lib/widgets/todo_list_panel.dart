@@ -18,13 +18,20 @@ class TodoListPanel extends ConsumerStatefulWidget {
 }
 
 class _TodoListPanelState extends ConsumerState<TodoListPanel> {
-  String? _selectedGameId;
+  void _setSelectedGameId(String nextGameId) {
+    final selectedGameId = ref.read(selectedTodoGameIdProvider);
+    if (selectedGameId == nextGameId) {
+      return;
+    }
+    ref.read(selectedTodoGameIdProvider.notifier).updateValue(nextGameId);
+  }
 
   @override
   Widget build(BuildContext context) {
     // userID is not null here we handle that in the above widget (maybe move that here)
     final userId = ref.watch(requiredAuthStateProvider).uid;
     final gamesAsync = ref.watch(activeUserGamesProvider);
+    final selectedGameId = ref.watch(selectedTodoGameIdProvider);
 
     return gamesAsync.when(
       data: (games) {
@@ -32,17 +39,30 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
           return _EmptyTodoState(userId: userId);
         }
 
-        _selectedGameId ??= games.first.id;
-        if (!games.any((g) => g.id == _selectedGameId)) {
-          _selectedGameId = games.first.id;
+        final effectiveSelectedGameId =
+            selectedGameId != null && games.any((g) => g.id == selectedGameId)
+            ? selectedGameId
+            : games.first.id;
+
+        if (selectedGameId != effectiveSelectedGameId) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              ref
+                  .read(selectedTodoGameIdProvider.notifier)
+                  .updateValue(effectiveSelectedGameId);
+            }
+          });
         }
 
-        final selectedGame = games.firstWhere((g) => g.id == _selectedGameId);
+        final selectedGame = games.firstWhere(
+          (g) => g.id == effectiveSelectedGameId,
+        );
         return _TodoListContent(
           userId: userId,
           games: games,
           selectedGame: selectedGame,
-          onGameChanged: (next) => setState(() => _selectedGameId = next),
+          // TODO: remove this dependency chain and just ref the provider directly where needed
+          onGameChanged: _setSelectedGameId,
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),

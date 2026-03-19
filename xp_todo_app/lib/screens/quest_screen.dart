@@ -20,7 +20,8 @@ class TodoScreen extends ConsumerWidget {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => QuestCreationDialog(),
+            builder: (context) =>
+                QuestCreationDialog(),
           );
         },
         tooltip: 'Create New Game',

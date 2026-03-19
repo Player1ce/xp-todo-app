@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
+import 'package:xp_todo_app/providers/todo_ui_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
@@ -17,6 +18,10 @@ class QuestCreationDialog extends ConsumerStatefulWidget {
 
 class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _descriptionFocusNode = FocusNode();
+  final FocusNode _xpFocusNode = FocusNode();
+  final FocusNode _levelFocusNode = FocusNode();
   String _title = '';
   String _description = '';
   Difficulty _difficulty = Difficulty.normal;
@@ -26,6 +31,63 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   String? _selectedGameId;
 
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedGameId = ref.read(selectedTodoGameIdProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _titleFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _titleFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _xpFocusNode.dispose();
+    _levelFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitForm(
+    QuestActionNotifier questActionNotifier,
+    String userId,
+    String effectiveGameId,
+  ) async {
+    if (_isSubmitting || !_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final parsedXpReward = int.parse(_xpReward);
+    final parsedLevel = int.parse(_level);
+
+    setState(() => _isSubmitting = true);
+    final quest = Quest(
+      id: '', // will be set by Firestore
+      title: _title,
+      description: _description,
+      difficulty: _difficulty,
+      completed: false,
+      xpReward: parsedXpReward,
+      gameId: effectiveGameId,
+      level: parsedLevel,
+      expireDate: _expireDate,
+      userId: userId,
+      dateCreated: DateTime.now(),
+      dateUpdated: DateTime.now(),
+    );
+
+    await questActionNotifier.createQuest(userId, effectiveGameId, quest);
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _isSubmitting = false);
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +120,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
               SizedBox(width: 12),
-              Text(
-                'Loading active games...',
-                style: theme.textTheme.bodyLarge,
-              ),
+              Text('Loading active games...', style: theme.textTheme.bodyLarge),
             ],
           ),
         ),
@@ -128,18 +187,29 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
               ),
               const SizedBox(height: 18),
               TextFormField(
+                focusNode: _titleFocusNode,
+                autofocus: true,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(labelText: 'Title'),
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _title = value),
+                onFieldSubmitted: (_) {
+                  _descriptionFocusNode.requestFocus();
+                },
               ),
               const SizedBox(height: 12),
               TextFormField(
+                focusNode: _descriptionFocusNode,
+                textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 1,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _description = value),
+                onFieldSubmitted: (_) {
+                  _xpFocusNode.requestFocus();
+                },
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
@@ -164,7 +234,9 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                     .map(
                       (d) => DropdownMenuItem(
                         value: d,
-                        child: Text(d.name[0].toUpperCase() + d.name.substring(1)),
+                        child: Text(
+                          d.name[0].toUpperCase() + d.name.substring(1),
+                        ),
                       ),
                     )
                     .toList(),
@@ -176,7 +248,9 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      focusNode: _xpFocusNode,
                       initialValue: _xpReward,
+                      textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: 'XP Reward'),
                       validator: (value) {
@@ -187,12 +261,17 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                         return null;
                       },
                       onChanged: (value) => setState(() => _xpReward = value),
+                      onFieldSubmitted: (_) {
+                        _levelFocusNode.requestFocus();
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextFormField(
+                      focusNode: _levelFocusNode,
                       initialValue: _level,
+                      textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: 'Level'),
                       validator: (value) {
@@ -203,6 +282,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                         return null;
                       },
                       onChanged: (value) => setState(() => _level = value),
+                      onFieldSubmitted: (_) {
+                        _submitForm(
+                          questActionNotifier,
+                          userId,
+                          effectiveGameId,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -249,33 +335,11 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 child: ElevatedButton(
                   onPressed: _isSubmitting
                       ? null
-                      : () async {
-                          if (!_formKey.currentState!.validate()) return;
-                          final parsedXpReward = int.parse(_xpReward);
-                          final parsedLevel = int.parse(_level);
-                          setState(() => _isSubmitting = true);
-                          final quest = Quest(
-                            id: '', // will be set by Firestore
-                            title: _title,
-                            description: _description,
-                            difficulty: _difficulty,
-                            completed: false,
-                            xpReward: parsedXpReward,
-                            gameId: effectiveGameId,
-                            level: parsedLevel,
-                            expireDate: _expireDate,
-                            userId: userId,
-                            dateCreated: DateTime.now(),
-                            dateUpdated: DateTime.now(),
-                          );
-                          await questActionNotifier.createQuest(
-                            userId,
-                            effectiveGameId,
-                            quest,
-                          );
-                          setState(() => _isSubmitting = false);
-                          if (context.mounted) Navigator.of(context).pop();
-                        },
+                      : () => _submitForm(
+                          questActionNotifier,
+                          userId,
+                          effectiveGameId,
+                        ),
                   child: _isSubmitting
                       ? CircularProgressIndicator(color: colorScheme.onPrimary)
                       : const Text('Create Quest'),

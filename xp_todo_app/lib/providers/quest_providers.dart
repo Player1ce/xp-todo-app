@@ -111,6 +111,29 @@ class QuestActionNotifier extends _$QuestActionNotifier {
     }
   }
 
+  Future<void> transferQuestToGame({
+    required String userId,
+    required String fromGameId,
+    required String toGameId,
+    required String questId,
+  }) async {
+    state = const AsyncValue.loading();
+    final nextState = await AsyncValue.guard<Quest?>(() async {
+      await ref
+          .read(questRepositoryProvider)
+          .transferQuestToGame(
+            userId: userId,
+            fromGameId: fromGameId,
+            toGameId: toGameId,
+            questId: questId,
+          );
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
+  }
+
   Future<void> deleteQuest(String userId, String gameId, String questId) async {
     state = const AsyncValue.loading();
     final nextState = await AsyncValue.guard<Quest?>(() async {

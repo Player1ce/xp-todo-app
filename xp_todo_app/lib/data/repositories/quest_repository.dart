@@ -4,6 +4,7 @@ import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
 import 'package:xp_todo_app/data/repositories/i_firestore_repository.dart';
+import 'package:xp_todo_app/exceptions/document_not_found_exception.dart';
 
 class QuestRepository extends IFirestoreRepository {
   static const String _serviceName = "QuestService";
@@ -83,6 +84,37 @@ class QuestRepository extends IFirestoreRepository {
       questId,
       Quest.createUpdateMap(completed: completed),
     );
+  }
+
+  Future<void> transferQuestToGame({
+    required String userId,
+    required String fromGameId,
+    required String toGameId,
+    required String questId,
+  }) async {
+    if (fromGameId == toGameId) {
+      return;
+    }
+
+    final sourceDoc = collection(userId, fromGameId).doc(questId);
+    final targetDoc = collection(userId, toGameId).doc(questId);
+
+    await firestore.runTransaction((transaction) async {
+      final sourceSnapshot = await transaction.get(sourceDoc);
+      if (!sourceSnapshot.exists || sourceSnapshot.data() == null) {
+        throw DocumentNotFoundException(
+          'Quest $questId not found in game $fromGameId',
+        );
+      }
+
+      final nextData = Map<String, dynamic>.from(sourceSnapshot.data()!);
+      nextData['gameId'] = toGameId;
+      nextData['dateUpdated'] = FieldValue.serverTimestamp();
+      nextData.remove('id');
+
+      transaction.set(targetDoc, nextData);
+      transaction.delete(sourceDoc);
+    });
   }
 
   Future<void> deleteQuest(String userId, String gameId, String questId) {
