@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/user_profile_providers.dart';
-import 'package:xp_todo_app/theme/app_theme.dart';
 
 class ProfileOverviewPanel extends ConsumerWidget {
   final String userId;
@@ -88,16 +87,18 @@ class _ProfileHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF14243C), Color(0xFF1A2035)],
+          colors: [colorScheme.primaryContainer, colorScheme.surface],
         ),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border(context)),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Row(
         children: [
@@ -105,11 +106,11 @@ class _ProfileHeroCard extends StatelessWidget {
             width: 54,
             height: 54,
             decoration: BoxDecoration(
-              color: AppColors.bgElevated(context),
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: AppColors.accentBlue),
+              border: Border.all(color: colorScheme.primary),
             ),
-            child: const Icon(Icons.person, color: AppColors.accentBlue),
+            child: Icon(Icons.person, color: colorScheme.primary),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -118,28 +119,28 @@ class _ProfileHeroCard extends StatelessWidget {
               children: [
                 Text(
                   displayName,
-                  style: TextStyle(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontFamily: 'Rajdhani',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary(context),
+                    color: colorScheme.onSurface,
                     letterSpacing: 1,
                   ),
                 ),
                 Text(
                   roleLabel,
-                  style: TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontFamily: 'ShareTechMono',
                     fontSize: 10,
-                    color: AppColors.accentBlue,
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   email,
-                  style: TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 11,
-                    color: AppColors.textSecondary(context),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                 ),
               ],
@@ -159,22 +160,24 @@ class _ProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final pct = (progress * 100).clamp(0, 100).toInt();
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.bgCard(context),
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border(context)),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Overall Completion',
-            style: TextStyle(
-              color: AppColors.textSecondary(context),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withValues(alpha: 0.72),
               fontFamily: 'ShareTechMono',
               fontSize: 10,
               letterSpacing: 1.2,
@@ -186,8 +189,8 @@ class _ProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               minHeight: 7,
               value: progress,
-              color: AppColors.accentBlue,
-              backgroundColor: AppColors.border(context),
+              color: colorScheme.primary,
+              backgroundColor: colorScheme.outline,
             ),
           ),
           const SizedBox(height: 6),
@@ -195,9 +198,9 @@ class _ProgressCard extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               '$pct%',
-              style: const TextStyle(
+              style: theme.textTheme.bodySmall?.copyWith(
                 fontFamily: 'ShareTechMono',
-                color: AppColors.accentGold,
+                color: colorScheme.secondary,
                 fontSize: 10,
               ),
             ),
@@ -216,27 +219,29 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.bgCard(context),
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border(context)),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,
-            style: TextStyle(
-              color: AppColors.textSecondary(context),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface.withValues(alpha: 0.72),
               fontSize: 12,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
-              color: AppColors.textPrimary(context),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface,
               fontFamily: 'Rajdhani',
               fontSize: 14,
               fontWeight: FontWeight.w700,

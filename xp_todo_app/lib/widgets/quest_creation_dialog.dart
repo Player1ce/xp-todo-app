@@ -29,6 +29,8 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final questActionNotifier = ref.read(questActionProvider.notifier);
     final String userId = ref.watch(
       requiredAuthStateProvider.select((authState) => authState.uid),
@@ -44,8 +46,8 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     if (activeGamesAsync.isLoading) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: const Color(0xFF1a2035),
-        child: const Padding(
+        backgroundColor: colorScheme.surface,
+        child: Padding(
           padding: EdgeInsets.all(24),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -56,7 +58,12 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
               SizedBox(width: 12),
-              Text('Loading active games...'),
+              Text(
+                'Loading active games...',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
         ),
@@ -66,10 +73,15 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     if (activeGamesAsync.hasError) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: const Color(0xFF1a2035),
-        child: const Padding(
+        backgroundColor: colorScheme.surface,
+        child: Padding(
           padding: EdgeInsets.all(24),
-          child: Text('Failed to load games. Please try again.'),
+          child: Text(
+            'Failed to load games. Please try again.',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface,
+            ),
+          ),
         ),
       );
     }
@@ -78,10 +90,15 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     if (activeGames.isEmpty) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: const Color(0xFF1a2035),
-        child: const Padding(
+        backgroundColor: colorScheme.surface,
+        child: Padding(
           padding: EdgeInsets.all(24),
-          child: Text('No active games found. Activate a game first.'),
+          child: Text(
+            'No active games found. Activate a game first.',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface,
+            ),
+          ),
         ),
       );
     }
@@ -96,7 +113,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: const Color(0xFF1a2035), // matches design reference
+      backgroundColor: colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -107,15 +124,15 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.add_box, color: Color(0xFF4d9fff)),
+                  Icon(Icons.add_box, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     'Create New Quest',
-                    style: TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontFamily: 'Rajdhani',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFe8eaf2),
+                      color: colorScheme.onSurface,
                       letterSpacing: 2,
                     ),
                   ),
@@ -127,13 +144,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                   labelText: 'Title',
                   labelStyle: TextStyle(
                     fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF161b27),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
+                    borderSide: BorderSide(color: colorScheme.outline),
                   ),
                 ),
                 validator: (value) =>
@@ -146,13 +163,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                   labelText: 'Description',
                   labelStyle: TextStyle(
                     fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF161b27),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
+                    borderSide: BorderSide(color: colorScheme.outline),
                   ),
                 ),
                 maxLines: 1,
@@ -167,13 +184,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                   labelText: 'Game',
                   labelStyle: TextStyle(
                     fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF161b27),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
+                    borderSide: BorderSide(color: colorScheme.outline),
                   ),
                 ),
                 items: activeGames
@@ -196,13 +213,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                   labelText: 'Difficulty',
                   labelStyle: TextStyle(
                     fontFamily: 'Rajdhani',
-                    color: Color(0xFF8a9bc0),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF161b27),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: Color(0xFF2a3550)),
+                    borderSide: BorderSide(color: colorScheme.outline),
                   ),
                 ),
                 items: Difficulty.values
@@ -230,13 +247,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                         labelText: 'XP Reward',
                         labelStyle: TextStyle(
                           fontFamily: 'Rajdhani',
-                          color: Color(0xFF8a9bc0),
+                          color: colorScheme.onSurface.withValues(alpha: 0.72),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF161b27),
+                        fillColor: colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: Color(0xFF2a3550)),
+                          borderSide: BorderSide(color: colorScheme.outline),
                         ),
                       ),
                       validator: (value) {
@@ -258,13 +275,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                         labelText: 'Level',
                         labelStyle: TextStyle(
                           fontFamily: 'Rajdhani',
-                          color: Color(0xFF8a9bc0),
+                          color: colorScheme.onSurface.withValues(alpha: 0.72),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF161b27),
+                        fillColor: colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide: BorderSide(color: Color(0xFF2a3550)),
+                          borderSide: BorderSide(color: colorScheme.outline),
                         ),
                       ),
                       validator: (value) {
@@ -287,9 +304,9 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                       _expireDate == null
                           ? 'No expiration date selected'
                           : 'Expires: ${MaterialLocalizations.of(context).formatMediumDate(_expireDate!)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Rajdhani',
-                        color: Color(0xFF8a9bc0),
+                        color: colorScheme.onSurface.withValues(alpha: 0.72),
                       ),
                     ),
                   ),
@@ -323,8 +340,8 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4d9fff),
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -367,7 +384,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                           if (context.mounted) Navigator.of(context).pop();
                         },
                   child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? CircularProgressIndicator(color: colorScheme.onPrimary)
                       : const Text('Create Quest'),
                 ),
               ),

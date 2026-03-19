@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
-import 'package:xp_todo_app/theme/app_theme.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -19,14 +18,16 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = AppColors.bgCard(context);
-    final borderColor = AppColors.border(context);
-    final textColor = AppColors.textPrimary(context);
-    final dimColor = AppColors.textDim(context);
-    final shadowColor = isDark
-        ? Colors.black.withValues(alpha: 0.22)
-        : Colors.black.withValues(alpha: 0.10);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = colorScheme.surface;
+    final borderColor = colorScheme.outline;
+    final textColor = colorScheme.onSurface;
+    final dimColor = colorScheme.onSurface.withValues(alpha: 0.56);
+    final shadowColor = colorScheme.shadow.withValues(
+      alpha: isDark ? 0.22 : 0.10,
+    );
     final progress = _normalizedCompletion(game.completionPercentage);
 
     return GestureDetector(
@@ -92,10 +93,10 @@ class GameCard extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [
-                              AppColors.accentBlueDark,
-                              AppColors.accentBlue,
+                              colorScheme.primaryContainer,
+                              colorScheme.primary,
                             ],
                           ),
                           borderRadius: BorderRadius.circular(2),
@@ -305,10 +306,15 @@ class _GameCover extends StatelessWidget {
   }
 
   Widget _gradientPlaceholder(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final gradientColors = isDark
-        ? const [Color(0xFF1A2A50), Color(0xFF0E1520)]
-        : const [Color(0xFFDCE8FF), Color(0xFFEEF3FF)];
+        ? [colorScheme.primaryContainer, colorScheme.surface]
+        : [
+            colorScheme.primaryContainer.withValues(alpha: 0.35),
+            colorScheme.surface,
+          ];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -322,7 +328,7 @@ class _GameCover extends StatelessWidget {
         child: Icon(
           Icons.videogame_asset_rounded,
           size: 22,
-          color: AppColors.textDim(context),
+          color: colorScheme.onSurface.withValues(alpha: 0.56),
         ),
       ),
     );
@@ -337,12 +343,11 @@ class _ActiveBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = isActive
-        ? AppColors.accentGreen
-        : AppColors.borderBright(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = isActive ? colorScheme.primary : colorScheme.outline;
     final iconColor = isActive
-        ? AppColors.accentGreen
-        : AppColors.textDim(context);
+        ? colorScheme.primary
+        : colorScheme.onSurface.withValues(alpha: 0.56);
 
     return InkWell(
       onTap: onTap == null ? null : () => onTap!(!isActive),
@@ -351,7 +356,7 @@ class _ActiveBadge extends StatelessWidget {
         width: 20,
         height: 20,
         decoration: BoxDecoration(
-          color: AppColors.bgPrimary(context).withValues(alpha: 0.86),
+          color: colorScheme.surface.withValues(alpha: 0.86),
           shape: BoxShape.circle,
           border: Border.all(color: borderColor),
         ),
@@ -372,13 +377,14 @@ class _GameCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final block = AppColors.border(context).withValues(alpha: 0.35);
+    final colorScheme = Theme.of(context).colorScheme;
+    final block = colorScheme.outline.withValues(alpha: 0.35);
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.bgCard(context),
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border(context)),
+        border: Border.all(color: colorScheme.outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -417,14 +423,15 @@ class _GameCardError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.bgCard(context),
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.accentRed.withValues(alpha: 0.45)),
+        border: Border.all(color: colorScheme.error.withValues(alpha: 0.45)),
       ),
-      child: const Center(
-        child: Icon(Icons.error_outline_rounded, color: AppColors.accentRed),
+      child: Center(
+        child: Icon(Icons.error_outline_rounded, color: colorScheme.error),
       ),
     );
   }

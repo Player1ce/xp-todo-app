@@ -6,7 +6,6 @@ import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/firebase_providers.dart';
 import 'package:xp_todo_app/providers/go_router_provider.dart';
-import 'package:xp_todo_app/providers/user_profile_providers.dart';
 import 'package:xp_todo_app/util/enums/user_role.dart';
 import 'package:xp_todo_app/widgets/profile_overview_panel.dart';
 import 'package:xp_todo_app/widgets/sign_in_required_widget.dart';
@@ -17,7 +16,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    // final router = ref.watch(routerProvider);
     final userRolesAsync = ref.watch(userRolesProvider());
 
     return authState.when(
@@ -34,36 +32,23 @@ class ProfileScreen extends ConsumerWidget {
           orElse: () => false,
         );
 
-        // return AdaptiveScaffold(
-        return Scaffold(
-          // appBar: AsaptiveAppBar(
-          appBar: AppBar(
-            // backgroundColor: Colors.red,
-            title: Text("Profile"),
+        return AdaptiveScaffold(
+          appBar: AdaptiveAppBar(
+            title: "Profile",
             actions: [
-              // logout
-              // AdaptiveAppBarAction(
-              IconButton(
+              AdaptiveAppBarAction(
                 onPressed: () {
                   ref.read(firebaseAuthProvider).signOut();
                 },
-                icon: Icon(Icons.logout),
-                // iosSymbol: 'rectangle.portrait.and.arrow.right',
-                // title: "Logout",
+                icon: Icons.logout,
+                title: "Logout",
               ),
               if (isAdmin)
-                // AdaptiveAppBarAction(
-                // AdaptiveAppBarAction(
-                IconButton(
+                AdaptiveAppBarAction(
                   onPressed: () async {
-                    await ref
-                        .read(goRouterProvider)
-                        .push(RouteConstants.adminPage);
+                    await context.push(RouteConstants.adminPage);
                   },
-                  icon: Icon(Icons.admin_panel_settings),
-
-                  // iosSymbol: 'person.crop.circle.badge.exclam',
-                  // title: "Admin Page",
+                  icon: Icons.admin_panel_settings,
                 ),
             ],
           ), // TODO: center app bar text

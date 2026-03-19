@@ -7,7 +7,6 @@ import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/providers/todo_ui_providers.dart';
 import 'package:xp_todo_app/providers/user_profile_providers.dart';
-import 'package:xp_todo_app/theme/app_theme.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/widgets/todo_item_card.dart';
 
@@ -68,6 +67,8 @@ class _TodoListContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final questsAsync = ref.watch(questsProvider(userId, selectedGame.id));
     final segment = ref.watch(todoFilterProvider);
 
@@ -80,22 +81,22 @@ class _TodoListContent extends ConsumerWidget {
             children: [
               Text(
                 'Active Quests',
-                style: TextStyle(
+                style: theme.textTheme.displayLarge?.copyWith(
                   fontFamily: 'Rajdhani',
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2.2,
-                  color: AppColors.textPrimary(context),
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 3),
               Text(
                 'Track and complete your current objectives',
-                style: TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: 'ShareTechMono',
                   fontSize: 10,
                   letterSpacing: 1.2,
-                  color: AppColors.textSecondary(context),
+                  color: colorScheme.onSurface.withValues(alpha: 0.72),
                 ),
               ),
               const SizedBox(height: 10),
@@ -164,10 +165,13 @@ class _TodoListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (quests.isEmpty) {
+      final color = Theme.of(context).colorScheme.onSurface.withValues(
+        alpha: 0.72,
+      );
       return Center(
         child: Text(
           'No quests in this segment.',
-          style: TextStyle(color: AppColors.textSecondary(context)),
+          style: TextStyle(color: color),
         ),
       );
     }
@@ -252,13 +256,16 @@ class _EmptyTodoState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.onSurface.withValues(
+      alpha: 0.72,
+    );
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Text(
           'No active games found. Create and activate a game in Library first.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: AppColors.textSecondary(context)),
+          style: TextStyle(color: color),
         ),
       ),
     );

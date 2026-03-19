@@ -2,20 +2,22 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
-import 'package:xp_todo_app/theme/app_theme.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0A0E14), Color(0xFF101826)],
+            colors: [theme.scaffoldBackgroundColor, colorScheme.surface],
           ),
         ),
         child: SafeArea(
@@ -26,25 +28,11 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'QuestLog',
-                      style: TextStyle(
-                        fontFamily: 'Rajdhani',
-                        fontSize: 34,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2.4,
-                        color: AppColors.textPrimary(context),
-                      ),
-                    ),
+                    Text('QuestLog', style: theme.textTheme.displayLarge),
                     const SizedBox(height: 4),
                     Text(
                       'Sign in to continue your progression',
-                      style: TextStyle(
-                        fontFamily: 'ShareTechMono',
-                        fontSize: 11,
-                        letterSpacing: 1.2,
-                        color: AppColors.textSecondary(context),
-                      ),
+                      style: theme.textTheme.bodySmall,
                     ),
                   ],
                 ),
@@ -61,11 +49,7 @@ class LoginScreen extends StatelessWidget {
                       action == AuthAction.signIn
                           ? 'Use email + password to enter your quest log.'
                           : 'Create your account to start tracking quests.',
-                      style: TextStyle(
-                        color: AppColors.textSecondary(context),
-                        fontFamily: 'ExoTwo',
-                        fontSize: 12,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
                     );
                   },
                 ),

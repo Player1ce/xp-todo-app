@@ -52,10 +52,12 @@ BottomNavigationBar getCustomPageViewAndroidNavigationBar(
   PageLayout pageLayout,
   int currentIndex,
 ) {
+  final theme = Theme.of(context);
   return BottomNavigationBar(
     backgroundColor:
-        Theme.of(context).bottomAppBarTheme.color?.withAlpha(100) ??
-        Colors.white.withAlpha(100),
+        theme.bottomNavigationBarTheme.backgroundColor ??
+        theme.bottomAppBarTheme.color ??
+        theme.colorScheme.surface,
     items: pageLayout.pageList
         .map(
           (pageData) => BottomNavigationBarItem(

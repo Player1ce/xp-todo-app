@@ -45,10 +45,12 @@ BottomNavigationBar getCustomAndroidNavigationBar(
   BuildContext context, [
   List<(String, String, String, IconData)> navBarList = homeNavBarList,
 ]) {
+  final theme = Theme.of(context);
   return BottomNavigationBar(
     backgroundColor:
-        Theme.of(context).bottomAppBarTheme.color?.withAlpha(100) ??
-        Colors.white.withAlpha(100),
+        theme.bottomNavigationBarTheme.backgroundColor ??
+        theme.bottomAppBarTheme.color ??
+        theme.colorScheme.surface,
     items: [
       for (int index = 0; index < navBarList.length; index++)
         BottomNavigationBarItem(

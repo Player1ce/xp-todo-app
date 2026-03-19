@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
-import 'package:xp_todo_app/theme/app_theme.dart';
 
 class TodoItemCard extends StatelessWidget {
   final Quest quest;
@@ -10,6 +9,8 @@ class TodoItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final dueDate = quest.expireDate;
     final isOverdue = dueDate != null && dueDate.isBefore(DateTime.now());
 
@@ -20,9 +21,9 @@ class TodoItemCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.fromLTRB(11, 10, 11, 10),
         decoration: BoxDecoration(
-          color: AppColors.bgCard(context),
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.border(context)),
+          border: Border.all(color: colorScheme.outline),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +33,7 @@ class TodoItemCard extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2),
-                color: isOverdue ? AppColors.accentRed : AppColors.accentBlue,
+                color: isOverdue ? colorScheme.error : colorScheme.primary,
               ),
             ),
             const SizedBox(width: 10),
@@ -44,11 +45,11 @@ class TodoItemCard extends StatelessWidget {
                     quest.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontFamily: 'ExoTwo',
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary(context),
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -61,10 +62,10 @@ class TodoItemCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         'LVL ${quest.level}',
-                        style: TextStyle(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           fontFamily: 'ShareTechMono',
                           fontSize: 9,
-                          color: AppColors.textDim(context),
+                          color: colorScheme.onSurface.withValues(alpha: 0.56),
                         ),
                       ),
                     ],
@@ -78,10 +79,10 @@ class TodoItemCard extends StatelessWidget {
               children: [
                 Text(
                   '+${quest.xpReward} XP',
-                  style: const TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontFamily: 'ShareTechMono',
                     fontSize: 11,
-                    color: AppColors.accentGold,
+                    color: colorScheme.secondary,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -89,12 +90,12 @@ class TodoItemCard extends StatelessWidget {
                   dueDate == null
                       ? 'No due date'
                       : '${_monthLabel(dueDate.month)} ${dueDate.day}',
-                  style: TextStyle(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontFamily: 'ShareTechMono',
                     fontSize: 9,
                     color: isOverdue
-                        ? AppColors.accentRed
-                        : AppColors.textDim(context),
+                        ? colorScheme.error
+                        : colorScheme.onSurface.withValues(alpha: 0.56),
                   ),
                 ),
               ],
