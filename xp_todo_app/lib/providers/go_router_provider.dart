@@ -6,6 +6,7 @@ import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/screens/admin_page.dart';
+import 'package:xp_todo_app/screens/game_detail_page.dart';
 import 'package:xp_todo_app/screens/login_screen.dart';
 import 'package:xp_todo_app/screens/page_view_home_screen.dart';
 import 'package:xp_todo_app/screens/settings_screen.dart';
@@ -82,13 +83,16 @@ GoRouter goRouter(Ref ref) {
         path: RouteConstants.adminPage,
         builder: (context, state) => const AdminPage(),
       ),
-      // GoRoute(
-      //   path: RouteConstants.gameView,
-      //   builder: (context, state) {
-      //     final gameId = state.pathParameters['gameId']!;
-      //     return GameViewPage(gameId: gameId);
-      //   },
-      // ),
+      GoRoute(
+        path: RouteConstants.gameView,
+        builder: (context, state) {
+          final gameId = state.pathParameters['gameId']!;
+          // TODO: this might be a problem check that this is ok
+          final userId = ref.watch(requiredActiveUserIdProvider);
+          // TODO: shoudl we change this to use active userid instead?
+          return GameDetailPage(userId: userId, gameId: gameId);
+        },
+      ),
       // GoRoute(
       //   path: RouteConstants.editProfile,
       //   builder: (context, state) => const EditProfilePage(),

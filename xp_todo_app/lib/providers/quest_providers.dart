@@ -34,6 +34,8 @@ Stream<List<Quest>> incompleteGameQuests(
   return repository.watchIncompleteGameQuests(userId, gameId);
 }
 
+// TODO: change completed quests to a get instead of a watch for better performance
+//  (will require a lot fo other steps too)
 @riverpod
 Stream<List<Quest>> completedUserQuests(Ref ref, String userId) {
   final repository = ref.watch(questRepositoryProvider);

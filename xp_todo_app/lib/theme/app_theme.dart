@@ -270,8 +270,9 @@ class AppMaterialTheme {
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.accentGreen;
+          }
           return Colors.transparent;
         }),
         side: const BorderSide(color: AppColors.borderBrightDark, width: 1.5),
@@ -283,8 +284,9 @@ class AppMaterialTheme {
           return AppColors.textDimDark;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.accentBlue;
+          }
           return AppColors.borderBrightDark;
         }),
       ),
@@ -406,8 +408,9 @@ class AppMaterialTheme {
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.accentGreen;
+          }
           return Colors.transparent;
         }),
         side: const BorderSide(color: AppColors.borderBrightLight, width: 1.5),
@@ -419,8 +422,9 @@ class AppMaterialTheme {
           return AppColors.textDimLight;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected))
+          if (states.contains(WidgetState.selected)) {
             return AppColors.accentBlue;
+          }
           return AppColors.borderBrightLight;
         }),
       ),

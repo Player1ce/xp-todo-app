@@ -22,7 +22,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
   String _title = '';
   String _imageUrl = '';
   String _description = '';
-  Difficulty _difficulty = Difficulty.normal;
+  Difficulty _difficulty = Difficulty.medium;
 
   bool _isSubmitting = false;
 
@@ -95,7 +95,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                     )
                     .toList(),
                 onChanged: (d) =>
-                    setState(() => _difficulty = d ?? Difficulty.normal),
+                    setState(() => _difficulty = d ?? Difficulty.medium),
               ),
               const SizedBox(height: 24),
               SizedBox(

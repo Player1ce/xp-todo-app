@@ -24,7 +24,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   final FocusNode _levelFocusNode = FocusNode();
   String _title = '';
   String _description = '';
-  Difficulty _difficulty = Difficulty.normal;
+  Difficulty _difficulty = Difficulty.easy;
   String _xpReward = '100';
   String _level = '1';
   DateTime? _expireDate;
@@ -204,8 +204,8 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 1,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Required' : null,
+                // validator: (value) =>
+                // value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _description = value),
                 onFieldSubmitted: (_) {
                   _xpFocusNode.requestFocus();
@@ -241,7 +241,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                     )
                     .toList(),
                 onChanged: (d) =>
-                    setState(() => _difficulty = d ?? Difficulty.normal),
+                    setState(() => _difficulty = d ?? Difficulty.medium),
               ),
               const SizedBox(height: 12),
               Row(

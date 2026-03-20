@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 enum Difficulty {
   trivial,
   easy,
-  normal,
+  medium,
   hard,
   extreme; // Difficulties ordered from easies to hardest so index can be used for comparison
 
   static const defaultValue =
-      Difficulty.normal; // default to normal if there is an error
+      Difficulty.easy; // default to easy if there is an error
 
   // Serialize to Firestore
   String toStorage() {
@@ -21,6 +21,10 @@ enum Difficulty {
       debugPrint(
         'Warning: Difficulty value is null in fromStorage, defaulting to normal',
       );
+    }
+
+    if (value == 'normal') {
+      return Difficulty.medium;
     }
     return Difficulty.values.byName(value ?? defaultValue.name);
   }
@@ -37,7 +41,7 @@ enum Difficulty {
         return CupertinoColors.systemRed;
       case Difficulty.hard:
         return CupertinoColors.systemOrange;
-      case Difficulty.normal:
+      case Difficulty.medium:
         return CupertinoColors.systemGreen;
       case Difficulty.easy:
         return CupertinoColors.systemYellow;
@@ -52,7 +56,7 @@ enum Difficulty {
       (d) => d.displayName == displayName,
       orElse: () {
         debugPrint(
-          'Difficulty value is null in fromDisplayName, defaulting to normal',
+          'Difficulty value is null in fromDisplayName, defaulting to ${defaultValue.displayName}',
         );
         return defaultValue;
       },
@@ -68,7 +72,7 @@ enum Difficulty {
       (d) => d.difficultyRating == rating,
       orElse: () {
         debugPrint(
-          'Difficulty value is null in fromDifficultyRating, defaulting to normal',
+          'Difficulty value is null in fromDifficultyRating, defaulting to ${defaultValue.displayName}',
         );
         return defaultValue;
       },

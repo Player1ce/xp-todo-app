@@ -197,23 +197,6 @@ class GamesGridView extends ConsumerWidget {
       activeOnly ? activeUserActiveGamesProvider : activeUserGamesProvider,
     );
 
-    // ref.listen<AsyncValue<Game?>>(gameActionProvider, (previous, next) {
-    //   next.whenOrNull(
-    //     data: (game) {
-    //       if (game != null) {
-    //         // createGame completed — navigate to new game
-    //         context.push(game.id);
-    //       }
-    //       // game == null means another action completed — no navigation needed
-    //     },
-    //     error: (e, _) => AdaptiveSnackBar.show(
-    //       context,
-    //       message: 'Something went wrong',
-    //       type: AdaptiveSnackBarType.error,
-    //     ),
-    //   );
-    // });
-
     return gamesAsync.when(
       data: (games) {
         if (games == null || games.isEmpty) {

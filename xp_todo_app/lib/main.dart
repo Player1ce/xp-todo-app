@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,8 +13,29 @@ import 'package:xp_todo_app/providers/go_router_provider.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 
 void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // debugPrint("Initializing Firebase");
+  // try {
+  //   if (Firebase.apps.isEmpty) {
+  //     await Firebase.initializeApp(
+  //       options: DefaultFirebaseOptions.currentPlatform,
+  //     );
+  //   } else {
+  //     Firebase.app();
+  //   }
+  // } on FirebaseException catch (e) {
+  //   if (e.code == 'duplicate-app') {
+  //     Firebase.app();
+  //   } else {
+  //     rethrow;
+  //   }
+  // }
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await _configureFirestoreCache();
+
 
   // TODO: use this to implement top level error catching and display a nice error screen instead of crashing
   // ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -23,6 +45,9 @@ void main() async {
   //   return const _AppErrorWidget();
   // };
   runApp(ProviderScope(child: const MyApp()));
+}
+
+Future<void> _configureFirestoreCache() async {
 }
 
 class MyApp extends ConsumerWidget {
