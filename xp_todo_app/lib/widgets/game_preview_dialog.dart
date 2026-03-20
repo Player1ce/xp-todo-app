@@ -99,8 +99,7 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
             ),
           ],
         ),
-        content: 
-        SizedBox(
+        content: SizedBox(
           width: 520,
           child: SingleChildScrollView(
             child: Column(
@@ -294,9 +293,9 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
           .read(gameActionProvider.notifier)
           .archiveGame(userId: widget.userId, gameId: widget.game.id);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Game archived.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Game archived.')));
         Navigator.of(context).pop();
       }
     } catch (_) {
@@ -338,10 +337,9 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
     });
 
     try {
-      await ref.read(gameActionProvider.notifier).deleteGame(
-        widget.userId,
-        widget.game.id,
-      );
+      await ref
+          .read(gameActionProvider.notifier)
+          .deleteGame(widget.userId, widget.game.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Game deleted permanently.')),

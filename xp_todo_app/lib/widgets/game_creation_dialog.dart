@@ -22,7 +22,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
   String _title = '';
   String _imageUrl = '';
   String _description = '';
-  Difficulty _difficulty = Difficulty.medium;
+  Difficulty _difficulty = Difficulty.easy;
 
   bool _isSubmitting = false;
 
@@ -66,16 +66,12 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
               const SizedBox(height: 12),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Image URL'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _imageUrl = value),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 1,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Required' : null,
                 onChanged: (value) => setState(() => _description = value),
               ),
               const SizedBox(height: 12),
@@ -95,7 +91,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                     )
                     .toList(),
                 onChanged: (d) =>
-                    setState(() => _difficulty = d ?? Difficulty.medium),
+                    setState(() => _difficulty = d ?? _difficulty),
               ),
               const SizedBox(height: 24),
               SizedBox(

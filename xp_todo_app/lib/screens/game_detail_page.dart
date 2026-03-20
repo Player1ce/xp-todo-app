@@ -1,17 +1,22 @@
 import 'dart:async';
 
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/providers/quest_ui_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
+import 'package:xp_todo_app/widgets/quest_creation_dialog.dart';
 import 'package:xp_todo_app/widgets/quest_item_card.dart';
 import 'package:xp_todo_app/widgets/quest_preview_dialog.dart';
 
+// TODO:!!!!!! need to fix archive and delete buttons
 class GameDetailPage extends ConsumerStatefulWidget {
   final String userId;
   final String gameId;
@@ -73,9 +78,9 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
               Navigator.of(this.context).pop();
             }
           },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(game.title),
+          child: AdaptiveScaffold(
+            appBar: AdaptiveAppBar(
+              title: game.title,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () async {
@@ -86,17 +91,32 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
                 },
               ),
               actions: [
-                IconButton(
-                  tooltip: 'Archive game',
-                  onPressed: _isSaving ? null : () => _archiveGame(game.id),
-                  icon: const Icon(Icons.inventory_2_outlined),
+                // IconButton(
+                AdaptiveAppBarAction(
+                  // tooltip: 'Archive game',
+                  onPressed: () =>
+                      _isSaving ? null : () => _archiveGame(game.id),
+                  icon: Icons.inventory_2_outlined,
                 ),
-                IconButton(
-                  tooltip: 'Delete game',
-                  onPressed: _isSaving ? null : () => _deleteGame(game.id),
-                  icon: const Icon(Icons.delete_outline),
+                // IconButton(
+                AdaptiveAppBarAction(
+                  // tooltip: 'Delete game',
+                  onPressed: () =>
+                      _isSaving ? null : () => _deleteGame(game.id),
+                  icon: Icons.delete_outline,
                 ),
               ],
+            ),
+            floatingActionButton: AdaptiveFloatingActionButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) =>
+                      QuestCreationDialog(selectedGameId: game.id),
+                );
+              },
+              tooltip: 'Create New Quest',
+              child: const Icon(Icons.add),
             ),
             body: _GameDetailContent(
               userId: widget.userId,
@@ -386,9 +406,14 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
           .read(gameActionProvider.notifier)
           .archiveGame(userId: widget.userId, gameId: gameId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Game archived.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Game archived.')));
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          context.go(RouteConstants.gameLibrary);
+        }
       }
     } catch (_) {
       if (mounted) {

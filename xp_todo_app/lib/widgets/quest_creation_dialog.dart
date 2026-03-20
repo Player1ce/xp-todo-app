@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
@@ -102,7 +103,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     final String userId = ref.watch(
       requiredAuthStateProvider.select((authState) => authState.uid),
     )!;
-    final activeGamesAsync = ref.watch(activeGamesProvider(userId));
+    final activeGamesAsync = ref.watch(activeUserActiveGamesProvider);
 
     listenForProviderErrors(
       widgetRef: ref,
@@ -147,6 +148,18 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     }
 
     final activeGames = activeGamesAsync.asData?.value ?? const [];
+    if (widget.selectedGameId != null &&
+        !activeGames.any((game) => game.id == widget.selectedGameId)) {
+      final directSelectedGame = ref.watch(
+        activeUserGameProvider(widget.selectedGameId!),
+      );
+      directSelectedGame.whenData((game) {
+        if (game != null) {
+          activeGames.add(game);
+        }
+      });
+    }
+
     if (activeGames.isEmpty) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
