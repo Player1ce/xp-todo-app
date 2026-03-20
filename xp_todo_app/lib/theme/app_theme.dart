@@ -144,12 +144,12 @@ class AppTypography {
 
       // Share Tech Mono data labels and values.
       labelLarge: GoogleFonts.shareTechMono(
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         color: primary,
       ),
       labelMedium: GoogleFonts.shareTechMono(
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: FontWeight.w400,
         letterSpacing: 1.2,
         color: secondary,
@@ -157,7 +157,7 @@ class AppTypography {
 
       // Rajdhani micro labels/tags.
       labelSmall: GoogleFonts.rajdhani(
-        fontSize: 8,
+        fontSize: 9,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.8,
         color: secondary,
