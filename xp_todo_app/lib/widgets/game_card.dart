@@ -177,6 +177,11 @@ class ActiveUSerProviderGameCard extends ConsumerWidget {
 }
 
 class GamesGridView extends ConsumerWidget {
+  static const double _maxCardWidth = 240;
+  static const double _gridSpacing = 12;
+  static const double _cardAspectRatio = 0.67;
+  static const double _maxContentWidth = 1280;
+
   final bool activeOnly;
   final EdgeInsetsGeometry padding;
   final ValueChanged<Game>? onGameTap;
@@ -203,15 +208,8 @@ class GamesGridView extends ConsumerWidget {
           return const Center(child: Text('No games yet.'));
         }
 
-        return GridView.builder(
-          padding: padding,
+        return _buildConstrainedGrid(
           itemCount: games.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
-            childAspectRatio: 0.67,
-          ),
           itemBuilder: (context, index) {
             final game = games[index];
             return GameCard(
@@ -235,21 +233,36 @@ class GamesGridView extends ConsumerWidget {
           },
         );
       },
-      loading: () => GridView.builder(
-        padding: padding,
+      loading: () => _buildConstrainedGrid(
         itemCount: 6,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 0.67,
-        ),
         itemBuilder: (_, _) => const _GameCardSkeleton(),
       ),
       error: (error, _) => Center(
         child: Text(
           'Failed to load games: $error',
           textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConstrainedGrid({
+    required int itemCount,
+    required Widget Function(BuildContext context, int index) itemBuilder,
+  }) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+        child: GridView.builder(
+          padding: padding,
+          itemCount: itemCount,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: _maxCardWidth,
+            mainAxisSpacing: _gridSpacing,
+            crossAxisSpacing: _gridSpacing,
+            childAspectRatio: _cardAspectRatio,
+          ),
+          itemBuilder: itemBuilder,
         ),
       ),
     );

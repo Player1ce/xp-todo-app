@@ -1,3 +1,9 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "chat.tools.terminal.autoApprove": {
+        "/^flutter analyze$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }
