@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 
-part 'todo_ui_providers.g.dart';
+part 'quest_ui_providers.g.dart';
 
 @Riverpod(keepAlive: true)
-class SelectedTodoGameId extends _$SelectedTodoGameId {
+class SelectedQuestGameId extends _$SelectedQuestGameId {
   @override
   String? build() {
     ref.watch(activeUserIdProvider);
@@ -33,14 +33,14 @@ class PageState {
       PageState(value: json['value'], counter: json['counter']);
 }
 
-enum TodoSegment { all, overdue, upcoming, undated }
+enum QuestSegment { all, overdue, upcoming, undated }
 
 @riverpod
-class TodoFilter extends _$TodoFilter {
+class QuestFilter extends _$QuestFilter {
   @override
-  TodoSegment build() => TodoSegment.all;
+  QuestSegment build() => QuestSegment.all;
 
-  void setSegment(TodoSegment segment) {
+  void setSegment(QuestSegment segment) {
     state = segment;
   }
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'todo_ui_providers.dart';
+part of 'quest_ui_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,28 +9,28 @@ part of 'todo_ui_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(SelectedTodoGameId)
-final selectedTodoGameIdProvider = SelectedTodoGameIdProvider._();
+@ProviderFor(SelectedQuestGameId)
+final selectedQuestGameIdProvider = SelectedQuestGameIdProvider._();
 
-final class SelectedTodoGameIdProvider
-    extends $NotifierProvider<SelectedTodoGameId, String?> {
-  SelectedTodoGameIdProvider._()
+final class SelectedQuestGameIdProvider
+    extends $NotifierProvider<SelectedQuestGameId, String?> {
+  SelectedQuestGameIdProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'selectedTodoGameIdProvider',
+        name: r'selectedQuestGameIdProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$selectedTodoGameIdHash();
+  String debugGetCreateSourceHash() => _$selectedQuestGameIdHash();
 
   @$internal
   @override
-  SelectedTodoGameId create() => SelectedTodoGameId();
+  SelectedQuestGameId create() => SelectedQuestGameId();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String? value) {
@@ -41,10 +41,10 @@ final class SelectedTodoGameIdProvider
   }
 }
 
-String _$selectedTodoGameIdHash() =>
-    r'e2ace3a7c8503244852339e93486b6dc274997a0';
+String _$selectedQuestGameIdHash() =>
+    r'84ef0c497bb6907b1219deac0e9c6e7932b645c8';
 
-abstract class _$SelectedTodoGameId extends $Notifier<String?> {
+abstract class _$SelectedQuestGameId extends $Notifier<String?> {
   String? build();
   @$mustCallSuper
   @override
@@ -62,51 +62,51 @@ abstract class _$SelectedTodoGameId extends $Notifier<String?> {
   }
 }
 
-@ProviderFor(TodoFilter)
-final todoFilterProvider = TodoFilterProvider._();
+@ProviderFor(QuestFilter)
+final questFilterProvider = QuestFilterProvider._();
 
-final class TodoFilterProvider
-    extends $NotifierProvider<TodoFilter, TodoSegment> {
-  TodoFilterProvider._()
+final class QuestFilterProvider
+    extends $NotifierProvider<QuestFilter, QuestSegment> {
+  QuestFilterProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'todoFilterProvider',
+        name: r'questFilterProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$todoFilterHash();
+  String debugGetCreateSourceHash() => _$questFilterHash();
 
   @$internal
   @override
-  TodoFilter create() => TodoFilter();
+  QuestFilter create() => QuestFilter();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(TodoSegment value) {
+  Override overrideWithValue(QuestSegment value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<TodoSegment>(value),
+      providerOverride: $SyncValueProvider<QuestSegment>(value),
     );
   }
 }
 
-String _$todoFilterHash() => r'acb7f968647cd09033f6d853828e71bd233bc678';
+String _$questFilterHash() => r'fb604dc314ea93a34bda41b2405e69f9d1a0a0d1';
 
-abstract class _$TodoFilter extends $Notifier<TodoSegment> {
-  TodoSegment build();
+abstract class _$QuestFilter extends $Notifier<QuestSegment> {
+  QuestSegment build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<TodoSegment, TodoSegment>;
+    final ref = this.ref as $Ref<QuestSegment, QuestSegment>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<TodoSegment, TodoSegment>,
-              TodoSegment,
+              AnyNotifier<QuestSegment, QuestSegment>,
+              QuestSegment,
               Object?,
               Object?
             >;

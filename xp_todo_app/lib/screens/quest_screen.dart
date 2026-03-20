@@ -2,10 +2,10 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/widgets/quest_creation_dialog.dart';
-import 'package:xp_todo_app/widgets/todo_list_panel.dart';
+import 'package:xp_todo_app/widgets/quest_list_panel.dart';
 
-class TodoScreen extends ConsumerWidget {
-  const TodoScreen({super.key});
+class QuestScreen extends ConsumerWidget {
+  const QuestScreen({super.key});
 
   // TODO: quest retrievela needs to be optimized in some way. Right now doing it by game workds, but it makes the todo page feel bad
   //  Lets update todo page to display a default main game at the top or a chosen main game then have the others collapsed for later expansion?
@@ -14,17 +14,16 @@ class TodoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AdaptiveScaffold(
-      appBar: AdaptiveAppBar(title: "TODO"),
-      body: TodoListPanel(),
+      appBar: AdaptiveAppBar(title: "Quest Log"),
+      body: QuestListPanel(),
       floatingActionButton: AdaptiveFloatingActionButton(
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) =>
-                QuestCreationDialog(),
+            builder: (context) => QuestCreationDialog(),
           );
         },
-        tooltip: 'Create New Game',
+        tooltip: 'Create New Quest',
         child: const Icon(Icons.add),
       ),
     );

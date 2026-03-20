@@ -10,7 +10,7 @@ import 'package:xp_todo_app/util/page_layout.dart';
 
 // mainPage
 Widget _buildMainPage_Games(BuildContext context) => const GamesScreen();
-Widget _buildMainPage_Todo(BuildContext context) => const TodoScreen();
+Widget _buildMainPage_Quest(BuildContext context) => const QuestScreen();
 Widget _buildMainPage_Profile(BuildContext context) => const ProfileScreen();
 
 const mainPageList = [
@@ -26,7 +26,7 @@ const mainPageList = [
     iconString: 'checkmark.square.fill',
     label: 'Quests',
     iconData: CupertinoIcons.check_mark_circled_solid,
-    builder: _buildMainPage_Todo,
+    builder: _buildMainPage_Quest,
   ),
   PageData(
     route: RouteConstants.profile,

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 
-class TodoItemCard extends StatelessWidget {
+class QuestItemCard extends StatelessWidget {
   final Quest quest;
   final VoidCallback? onTap;
   final ValueChanged<bool>? onCompletedChanged;
   final bool isBusy;
 
-  const TodoItemCard({
+  const QuestItemCard({
     super.key,
     required this.quest,
     this.onTap,
@@ -23,8 +23,8 @@ class TodoItemCard extends StatelessWidget {
     final isOverdue = dueDate != null && dueDate.isBefore(DateTime.now());
     final isCompleted = quest.completed;
     final textColor = isCompleted
-      ? colorScheme.onSurface.withValues(alpha: 0.56)
-      : colorScheme.onSurface;
+        ? colorScheme.onSurface.withValues(alpha: 0.56)
+        : colorScheme.onSurface;
 
     return InkWell(
       onTap: onTap,
@@ -182,9 +182,7 @@ class _Tag extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: color,
-        ),
+        style: theme.textTheme.labelSmall?.copyWith(color: color),
       ),
     );
   }

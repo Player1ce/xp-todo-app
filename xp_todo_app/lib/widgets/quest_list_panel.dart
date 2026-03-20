@@ -6,24 +6,24 @@ import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
-import 'package:xp_todo_app/providers/todo_ui_providers.dart';
+import 'package:xp_todo_app/providers/quest_ui_providers.dart';
 import 'package:xp_todo_app/widgets/quest_preview_dialog.dart';
-import 'package:xp_todo_app/widgets/todo_item_card.dart';
+import 'package:xp_todo_app/widgets/quest_item_card.dart';
 
-class TodoListPanel extends ConsumerStatefulWidget {
-  const TodoListPanel({super.key});
+class QuestListPanel extends ConsumerStatefulWidget {
+  const QuestListPanel({super.key});
 
   @override
-  ConsumerState<TodoListPanel> createState() => _TodoListPanelState();
+  ConsumerState<QuestListPanel> createState() => _QuestListPanelState();
 }
 
-class _TodoListPanelState extends ConsumerState<TodoListPanel> {
+class _QuestListPanelState extends ConsumerState<QuestListPanel> {
   void _setSelectedGameId(String nextGameId) {
-    final selectedGameId = ref.read(selectedTodoGameIdProvider);
+    final selectedGameId = ref.read(selectedQuestGameIdProvider);
     if (selectedGameId == nextGameId) {
       return;
     }
-    ref.read(selectedTodoGameIdProvider.notifier).updateValue(nextGameId);
+    ref.read(selectedQuestGameIdProvider.notifier).updateValue(nextGameId);
   }
 
   @override
@@ -31,12 +31,12 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
     // userID is not null here we handle that in the above widget (maybe move that here)
     final userId = ref.watch(requiredAuthStateProvider).uid;
     final gamesAsync = ref.watch(activeUserActiveGamesProvider);
-    final selectedGameId = ref.watch(selectedTodoGameIdProvider);
+    final selectedGameId = ref.watch(selectedQuestGameIdProvider);
 
     return gamesAsync.when(
       data: (games) {
         if (games == null || games.isEmpty) {
-          return _EmptyTodoState(userId: userId);
+          return _EmptyQuestState(userId: userId);
         }
 
         final effectiveSelectedGameId =
@@ -48,7 +48,7 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               ref
-                  .read(selectedTodoGameIdProvider.notifier)
+                  .read(selectedQuestGameIdProvider.notifier)
                   .updateValue(effectiveSelectedGameId);
             }
           });
@@ -57,7 +57,7 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
         final selectedGame = games.firstWhere(
           (g) => g.id == effectiveSelectedGameId,
         );
-        return _TodoListContent(
+        return _QuestListContent(
           userId: userId,
           games: games,
           selectedGame: selectedGame,
@@ -71,14 +71,14 @@ class _TodoListPanelState extends ConsumerState<TodoListPanel> {
   }
 }
 
-class _TodoListContent extends ConsumerStatefulWidget {
+class _QuestListContent extends ConsumerStatefulWidget {
   final String userId;
   final List<Game> games;
   final Game selectedGame;
   final ValueChanged<String> onGameChanged;
 
   // TODO: remove pass in of userID here
-  const _TodoListContent({
+  const _QuestListContent({
     required this.userId,
     required this.games,
     required this.selectedGame,
@@ -86,10 +86,10 @@ class _TodoListContent extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<_TodoListContent> createState() => _TodoListContentState();
+  ConsumerState<_QuestListContent> createState() => _QuestListContentState();
 }
 
-class _TodoListContentState extends ConsumerState<_TodoListContent> {
+class _QuestListContentState extends ConsumerState<_QuestListContent> {
   final Set<String> _busyQuestIds = <String>{};
 
   @override
@@ -100,7 +100,7 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
       activeUserIncompleteGameQuestsProvider(widget.selectedGame.id),
     );
     // TODO: this state probably shouldn't be persisted
-    final segment = ref.watch(todoFilterProvider);
+    final segment = ref.watch(questFilterProvider);
 
     return Column(
       children: [
@@ -129,7 +129,7 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
                 onChanged: widget.onGameChanged,
               ),
               const SizedBox(height: 10),
-              _TodoSegmentControl(current: segment),
+              _QuestSegmentControl(current: segment),
             ],
           ),
         ),
@@ -138,7 +138,7 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
             data: (quests) {
               quests ??= []; // Could be null so set to empty list in that case
               final filtered = _filterQuests(quests, segment);
-              return _TodoListView(
+              return _QuestListView(
                 quests: filtered,
                 isQuestBusy: (questId) => _busyQuestIds.contains(questId),
                 onQuestTap: (quest) {
@@ -277,20 +277,20 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
         );
   }
 
-  List<Quest> _filterQuests(List<Quest> quests, TodoSegment segment) {
+  List<Quest> _filterQuests(List<Quest> quests, QuestSegment segment) {
     final now = DateTime.now();
     final endOfSoon = now.add(const Duration(days: 3));
 
     bool include(Quest quest) {
       final due = quest.expireDate;
       switch (segment) {
-        case TodoSegment.all:
+        case QuestSegment.all:
           return true;
-        case TodoSegment.overdue:
+        case QuestSegment.overdue:
           return due != null && due.isBefore(now);
-        case TodoSegment.upcoming:
+        case QuestSegment.upcoming:
           return due != null && due.isAfter(now) && due.isBefore(endOfSoon);
-        case TodoSegment.undated:
+        case QuestSegment.undated:
           return due == null;
       }
     }
@@ -309,14 +309,14 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
   }
 }
 
-class _TodoListView extends StatelessWidget {
+class _QuestListView extends StatelessWidget {
   final List<Quest> quests;
   final ValueChanged<Quest> onQuestTap;
   final bool Function(String questId) isQuestBusy;
   final Future<void> Function(Quest quest, bool nextCompleted)
   onQuestCompletionChanged;
 
-  const _TodoListView({
+  const _QuestListView({
     required this.quests,
     required this.onQuestTap,
     required this.isQuestBusy,
@@ -343,7 +343,7 @@ class _TodoListView extends StatelessWidget {
       itemCount: quests.length,
       itemBuilder: (context, index) {
         final quest = quests[index];
-        return TodoItemCard(
+        return QuestItemCard(
           quest: quest,
           isBusy: isQuestBusy(quest.id),
           onTap: () => onQuestTap(quest),
@@ -356,36 +356,36 @@ class _TodoListView extends StatelessWidget {
   }
 }
 
-class _TodoSegmentControl extends ConsumerWidget {
-  final TodoSegment current;
+class _QuestSegmentControl extends ConsumerWidget {
+  final QuestSegment current;
 
-  const _TodoSegmentControl({required this.current});
+  const _QuestSegmentControl({required this.current});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CupertinoSlidingSegmentedControl<TodoSegment>(
+    return CupertinoSlidingSegmentedControl<QuestSegment>(
       groupValue: current,
       children: const {
-        TodoSegment.all: Padding(
+        QuestSegment.all: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('All'),
         ),
-        TodoSegment.overdue: Padding(
+        QuestSegment.overdue: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('Overdue'),
         ),
-        TodoSegment.upcoming: Padding(
+        QuestSegment.upcoming: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('Soon'),
         ),
-        TodoSegment.undated: Padding(
+        QuestSegment.undated: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('No Date'),
         ),
       },
       onValueChanged: (next) {
         if (next != null) {
-          ref.read(todoFilterProvider.notifier).setSegment(next);
+          ref.read(questFilterProvider.notifier).setSegment(next);
         }
       },
     );
@@ -421,10 +421,10 @@ class _GameSelector extends StatelessWidget {
   }
 }
 
-class _EmptyTodoState extends StatelessWidget {
+class _EmptyQuestState extends StatelessWidget {
   final String userId;
 
-  const _EmptyTodoState({required this.userId});
+  const _EmptyQuestState({required this.userId});
 
   @override
   Widget build(BuildContext context) {

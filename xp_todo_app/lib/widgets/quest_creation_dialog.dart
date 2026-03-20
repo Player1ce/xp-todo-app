@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
-import 'package:xp_todo_app/providers/todo_ui_providers.dart';
+import 'package:xp_todo_app/providers/quest_ui_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
@@ -35,7 +35,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedGameId = ref.read(selectedTodoGameIdProvider);
+    _selectedGameId = ref.read(selectedQuestGameIdProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _titleFocusNode.requestFocus();
