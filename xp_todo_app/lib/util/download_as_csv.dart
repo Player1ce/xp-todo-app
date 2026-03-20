@@ -12,7 +12,9 @@ Future<void> downloadAsCSV(
   String fileName = "wordUtteranceData",
 ]) async {
   // 1. Generate CSV content
-  final csvData = const CsvEncoder().convert([header, ...dataList]);
+  // note: this used to be final csvData = const CsvEncoder().convert([header, ...dataList]); in VSC: 7.0.0
+  //  but with the upgrade to 8.0.0 the preffered API usage has changed. If testing fails revert to older version
+  final csvData = Csv().encode([header, ...dataList]);
   final timestamp = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
   final fullFileName = '${fileName}_$timestamp.csv';
 
