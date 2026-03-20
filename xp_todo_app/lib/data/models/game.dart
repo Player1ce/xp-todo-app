@@ -8,6 +8,8 @@ import 'package:xp_todo_app/util/time_utils.dart';
 
 class Game extends IFirestoreModel {
   static String collectionName = 'Game';
+  static String gameActiveFieldName = 'isActive';
+  static String gameArchivedFieldName = 'archived';
 
   final String id;
 
@@ -16,6 +18,7 @@ class Game extends IFirestoreModel {
   final String description;
 
   final bool isActive;
+  final bool archived;
   final int totalQuests;
   final int completedQuests;
   final Difficulty difficulty;
@@ -31,6 +34,7 @@ class Game extends IFirestoreModel {
     required this.imageUrl,
     required this.description,
     required this.isActive,
+    this.archived = false,
     required this.totalQuests,
     required this.completedQuests,
     required this.difficulty,
@@ -48,6 +52,7 @@ class Game extends IFirestoreModel {
     String? imageUrl,
     String? description,
     bool? isActive,
+    bool? archived,
     int? totalQuests,
     int? completedQuests,
     Difficulty? difficulty,
@@ -64,6 +69,7 @@ class Game extends IFirestoreModel {
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
       isActive: isActive ?? this.isActive,
+      archived: archived ?? this.archived,
       totalQuests: totalQuests ?? this.totalQuests,
       completedQuests: completedQuests ?? this.completedQuests,
       difficulty: difficulty ?? this.difficulty,
@@ -83,7 +89,8 @@ class Game extends IFirestoreModel {
       'title': title,
       'imageUrl': imageUrl,
       'description': description,
-      'isActive': isActive,
+      gameActiveFieldName: isActive,
+      gameArchivedFieldName: archived,
       'totalQuests': totalQuests,
       'completedQuests': completedQuests,
       'difficulty': difficulty.toStorage(),
@@ -102,7 +109,8 @@ class Game extends IFirestoreModel {
       title: map['title'] as String,
       imageUrl: map['imageUrl'] as String,
       description: map['description'] as String,
-      isActive: map['isActive'] as bool,
+      isActive: map[gameActiveFieldName] as bool,
+      archived: map[gameArchivedFieldName] as bool? ?? false,
       totalQuests: map['totalQuests'] as int,
       completedQuests: map['completedQuests'] as int,
       difficulty: Difficulty.fromStorage(map['difficulty'] as String?),
@@ -138,6 +146,7 @@ class Game extends IFirestoreModel {
     String? imageUrl,
     String? description,
     bool? isActive,
+    bool? archived,
     int? totalQuests,
     int? completedQuests,
     Difficulty? difficulty,
@@ -151,7 +160,8 @@ class Game extends IFirestoreModel {
     if (title != null) map['title'] = title;
     if (imageUrl != null) map['imageUrl'] = imageUrl;
     if (description != null) map['description'] = description;
-    if (isActive != null) map['isActive'] = isActive;
+    if (isActive != null) map[gameActiveFieldName] = isActive;
+    if (archived != null) map[gameArchivedFieldName] = archived;
     if (totalQuests != null) map['totalQuests'] = totalQuests;
     if (completedQuests != null) map['completedQuests'] = completedQuests;
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
@@ -167,7 +177,7 @@ class Game extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'Game(id: $id, title: $title, imageUrl: $imageUrl, description: $description, isActive: $isActive, totalQuests: $totalQuests, completedQuests: $completedQuests, difficulty: $difficulty, availableXP: $availableXP, totalXP: $totalXP, completionPercentage: $completionPercentage)';
+    return 'Game(id: $id, title: $title, imageUrl: $imageUrl, description: $description, isActive: $isActive, archived: $archived, totalQuests: $totalQuests, completedQuests: $completedQuests, difficulty: $difficulty, availableXP: $availableXP, totalXP: $totalXP, completionPercentage: $completionPercentage)';
   }
 
   @override
@@ -179,6 +189,7 @@ class Game extends IFirestoreModel {
         other.imageUrl == imageUrl &&
         other.description == description &&
         other.isActive == isActive &&
+        other.archived == archived &&
         other.totalQuests == totalQuests &&
         other.completedQuests == completedQuests &&
         other.difficulty == difficulty &&
@@ -195,6 +206,7 @@ class Game extends IFirestoreModel {
         imageUrl.hashCode ^
         description.hashCode ^
         isActive.hashCode ^
+        archived.hashCode ^
         totalQuests.hashCode ^
         completedQuests.hashCode ^
         difficulty.hashCode ^

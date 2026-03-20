@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:xp_todo_app/data/models/game.dart';
+import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/data/models/user_profile.dart';
 import 'package:xp_todo_app/data/repositories/i_firestore_repository.dart';
 
@@ -62,9 +63,28 @@ class GameRepository extends IFirestoreRepository {
     return updateDocument(collection(userId), gameId, updates);
   }
 
-  // TODO: update this to also delete all subcollection documents (quests)
-  Future<void> deleteGame(String userId, String gameId) {
-    return deleteDocument(collection(userId), gameId);
+  // TODO: conver to backend bulk dleete if necessary (probably never)
+  //  we can use a rcursive or callable function to clean in the background and that is the best wawy by far here
+
+  Future<void> deleteGame(String userId, String gameId) async {
+    final gameRef = collection(userId).doc(gameId);
+    final questCollection = gameRef.collection(Quest.collectionName);
+    const int batchSize = 500; // Firestore batch limit
+
+    while (true) {
+      final snapshot = await questCollection.limit(batchSize).get();
+      if (snapshot.docs.isEmpty) {
+        break;
+      }
+
+      final batch = firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    }
+
+    await deleteDocument(collection(userId), gameId);
   }
 
   /// Check if user exists
@@ -75,6 +95,14 @@ class GameRepository extends IFirestoreRepository {
   // ------Specific Actions to support app features------------------------------
   Future<void> setGameActive(String userId, String gameId, bool isActive) {
     return updateGame(userId, gameId, Game.createUpdateMap(isActive: isActive));
+  }
+
+  Future<void> archiveGame(String userId, String gameId) {
+    return updateGame(
+      userId,
+      gameId,
+      Game.createUpdateMap(archived: true, isActive: false),
+    );
   }
 
   Future<void> setGameProgressCache({
@@ -116,12 +144,14 @@ class GameRepository extends IFirestoreRepository {
   }
 
   Stream<List<Game>> watchActiveGames(String userId) {
-    return collection(
-      userId,
-    ).where('isActive', isEqualTo: true).snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Game.fromFirestore(doc.id, doc.data()))
-          .toList(growable: false);
-    });
+    return collection(userId)
+        .where(Game.gameArchivedFieldName, isEqualTo: false)
+        .where(Game.gameActiveFieldName, isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Game.fromFirestore(doc.id, doc.data()))
+              .toList(growable: false);
+        });
   }
 }

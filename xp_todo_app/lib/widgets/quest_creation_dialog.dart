@@ -9,7 +9,8 @@ import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
 
 class QuestCreationDialog extends ConsumerStatefulWidget {
-  const QuestCreationDialog({super.key});
+  String? selectedGameId;
+  QuestCreationDialog({super.key, this.selectedGameId});
 
   @override
   ConsumerState<QuestCreationDialog> createState() =>
@@ -35,7 +36,11 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedGameId = ref.read(selectedQuestGameIdProvider);
+    if (widget.selectedGameId != null) {
+      _selectedGameId = widget.selectedGameId;
+    } else {
+      _selectedGameId = ref.read(selectedQuestGameIdProvider);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _titleFocusNode.requestFocus();

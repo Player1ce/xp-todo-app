@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
+import 'package:xp_todo_app/widgets/quest_creation_dialog.dart';
 
 class GamePreviewDialog extends ConsumerStatefulWidget {
   final String userId;
@@ -76,6 +78,16 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
             const SizedBox(width: 8),
             const Expanded(child: Text('Game Preview')),
             IconButton(
+              tooltip: 'Archive game',
+              onPressed: _isSaving ? null : _archiveGame,
+              icon: const Icon(Icons.inventory_2_outlined),
+            ),
+            IconButton(
+              tooltip: 'Delete game',
+              onPressed: _isSaving ? null : _deleteGame,
+              icon: const Icon(Icons.delete_outline),
+            ),
+            IconButton(
               tooltip: 'Close',
               onPressed: () async {
                 final canClose = await _requestClose();
@@ -87,7 +99,8 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
             ),
           ],
         ),
-        content: SizedBox(
+        content: 
+        SizedBox(
           width: 520,
           child: SingleChildScrollView(
             child: Column(
@@ -244,14 +257,147 @@ class _GamePreviewDialogState extends ConsumerState<GamePreviewDialog> {
 
     if (_errorMessage != null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_errorMessage!)));
       }
       return false;
     }
 
     return true;
+  }
+
+  Future<void> _archiveGame() async {
+    final shouldArchive = await _confirmAction(
+      title: 'Archive game?',
+      message:
+          'This will mark the game as archived and inactive. Archived games are hidden from game lists and selectors.',
+      confirmLabel: 'Archive',
+      isDestructive: false,
+    );
+    if (!shouldArchive) {
+      return;
+    }
+
+    final canProceed = await _requestClose();
+    if (!canProceed || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref
+          .read(gameActionProvider.notifier)
+          .archiveGame(userId: widget.userId, gameId: widget.game.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Game archived.')),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _errorMessage =
+              'Failed to archive this game. Please verify your connection and retry.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deleteGame() async {
+    final shouldDelete = await _confirmAction(
+      title: 'Delete game permanently?',
+      message:
+          'This permanently deletes the game and all quests in this game. This action cannot be undone.',
+      confirmLabel: 'Delete',
+      isDestructive: true,
+    );
+    if (!shouldDelete) {
+      return;
+    }
+
+    final canProceed = await _requestClose();
+    if (!canProceed || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref.read(gameActionProvider.notifier).deleteGame(
+        widget.userId,
+        widget.game.id,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Game deleted permanently.')),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _errorMessage =
+              'Failed to delete this game. Please verify your connection and retry.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _confirmAction({
+    required String title,
+    required String message,
+    required String confirmLabel,
+    required bool isDestructive,
+  }) async {
+    final colorScheme = Theme.of(context).colorScheme;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: isDestructive
+                  ? FilledButton.styleFrom(
+                      backgroundColor: colorScheme.error,
+                      foregroundColor: colorScheme.onError,
+                    )
+                  : null,
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(confirmLabel),
+            ),
+          ],
+        );
+      },
+    );
+
+    return confirmed ?? false;
   }
 }
 
@@ -294,7 +440,9 @@ class _GameImagePreview extends StatelessWidget {
                           child: Icon(
                             Icons.broken_image,
                             size: 42,
-                            color: colorScheme.onSurface.withValues(alpha: 0.56),
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.56,
+                            ),
                           ),
                         ),
                       ),
@@ -323,9 +471,9 @@ class _GameImagePreview extends StatelessWidget {
                             child: const Text('Cancel'),
                           ),
                           FilledButton(
-                            onPressed: () => Navigator.of(context).pop(
-                              controller.text.trim(),
-                            ),
+                            onPressed: () => Navigator.of(
+                              context,
+                            ).pop(controller.text.trim()),
                             child: const Text('Apply'),
                           ),
                         ],

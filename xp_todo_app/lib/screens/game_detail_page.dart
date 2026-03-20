@@ -85,6 +85,18 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
                   }
                 },
               ),
+              actions: [
+                IconButton(
+                  tooltip: 'Archive game',
+                  onPressed: _isSaving ? null : () => _archiveGame(game.id),
+                  icon: const Icon(Icons.inventory_2_outlined),
+                ),
+                IconButton(
+                  tooltip: 'Delete game',
+                  onPressed: _isSaving ? null : () => _deleteGame(game.id),
+                  icon: const Icon(Icons.delete_outline),
+                ),
+              ],
             ),
             body: _GameDetailContent(
               userId: widget.userId,
@@ -345,6 +357,137 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
     }
 
     return true;
+  }
+
+  Future<void> _archiveGame(String gameId) async {
+    final shouldArchive = await _confirmAction(
+      title: 'Archive game?',
+      message:
+          'This will mark the game as archived and inactive. Archived games are hidden from game lists and selectors.',
+      confirmLabel: 'Archive',
+      isDestructive: false,
+    );
+    if (!shouldArchive) {
+      return;
+    }
+
+    final canProceed = await _requestClose();
+    if (!canProceed || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref
+          .read(gameActionProvider.notifier)
+          .archiveGame(userId: widget.userId, gameId: gameId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Game archived.')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _errorMessage =
+              'Failed to archive this game. Please verify your connection and retry.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deleteGame(String gameId) async {
+    final shouldDelete = await _confirmAction(
+      title: 'Delete game permanently?',
+      message:
+          'This permanently deletes the game and all quests in this game. This action cannot be undone.',
+      confirmLabel: 'Delete',
+      isDestructive: true,
+    );
+    if (!shouldDelete) {
+      return;
+    }
+
+    final canProceed = await _requestClose();
+    if (!canProceed || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref
+          .read(gameActionProvider.notifier)
+          .deleteGame(widget.userId, gameId);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Game deleted permanently.')),
+        );
+        Navigator.of(context).pop();
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _errorMessage =
+              'Failed to delete this game. Please verify your connection and retry.';
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _confirmAction({
+    required String title,
+    required String message,
+    required String confirmLabel,
+    required bool isDestructive,
+  }) async {
+    final colorScheme = Theme.of(context).colorScheme;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: isDestructive
+                  ? FilledButton.styleFrom(
+                      backgroundColor: colorScheme.error,
+                      foregroundColor: colorScheme.onError,
+                    )
+                  : null,
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(confirmLabel),
+            ),
+          ],
+        );
+      },
+    );
+
+    return confirmed ?? false;
   }
 }
 

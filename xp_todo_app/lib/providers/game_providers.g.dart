@@ -90,10 +90,10 @@ final class ActiveGamesProvider
     extends
         $FunctionalProvider<
           AsyncValue<List<Game>>,
-          AsyncValue<List<Game>>,
-          AsyncValue<List<Game>>
+          List<Game>,
+          Stream<List<Game>>
         >
-    with $Provider<AsyncValue<List<Game>>> {
+    with $FutureModifier<List<Game>>, $StreamProvider<List<Game>> {
   ActiveGamesProvider._({
     required ActiveGamesFamily super.from,
     required String super.argument,
@@ -117,22 +117,13 @@ final class ActiveGamesProvider
 
   @$internal
   @override
-  $ProviderElement<AsyncValue<List<Game>>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $StreamProviderElement<List<Game>> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
 
   @override
-  AsyncValue<List<Game>> create(Ref ref) {
+  Stream<List<Game>> create(Ref ref) {
     final argument = this.argument as String;
     return activeGames(ref, argument);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Game>> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Game>>>(value),
-    );
   }
 
   @override
@@ -146,10 +137,10 @@ final class ActiveGamesProvider
   }
 }
 
-String _$activeGamesHash() => r'0e675dab289b67113cce814648c6fbfe795bcb41';
+String _$activeGamesHash() => r'28f1fabae790b1bef8a7b5fb4fe23a19e2dc7ae2';
 
 final class ActiveGamesFamily extends $Family
-    with $FunctionalFamilyOverride<AsyncValue<List<Game>>, String> {
+    with $FunctionalFamilyOverride<Stream<List<Game>>, String> {
   ActiveGamesFamily._()
     : super(
         retry: null,
@@ -211,7 +202,7 @@ final class ActiveUserGamesProvider
   }
 }
 
-String _$activeUserGamesHash() => r'5548d5c11c466e486dac1ecd5fe5795a14721cbe';
+String _$activeUserGamesHash() => r'924e5f0de31599769d5e31000333efbbfbec22fb';
 
 @ProviderFor(activeUserActiveGames)
 final activeUserActiveGamesProvider = ActiveUserActiveGamesProvider._();
@@ -259,7 +250,7 @@ final class ActiveUserActiveGamesProvider
 }
 
 String _$activeUserActiveGamesHash() =>
-    r'bcb4b4001976b0341cc923d2adef9e4aff6702db';
+    r'c6e2ec308cfa3185f32a71b1e23339c076d73722';
 
 @ProviderFor(activeUserGame)
 final activeUserGameProvider = ActiveUserGameFamily._();
@@ -446,7 +437,7 @@ final class GameActionNotifierProvider
 }
 
 String _$gameActionNotifierHash() =>
-    r'132ed7c2f21096296db0e6426e83ae9e34dd6638';
+    r'66b4ceccd927cdffbb0b7b104c9996eeee5626b6';
 
 abstract class _$GameActionNotifier extends $Notifier<AsyncValue<Game?>> {
   AsyncValue<Game?> build();

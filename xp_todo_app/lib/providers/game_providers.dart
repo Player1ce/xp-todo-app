@@ -13,11 +13,9 @@ Stream<List<Game>> games(Ref ref, String userId) {
 }
 
 @riverpod
-AsyncValue<List<Game>> activeGames(Ref ref, String userId) {
-  final gamesAsync = ref.watch(gamesProvider(userId));
-  return gamesAsync.whenData(
-    (games) => games.where((game) => game.isActive).toList(),
-  );
+Stream<List<Game>> activeGames(Ref ref, String userId) {
+  final repository = ref.watch(gameRepositoryProvider);
+  return repository.watchActiveGames(userId);
 }
 
 @Riverpod(keepAlive: true)
@@ -26,7 +24,13 @@ AsyncValue<List<Game>?> activeUserGames(Ref ref) {
   if (activeUserId == null) {
     return const AsyncValue.data(null);
   }
-  return ref.watch(gamesProvider(activeUserId));
+  return ref.watch(
+    gamesProvider(activeUserId).select(
+      (gamesAsync) => gamesAsync.whenData(
+        (games) => games.where((game) => !game.archived).toList(),
+      ),
+    ),
+  );
 }
 
 @riverpod
@@ -34,7 +38,8 @@ AsyncValue<List<Game>?> activeUserActiveGames(Ref ref) {
   return ref.watch(
     activeUserGamesProvider.select(
       (gamesAsync) => gamesAsync.whenData(
-        (games) => games?.where((game) => game.isActive).toList(),
+        (games) =>
+            games?.where((game) => game.isActive && !game.archived).toList(),
       ),
     ),
   );
@@ -84,6 +89,20 @@ class GameActionNotifier extends _$GameActionNotifier {
       await ref
           .read(gameRepositoryProvider)
           .setGameActive(userId, gameId, isActive);
+      return null;
+    });
+    if (ref.mounted) {
+      state = nextState;
+    }
+  }
+
+  Future<void> archiveGame({
+    required String userId,
+    required String gameId,
+  }) async {
+    state = const AsyncValue.loading();
+    final nextState = await AsyncValue.guard<Game?>(() async {
+      await ref.read(gameRepositoryProvider).archiveGame(userId, gameId);
       return null;
     });
     if (ref.mounted) {
