@@ -172,4 +172,28 @@ class QuestRepository extends IFirestoreRepository {
               .toList(growable: false);
         });
   }
+
+  // watch compled quests for game
+  Stream<List<Quest>> watchCompletedGameQuests(String userId, String gameId) {
+    return collection(userId, gameId)
+        .where(Quest.completeFieldName, isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+              .toList(growable: false);
+        });
+  }
+
+  // watch compled quests for user
+  Stream<List<Quest>> watchCompletedUserQuests(String userId) {
+    return collection(userId, '')
+        .where(Quest.completeFieldName, isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
+              .toList(growable: false);
+        });
+  }
 }

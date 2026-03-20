@@ -97,7 +97,7 @@ class _TodoListContentState extends ConsumerState<_TodoListContent> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final questsAsync = ref.watch(
-      activeUserGameQuestsProvider(widget.selectedGame.id),
+      activeUserIncompleteGameQuestsProvider(widget.selectedGame.id),
     );
     // TODO: this state probably shouldn't be persisted
     final segment = ref.watch(todoFilterProvider);

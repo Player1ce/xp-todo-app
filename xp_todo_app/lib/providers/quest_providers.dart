@@ -5,6 +5,7 @@ import 'package:xp_todo_app/providers/repository_providers.dart';
 
 part 'quest_providers.g.dart';
 
+// Repository stream providers
 @riverpod
 Stream<List<Quest>> userQuests(Ref ref, String userId) {
   final repository = ref.watch(questRepositoryProvider);
@@ -33,7 +34,68 @@ Stream<List<Quest>> incompleteGameQuests(
   return repository.watchIncompleteGameQuests(userId, gameId);
 }
 
+@riverpod
+Stream<List<Quest>> completedUserQuests(Ref ref, String userId) {
+  final repository = ref.watch(questRepositoryProvider);
+  return repository.watchCompletedUserQuests(userId);
+}
+
+@riverpod
+Stream<List<Quest>> completedGameQuests(Ref ref, String userId, String gameId) {
+  final repository = ref.watch(questRepositoryProvider);
+  return repository.watchCompletedGameQuests(userId, gameId);
+}
+
+// Active user quest stream providers
+
+// active user incomplete quests for game
 @Riverpod(keepAlive: true)
+AsyncValue<List<Quest>?> activeUserIncompleteGameQuests(
+  Ref ref,
+  String gameId,
+) {
+  final activeUserId = ref.watch(activeUserIdProvider);
+
+  if (activeUserId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(incompleteGameQuestsProvider(activeUserId, gameId));
+}
+
+// active user completed quests for game
+@Riverpod(keepAlive: true)
+AsyncValue<List<Quest>?> activeUserCompletedGameQuests(Ref ref, String gameId) {
+  final activeUserId = ref.watch(activeUserIdProvider);
+
+  if (activeUserId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(completedGameQuestsProvider(activeUserId, gameId));
+}
+
+// active user incomplete quests for all games
+@riverpod
+AsyncValue<List<Quest>?> activeUserIncompleteQuests(Ref ref) {
+  final activeUserId = ref.watch(activeUserIdProvider);
+
+  if (activeUserId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(incompleteUserQuestsProvider(activeUserId));
+}
+
+// active user completed quests for all games
+@riverpod
+AsyncValue<List<Quest>?> activeUserCompletedQuests(Ref ref) {
+  final activeUserId = ref.watch(activeUserIdProvider);
+
+  if (activeUserId == null) {
+    return const AsyncValue.data(null);
+  }
+  return ref.watch(completedUserQuestsProvider(activeUserId));
+}
+
+@riverpod
 AsyncValue<List<Quest>?> activeUserAllQuests(Ref ref) {
   final activeUserId = ref.watch(activeUserIdProvider);
 
@@ -43,14 +105,42 @@ AsyncValue<List<Quest>?> activeUserAllQuests(Ref ref) {
   return ref.watch(userQuestsProvider(activeUserId));
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 AsyncValue<List<Quest>?> activeUserGameQuests(Ref ref, String gameId) {
-  final activeUserId = ref.watch(activeUserIdProvider);
+  final completeQuestsAsync = ref.watch(
+    activeUserCompletedGameQuestsProvider(gameId),
+  );
+  final incompleteQuestsAsync = ref.watch(
+    activeUserIncompleteGameQuestsProvider(gameId),
+  );
 
-  if (activeUserId == null) {
+  if (completeQuestsAsync.hasError) {
+    return AsyncValue.error(
+      completeQuestsAsync.error!,
+      completeQuestsAsync.stackTrace ?? StackTrace.current,
+    );
+  }
+
+  if (incompleteQuestsAsync.hasError) {
+    return AsyncValue.error(
+      incompleteQuestsAsync.error!,
+      incompleteQuestsAsync.stackTrace ?? StackTrace.current,
+    );
+  }
+
+  if (completeQuestsAsync.isLoading || incompleteQuestsAsync.isLoading) {
+    return const AsyncValue.loading();
+  }
+
+  final completed = completeQuestsAsync.asData?.value;
+  final incomplete = incompleteQuestsAsync.asData?.value;
+
+  // Keep a null payload to represent "no active user" from upstream providers.
+  if (completed == null && incomplete == null) {
     return const AsyncValue.data(null);
   }
-  return ref.watch(gameQuestsProvider(activeUserId, gameId));
+
+  return AsyncValue.data(<Quest>[...?completed, ...?incomplete]);
 }
 
 @riverpod
