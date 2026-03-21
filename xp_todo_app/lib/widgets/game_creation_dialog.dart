@@ -123,6 +123,7 @@ class _GameCreationDialogState extends ConsumerState<GameCreationDialog> {
                             imageUrl: _imageUrl,
                             description: _description,
                             isActive: true,
+                            archived: false,
                             totalQuests: 0,
                             completedQuests: 0,
                             difficulty: _difficulty,

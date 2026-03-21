@@ -63,9 +63,9 @@ class GameRepository extends IFirestoreRepository {
     return updateDocument(collection(userId), gameId, updates);
   }
 
-  // TODO: conver to backend bulk dleete if necessary (probably never)
+  // TODO: convert to backend bulk dleete if necessary (probably never)
+  //   probably best to mark and delete later
   //  we can use a rcursive or callable function to clean in the background and that is the best wawy by far here
-
   Future<void> deleteGame(String userId, String gameId) async {
     final gameRef = collection(userId).doc(gameId);
     final questCollection = gameRef.collection(Quest.collectionName);
@@ -94,7 +94,14 @@ class GameRepository extends IFirestoreRepository {
 
   // ------Specific Actions to support app features------------------------------
   Future<void> setGameActive(String userId, String gameId, bool isActive) {
-    return updateGame(userId, gameId, Game.createUpdateMap(isActive: isActive));
+    return updateGame(
+      userId,
+      gameId,
+      Game.createUpdateMap(
+        isActive: isActive,
+        archived: isActive ? false : null,
+      ),
+    );
   }
 
   Future<void> archiveGame(String userId, String gameId) {

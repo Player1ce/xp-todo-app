@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/data/models/quest.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
@@ -10,8 +9,8 @@ import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/util/listen_for_provider_errors.dart';
 
 class QuestCreationDialog extends ConsumerStatefulWidget {
-  String? selectedGameId;
-  QuestCreationDialog({super.key, this.selectedGameId});
+  final String? selectedGameId;
+  const QuestCreationDialog({super.key, this.selectedGameId});
 
   @override
   ConsumerState<QuestCreationDialog> createState() =>

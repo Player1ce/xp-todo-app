@@ -34,7 +34,7 @@ class Game extends IFirestoreModel {
     required this.imageUrl,
     required this.description,
     required this.isActive,
-    this.archived = false,
+    required this.archived,
     required this.totalQuests,
     required this.completedQuests,
     required this.difficulty,

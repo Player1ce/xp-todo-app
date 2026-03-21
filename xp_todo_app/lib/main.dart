@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/firebase_options.dart';
 import 'package:xp_todo_app/providers/go_router_provider.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
+import 'package:xp_todo_app/util/configure_firestore_cache.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +34,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await _configureFirestoreCache();
-
+  await configureFirestoreCache();
 
   // TODO: use this to implement top level error catching and display a nice error screen instead of crashing
   // ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -45,9 +44,6 @@ void main() async {
   //   return const _AppErrorWidget();
   // };
   runApp(ProviderScope(child: const MyApp()));
-}
-
-Future<void> _configureFirestoreCache() async {
 }
 
 class MyApp extends ConsumerWidget {

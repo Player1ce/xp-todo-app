@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/data/models/game.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/util/enums/difficulty.dart';
-import 'package:xp_todo_app/widgets/quest_creation_dialog.dart';
 
 class GamePreviewDialog extends ConsumerStatefulWidget {
   final String userId;
