@@ -112,6 +112,10 @@ class GameRepository extends IFirestoreRepository {
     );
   }
 
+  // TODO: evaluate if this should be handled here or in the quest repository.
+  //  The pro of here is it can be queued in a widget for fast response times
+  //  The con is it adds coupling and is not enforced
+  //  We probably wnat a hybrid approach where this does a recount instead of an update and is used sparingly.
   Future<void> setGameProgressCache({
     required String userId,
     required String gameId,
