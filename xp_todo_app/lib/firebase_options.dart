@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '38181921976',
     projectId: 'xp-todo-app-672ff',
     storageBucket: 'xp-todo-app-672ff.firebasestorage.app',
+    iosClientId: '38181921976-q60tlauligeruv2pq3eqhig12njq3vdt.apps.googleusercontent.com',
     iosBundleId: 'com.example.xpTodoApp',
   );
 
@@ -72,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '38181921976',
     projectId: 'xp-todo-app-672ff',
     storageBucket: 'xp-todo-app-672ff.firebasestorage.app',
+    iosClientId: '38181921976-q60tlauligeruv2pq3eqhig12njq3vdt.apps.googleusercontent.com',
     iosBundleId: 'com.example.xpTodoApp',
   );
 

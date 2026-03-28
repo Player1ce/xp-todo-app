@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart'; // kIsWeb
 
 Future<void> configureFirestoreCache() async {
-  const cacheSizeBytes = 250 * 1024 * 1024; // 150 MB
+  const cacheSizeBytes = 100 * 1024 * 1024; // 100 MB
   final firestore = FirebaseFirestore.instance;
 
   if (kIsWeb) {
