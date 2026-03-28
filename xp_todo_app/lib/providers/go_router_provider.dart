@@ -6,7 +6,7 @@ import 'package:xp_todo_app/const/page_view_configurations.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
 import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/screens/admin_page.dart';
-import 'package:xp_todo_app/screens/game_detail_page.dart';
+import 'package:xp_todo_app/screens/game_screen/game_detail_page.dart';
 import 'package:xp_todo_app/screens/login_screen.dart';
 import 'package:xp_todo_app/screens/page_view_home_screen.dart';
 import 'package:xp_todo_app/screens/settings_screen.dart';

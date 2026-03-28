@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
-import 'package:xp_todo_app/screens/games_screen.dart';
+import 'package:xp_todo_app/screens/game_screen/games_screen.dart';
 import 'package:xp_todo_app/screens/quest_screen.dart';
 import 'package:xp_todo_app/screens/profile_screen.dart';
 

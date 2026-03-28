@@ -456,10 +456,10 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
           .read(gameActionProvider.notifier)
           .deleteGame(widget.userId, gameId);
       if (mounted) {
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Game deleted permanently.')),
         );
-        Navigator.of(context).pop();
       }
     } catch (_) {
       if (mounted) {
