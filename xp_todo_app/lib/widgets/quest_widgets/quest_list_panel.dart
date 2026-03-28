@@ -7,8 +7,8 @@ import 'package:xp_todo_app/providers/auth_providers.dart';
 import 'package:xp_todo_app/providers/game_providers.dart';
 import 'package:xp_todo_app/providers/quest_providers.dart';
 import 'package:xp_todo_app/providers/quest_ui_providers.dart';
-import 'package:xp_todo_app/widgets/quest_preview_dialog.dart';
-import 'package:xp_todo_app/widgets/quest_item_card.dart';
+import 'package:xp_todo_app/widgets/quest_widgets/quest_preview_dialog.dart';
+import 'package:xp_todo_app/widgets/quest_widgets/quest_item_card.dart';
 
 class QuestListPanel extends ConsumerStatefulWidget {
   const QuestListPanel({super.key});
