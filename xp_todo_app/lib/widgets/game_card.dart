@@ -239,7 +239,7 @@ class GamesGridView extends ConsumerWidget {
       ),
       error: (error, _) => Center(
         child: Text(
-          'Failed to load games: $error',
+          'Failed to load games in card: $error',
           textAlign: TextAlign.center,
         ),
       ),
