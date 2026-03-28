@@ -94,15 +94,13 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
                 // IconButton(
                 AdaptiveAppBarAction(
                   // tooltip: 'Archive game',
-                  onPressed: () =>
-                      _isSaving ? null : () => _archiveGame(game.id),
+                  onPressed: () => _isSaving ? null : _archiveGame(game.id),
                   icon: Icons.inventory_2_outlined,
                 ),
                 // IconButton(
                 AdaptiveAppBarAction(
                   // tooltip: 'Delete game',
-                  onPressed: () =>
-                      _isSaving ? null : () => _deleteGame(game.id),
+                  onPressed: () => _isSaving ? null : _deleteGame(game.id),
                   icon: Icons.delete_outline,
                 ),
               ],
