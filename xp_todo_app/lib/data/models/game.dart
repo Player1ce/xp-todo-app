@@ -10,6 +10,8 @@ class Game extends IFirestoreModel {
   static String collectionName = 'Game';
   static String gameActiveFieldName = 'isActive';
   static String gameArchivedFieldName = 'archived';
+  static String completedQuestsFieldName = 'completedQuests';
+  static String totalQuestsFieldName = 'totalQuests';
 
   final String id;
 
@@ -91,8 +93,8 @@ class Game extends IFirestoreModel {
       'description': description,
       gameActiveFieldName: isActive,
       gameArchivedFieldName: archived,
-      'totalQuests': totalQuests,
-      'completedQuests': completedQuests,
+      totalQuestsFieldName: totalQuests,
+      completedQuestsFieldName: completedQuests,
       'difficulty': difficulty.toStorage(),
       'availableXP': availableXP,
       'totalXP': totalXP,
@@ -111,8 +113,8 @@ class Game extends IFirestoreModel {
       description: map['description'] as String,
       isActive: map[gameActiveFieldName] as bool,
       archived: map[gameArchivedFieldName] as bool? ?? false,
-      totalQuests: (map['totalQuests'] as double).toInt(),
-      completedQuests: (map['completedQuests'] as double).toInt(),
+      totalQuests: (map[totalQuestsFieldName] as double).toInt(),
+      completedQuests: (map[completedQuestsFieldName] as double).toInt(),
       difficulty: Difficulty.fromStorage(map['difficulty'] as String?),
       availableXP: (map['availableXP'] as double).toInt(),
       totalXP: (map['totalXP'] as double).toInt(),
@@ -162,8 +164,10 @@ class Game extends IFirestoreModel {
     if (description != null) map['description'] = description;
     if (isActive != null) map[gameActiveFieldName] = isActive;
     if (archived != null) map[gameArchivedFieldName] = archived;
-    if (totalQuests != null) map['totalQuests'] = totalQuests;
-    if (completedQuests != null) map['completedQuests'] = completedQuests;
+    if (totalQuests != null) map[totalQuestsFieldName] = totalQuests;
+    if (completedQuests != null) {
+      map[completedQuestsFieldName] = completedQuests;
+    }
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
     if (availableXP != null) map['availableXP'] = availableXP;
     if (totalXP != null) map['totalXP'] = totalXP;
