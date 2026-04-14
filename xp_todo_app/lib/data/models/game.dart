@@ -179,6 +179,43 @@ class Game extends IFirestoreModel {
     return map;
   }
 
+  // check the keys and types of the values in the map to ensure they are valid for updating a Game document
+  static bool isValidUpdateMap(Map<String, dynamic> updates) {
+    final validKeys = {
+      'title': String,
+      'imageUrl': String,
+      'description': String,
+      gameActiveFieldName: bool,
+      gameArchivedFieldName: bool,
+      totalQuestsFieldName: int,
+      completedQuestsFieldName: int,
+      'difficulty': Difficulty,
+      'availableXP': int,
+      'totalXP': int,
+      'completionPercentage': double,
+    };
+
+    for (final entry in updates.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
+      if (!validKeys.containsKey(key)) {
+        return false; // Invalid key
+      }
+
+      final expectedType = validKeys[key]!;
+      if (expectedType == Difficulty) {
+        if (value is! String || !Difficulty.isValidName(value)) {
+          return false; // Invalid type for difficulty
+        }
+      } else if (value.runtimeType != expectedType) {
+        return false; // Invalid type
+      }
+    }
+
+    return true; // All keys and types are valid
+  }
+
   @override
   String toString() {
     return 'Game(id: $id, title: $title, imageUrl: $imageUrl, description: $description, isActive: $isActive, archived: $archived, totalQuests: $totalQuests, completedQuests: $completedQuests, difficulty: $difficulty, availableXP: $availableXP, totalXP: $totalXP, completionPercentage: $completionPercentage)';
