@@ -219,6 +219,35 @@ class _QuestListContentState extends ConsumerState<_QuestListContent> {
                       ..showSnackBar(snackBar);
                   }
                 },
+                onQuestRiskChanged: (quest, nextRisk) async {
+                  if (_busyQuestIds.contains(quest.id)) {
+                    return;
+                  }
+
+                  setState(() => _busyQuestIds.add(quest.id));
+                  try {
+                    await ref
+                        .read(questActionProvider.notifier)
+                        .updateQuest(
+                          widget.userId,
+                          widget.selectedGame.id,
+                          quest.id,
+                          {'risk': nextRisk},
+                        );
+                  } catch (_) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Unable to update quest risk right now.'),
+                        ),
+                      );
+                    }
+                  } finally {
+                    if (mounted) {
+                      setState(() => _busyQuestIds.remove(quest.id));
+                    }
+                  }
+                },
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -297,6 +326,11 @@ class _QuestListContentState extends ConsumerState<_QuestListContent> {
 
     final filtered = quests.where(include).toList(growable: false);
     filtered.sort((a, b) {
+      final riskCompare = b.risk.compareTo(a.risk);
+      if (riskCompare != 0) {
+        return riskCompare;
+      }
+
       final aDue = a.expireDate;
       final bDue = b.expireDate;
       if (aDue == null && bDue == null) return 0;
@@ -315,12 +349,14 @@ class _QuestListView extends StatelessWidget {
   final bool Function(String questId) isQuestBusy;
   final Future<void> Function(Quest quest, bool nextCompleted)
   onQuestCompletionChanged;
+  final Future<void> Function(Quest quest, int nextRisk) onQuestRiskChanged;
 
   const _QuestListView({
     required this.quests,
     required this.onQuestTap,
     required this.isQuestBusy,
     required this.onQuestCompletionChanged,
+    required this.onQuestRiskChanged,
   });
 
   @override
@@ -349,6 +385,9 @@ class _QuestListView extends StatelessWidget {
           onTap: () => onQuestTap(quest),
           onCompletedChanged: (nextCompleted) {
             onQuestCompletionChanged(quest, nextCompleted);
+          },
+          onRiskChanged: (nextRisk) {
+            onQuestRiskChanged(quest, nextRisk);
           },
         );
       },

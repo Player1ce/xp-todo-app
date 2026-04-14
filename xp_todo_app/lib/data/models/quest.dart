@@ -10,6 +10,7 @@ import 'package:xp_todo_app/util/time_utils.dart';
 class Quest extends IFirestoreModel {
   static String collectionName = 'Quest';
   static String completeFieldName = 'completed';
+  static String riskFieldName = 'risk';
 
   final String id;
   final String title;
@@ -18,6 +19,7 @@ class Quest extends IFirestoreModel {
   final Difficulty difficulty;
   final String description;
   final DateTime? expireDate;
+  final int risk;
 
   final String userId;
   final String gameId;
@@ -31,6 +33,7 @@ class Quest extends IFirestoreModel {
     required this.level,
     required this.difficulty,
     required this.description,
+    this.risk = 0,
     required this.userId,
     required this.gameId,
     required this.completed,
@@ -39,7 +42,8 @@ class Quest extends IFirestoreModel {
     super.dateUpdated,
   }) : assert(title.isNotEmpty, 'Quest title cannot be empty'),
        assert(xpReward >= 0, 'XP reward cannot be negative'),
-       assert(level >= 0, 'Level cannot be negative');
+       assert(level >= 0, 'Level cannot be negative'),
+       assert(risk >= 0 && risk <= 100, 'Risk must be between 0 and 100');
 
   Quest copyWith({
     String? id,
@@ -48,6 +52,7 @@ class Quest extends IFirestoreModel {
     int? level,
     Difficulty? difficulty,
     String? description,
+    int? risk,
     String? userId,
     String? gameId,
     DateTime? expireDate,
@@ -62,6 +67,7 @@ class Quest extends IFirestoreModel {
       level: level ?? this.level,
       difficulty: difficulty ?? this.difficulty,
       description: description ?? this.description,
+      risk: risk ?? this.risk,
       userId: userId ?? this.userId,
       gameId: gameId ?? this.gameId,
       expireDate: expireDate ?? this.expireDate,
@@ -83,6 +89,7 @@ class Quest extends IFirestoreModel {
       'difficulty': difficulty.toStorage(),
       'expireDate': expireDate,
       'description': description,
+      riskFieldName: risk,
       'userId': userId,
       'gameId': gameId,
       completeFieldName: completed,
@@ -100,6 +107,7 @@ class Quest extends IFirestoreModel {
       expireDate: map['expireDate'] != null
           ? convertToDateTime(map['expireDate'])
           : null,
+      risk: map[riskFieldName] as int? ?? 0,
       userId: map['userId'] as String,
       gameId: map['gameId'] as String,
       description: map['description'] as String,
@@ -133,6 +141,7 @@ class Quest extends IFirestoreModel {
     int? level,
     Difficulty? difficulty,
     String? description,
+    int? risk,
     String? userId,
     String? gameId,
     DateTime? expireDate,
@@ -145,6 +154,7 @@ class Quest extends IFirestoreModel {
     if (level != null) map['level'] = level;
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
     if (description != null) map['description'] = description;
+    if (risk != null) map[riskFieldName] = risk;
     if (userId != null) map['userId'] = userId;
     if (gameId != null) map['gameId'] = gameId;
     if (completed != null) map[completeFieldName] = completed;
@@ -157,7 +167,7 @@ class Quest extends IFirestoreModel {
 
   @override
   String toString() {
-    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, completed: $completed, expireDate: $expireDate, description: $description, dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
+    return 'Quest(id: $id, name: $title, xpReward: $xpReward, level: $level, difficulty: $difficulty, risk: $risk, completed: $completed, expireDate: $expireDate, description: $description, dateCreated: $dateCreated, dateUpdated: $dateUpdated)';
   }
 
   @override
@@ -168,6 +178,7 @@ class Quest extends IFirestoreModel {
         other.xpReward == xpReward &&
         other.level == level &&
         other.difficulty == difficulty &&
+        other.risk == risk &&
         other.description == description &&
         other.userId == userId &&
         other.gameId == gameId &&
@@ -181,6 +192,7 @@ class Quest extends IFirestoreModel {
         xpReward.hashCode ^
         level.hashCode ^
         difficulty.hashCode ^
+        risk.hashCode ^
         description.hashCode ^
         userId.hashCode ^
         gameId.hashCode ^

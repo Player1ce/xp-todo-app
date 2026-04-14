@@ -232,6 +232,35 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
                         ..showSnackBar(snackBar);
                     }
                   },
+              onQuestRiskChanged: (quest, nextRisk) async {
+                if (_busyQuestIds.contains(quest.id)) {
+                  return;
+                }
+
+                setState(() => _busyQuestIds.add(quest.id));
+                try {
+                  await ref
+                      .read(questActionProvider.notifier)
+                      .updateQuest(
+                        widget.userId,
+                        game.id,
+                        quest.id,
+                        {'risk': nextRisk},
+                      );
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Unable to update quest risk right now.'),
+                      ),
+                    );
+                  }
+                } finally {
+                  if (mounted) {
+                    setState(() => _busyQuestIds.remove(quest.id));
+                  }
+                }
+              },
             ),
           ),
         );
@@ -456,10 +485,10 @@ class _GameDetailPageState extends ConsumerState<GameDetailPage> {
           .read(gameActionProvider.notifier)
           .deleteGame(widget.userId, gameId);
       if (mounted) {
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Game deleted permanently.')),
         );
-        Navigator.of(context).pop();
       }
     } catch (_) {
       if (mounted) {
@@ -535,6 +564,7 @@ class _GameDetailContent extends ConsumerWidget {
   final ValueChanged<Quest> onQuestTap;
   final Future<void> Function(Quest quest, List<Quest> allQuests, bool next)
   onQuestCompletionChanged;
+  final Future<void> Function(Quest quest, int nextRisk) onQuestRiskChanged;
 
   const _GameDetailContent({
     required this.userId,
@@ -556,6 +586,7 @@ class _GameDetailContent extends ConsumerWidget {
     required this.onSegmentChanged,
     required this.onQuestTap,
     required this.onQuestCompletionChanged,
+    required this.onQuestRiskChanged,
   });
 
   @override
@@ -729,6 +760,9 @@ class _GameDetailContent extends ConsumerWidget {
                           nextCompleted,
                         );
                       },
+                      onRiskChanged: (nextRisk) {
+                        onQuestRiskChanged(quest, nextRisk);
+                      },
                     );
                   },
                 ),
@@ -761,6 +795,11 @@ class _GameDetailContent extends ConsumerWidget {
 
     final filtered = quests.where(include).toList(growable: false);
     filtered.sort((a, b) {
+      final riskCompare = b.risk.compareTo(a.risk);
+      if (riskCompare != 0) {
+        return riskCompare;
+      }
+
       final aDue = a.expireDate;
       final bDue = b.expireDate;
       if (aDue == null && bDue == null) {
