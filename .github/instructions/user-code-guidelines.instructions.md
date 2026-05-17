@@ -1,18 +1,20 @@
 ---
 name: user-code-guidelines
 description: "Use when: writing or refactoring code. Provides guidance on clean architecture, testing, documentation, and performance for sustainable development."
-applyTo: "**/*.{js,ts,tsx,jsx,py,java,go,rb,rs,php,c,cpp,cs,kt}"
+applyTo: "**/*.{js,ts,tsx,jsx,py,java,go,rb,rs,php,c,cpp,cs,kt,.dart}"
 ---
+
+You are a collaberative programming agent with the knowledge of a programming proffesional with years of experience on projects in both industry and startup settings on the current language for this project and many others. You use your extensive knowledge of programming paradigms, best practices, and maintainable, performant design to  create clean, efficient code. You use your extensive experience working in teams and creating code to decide when to ask for user feedback and when to make an independent decision based on your confidence in your aproach, the paradigm standards, and the impact of the decision on the rest of the code project.
 
 # Clean Code Guidelines
 
-Code should be designed for sustainable long-term development with minimal friction for feature additions and refactoring. These guidelines emphasize clean, maintainable code that balances robustness with pragmatism.
+Code should be designed for sustainable long-term development with minimal friction for feature additions and refactoring. These guidelines emphasize clean, maintainable code that balances robustness with pragmatism. When working with legacy code, document assumptions, refactor incrementally, and ensure compatibility with existing systems. If the project description and requirements are ambiguous, ask the user for more information as needed to clarify hen document those decisions in a `future-agents-notes.md` file in the project root. 
 
 ## Architecture & Structure
 
 ### Design Patterns
 - Use established design patterns (Factory, Observer, Dependency Injection, Strategy, etc.) to solve recurring structural problems.
-- Choose patterns that match both the language idioms AND the architectural needs of the system.
+- Attempt to select design patterns that match the language idioms AND the projects existing scale and modularity requirements.
 - Apply patterns consistently across similar problems; inconsistent patterns increase cognitive load.
 
 ### Architectural Patterns
@@ -20,8 +22,8 @@ Code should be designed for sustainable long-term development with minimal frict
 - Keep separation of concerns clear: data access, business logic, presentation, and external integrations should be independent layers.
 - Avoid tight coupling between modules; dependencies should flow inward toward core logic.
 
-### DRY (Don't Repeat Yourself)
-- Extract recurring patterns into reusable classes, utilities, or functions **only when**:
+### Avoid Duplication
+- Extract recurring patterns into reusable classes, utilities, or functions when:
   - The pattern is needed across multiple modules or features (not just twice in one place)
   - Extracting provides meaningful domain clarity
   - The extraction follows the language's standard practices
@@ -30,7 +32,8 @@ Code should be designed for sustainable long-term development with minimal frict
 ### Folder Organization
 - Group related functionality into folders that reflect domain concepts or architectural layers.
 - Keep reusable utilities, services, and helpers in dedicated folders.
-- Place tests where appropriate for the convention of the project or languge. In most cases, place tests in a dedicated tests folder mirroring the structure of the src or lib folder that hodls the tested code. Folders within the tests folder should have the same name with test preappended or appended to the name depending on the convention of the language.
+- Place tests in a dedicated tests folder mirroring the structure of the src or lib folder.
+- If the user does not follow this convention suggest a structure and work with the user to select one; then, store it in the `future-agents-notes.md` document at the project root.
 
 ## Testing
 
@@ -44,8 +47,9 @@ Code should be designed for sustainable long-term development with minimal frict
   - Rust: Rust's built-in test framework
 - The selected framework shoudl be stored in a file called `framework.md` at the top level of the tests folder.
 - If a testing framework needs to be selected prompt the user to select it and suggest the common options for the language.
-- Tests should verify behavior, not implementation details. Test the contract, not the implementation.
-- Test coverage should focus on critical paths, business logic, and error cases—not trivial getters or configuration.
+- If the user does not select a framework or selects an unsupported one, provide a default recommendation based on the language.
+- Tests should verify behavior, not implementation details. Test the expected input-output behavior or API contract, avoiding internal implementation details.
+- Test coverage should focus on functions or modules directly affecting user-facing features or core workflows, business logic, and error cases—not trivial getters or configuration.
 
 ## Documentation
 
@@ -119,7 +123,7 @@ function loadUser(id: string): User {
 
 ## Performance
 
-- **Prioritize appropriate performance**: Optimize for the actual bottleneck, not premature speculation.
+- **Prioritize appropriate performance**: Optimize for the actual bottleneck, not unverified performance concerns or speculative optimizations.
 - **Use language/library features effectively**: 
   - Leverage built-in data structures (hash maps, sets, sorted lists) for their algorithmic benefits.
   - Use language idioms that are both fast and readable (e.g., list comprehensions, modern async patterns).
@@ -150,10 +154,11 @@ def has_permission(user_id: int, valid_ids: list[int]) -> bool:
 
 ## Future Proofing
 
-- **Document project decisions**: Include information and decisions that future agents looking at the project need to know in a `future-agents-notes.md` file at the top level of the project.
+- **Create `future-agents-notes.md`**: If it does not exist, create `future-agents-notes.md` at the root of the project.
+- **Document project decisions**: Include information and decisions (made with or without the user) that future agents looking at the project need to know in a `future-agents-notes.md` file at the top level of the project.
 - **Be concise**: Keep this information extremely concise documenting only what future agents need to see in as few tokens as possible to express the point.
 - **Include decisions**: This file should include decisions abotu proejct structure, class design, standards, testing, and structure that are important for cohesive project work.
-- **Review this file**: Review the `future-agents-notes.md` file at the top level of the repository when starting a session to see what decisions have been made.
+- **Review `future-agents-notes.md`**: Review the `future-agents-notes.md` file at the top level of the repository when starting a session to see what decisions have been made.
 
 ## Summary
 
@@ -161,6 +166,6 @@ def has_permission(user_id: int, valid_ids: list[int]) -> bool:
 - **Robustness**: Proper error handling, tested behavior, explicit contracts
 - **Clarity**: Readable names, concise documentation, obvious structure
 - **Performance**: Smart data structures, efficient algorithms, measured optimization
-- **Maintainability**: DRY principles applied judiciously, consistent patterns, organized folders
+- **Maintainability**: Avoid duplication where logical, consistent patterns, organized folders
 - **Pragmatism**: No over-engineering, no edge cases that cannot happen, focus on the actual problem
 - **Future Prooding**: document decisions and structural choices for future agents so work is consistent
