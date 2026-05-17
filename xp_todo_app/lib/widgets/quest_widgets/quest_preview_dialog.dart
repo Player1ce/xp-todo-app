@@ -31,6 +31,7 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
   late String _description;
   late String _xpReward;
   late String _level;
+  late String _risk;
   late Difficulty _difficulty;
   late DateTime? _dueDate;
   late bool _completed;
@@ -49,6 +50,7 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
     _description = widget.quest.description;
     _xpReward = widget.quest.xpReward.toString();
     _level = widget.quest.level.toString();
+    _risk = widget.quest.risk.toString();
     _difficulty = widget.quest.difficulty;
     _dueDate = widget.quest.expireDate;
     _completed = widget.quest.completed;
@@ -109,6 +111,19 @@ class _QuestPreviewDialogState extends ConsumerState<QuestPreviewDialog> {
                   onChanged: (value) {
                     setState(() => _title = value);
                     _scheduleTextSave({'name': value});
+                  },
+                ),
+                const SizedBox(height: 10),
+                _InlineEditableField(
+                  label: 'Risk (0-100)',
+                  value: _risk,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() => _risk = value);
+                    final parsed = int.tryParse(value);
+                    if (parsed != null) {
+                      _scheduleTextSave({'risk': parsed.clamp(0, 100)});
+                    }
                   },
                 ),
                 const SizedBox(height: 10),

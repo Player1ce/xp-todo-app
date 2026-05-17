@@ -22,6 +22,15 @@ class QuestRepository extends IFirestoreRepository {
     return collectionRef(segments);
   }
 
+  CollectionReference<Map<String, dynamic>> gameCollection(String userId) {
+    final segments = List<String>.of(
+      collectionElements.sublist(0, 3),
+      growable: false,
+    );
+    segments[1] = userId;
+    return collectionRef(segments);
+  }
+
   QuestRepository({required FirebaseFirestore firestore, bool isDemo = false})
     : super(firestore, isDemo, [
         isDemo
@@ -69,6 +78,14 @@ class QuestRepository extends IFirestoreRepository {
     String questId,
     Map<String, dynamic> updates,
   ) {
+    if (updates.isEmpty) {
+      return Future.value();
+    }
+
+    if (updates.containsKey(Quest.completeFieldName)) {
+      return _changeQuestCompletion(userId, gameId, questId, updates);
+    }
+
     return updateDocument(collection(userId, gameId), questId, updates);
   }
 
@@ -78,7 +95,7 @@ class QuestRepository extends IFirestoreRepository {
     String questId,
     bool completed,
   ) {
-    return updateQuest(
+    return _changeQuestCompletion(
       userId,
       gameId,
       questId,
@@ -195,5 +212,61 @@ class QuestRepository extends IFirestoreRepository {
               .map((doc) => Quest.fromFirestore(doc.id, doc.data()))
               .toList(growable: false);
         });
+  }
+
+  // ------Helper Methods-----------------------------------------------
+
+  Future<void> _changeQuestCompletion(
+    String userId,
+    String gameId,
+    String questId,
+    Map<String, dynamic> updates,
+  ) {
+    if (updates[Quest.completeFieldName] is! bool) {
+      throw ArgumentError(
+        'Invalid value for ${Quest.completeFieldName}: must be a boolean',
+      );
+    }
+
+    final gameDoc = gameCollection(userId).doc(gameId);
+    final questDoc = collection(userId, gameId).doc(questId);
+
+    updates['dateUpdated'] = FieldValue.serverTimestamp();
+    updates.remove('id');
+
+    return firestore.runTransaction((transaction) async {
+      final questSnapshot = await transaction.get(questDoc);
+
+      if (questSnapshot.data() == null || !questSnapshot.exists) {
+        throw DocumentNotFoundException(
+          'QuestRepostiory(updateQuest): Quest $questId not found in game $gameId',
+        );
+      } else {
+        var oldValue = questSnapshot.data()![Quest.completeFieldName];
+        if (oldValue == null || oldValue is! bool) {
+          oldValue = false;
+        }
+
+        if (oldValue == updates[Quest.completeFieldName]) {
+          // No change in completion status, so no need to update game stats
+          transaction.update(questDoc, updates);
+          return;
+        }
+      }
+
+      final gameSnapshot = await transaction.get(gameDoc);
+      if (!gameSnapshot.exists || gameSnapshot.data() == null) {
+        throw DocumentNotFoundException(
+          'QuestRepostiory(updateQuest): Game $gameId not found for user $userId',
+        );
+      }
+
+      transaction.update(gameDoc, {
+        Game.completedQuestsFieldName: FieldValue.increment(
+          updates[Quest.completeFieldName] == true ? 1 : -1,
+        ),
+      });
+      transaction.update(questDoc, updates);
+    });
   }
 }

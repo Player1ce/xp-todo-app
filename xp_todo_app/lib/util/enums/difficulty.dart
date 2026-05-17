@@ -78,4 +78,8 @@ enum Difficulty {
       },
     );
   }
+
+  static bool isValidName(String name) {
+    return values.any((d) => d.name == name);
+  }
 }

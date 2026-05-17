@@ -5,6 +5,7 @@ class QuestItemCard extends StatelessWidget {
   final Quest quest;
   final VoidCallback? onTap;
   final ValueChanged<bool>? onCompletedChanged;
+  final ValueChanged<int>? onRiskChanged;
   final bool isBusy;
 
   const QuestItemCard({
@@ -12,6 +13,7 @@ class QuestItemCard extends StatelessWidget {
     required this.quest,
     this.onTap,
     this.onCompletedChanged,
+    this.onRiskChanged,
     this.isBusy = false,
   });
 
@@ -102,16 +104,28 @@ class QuestItemCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    quest.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: textColor,
-                      decoration: isCompleted
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          quest.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: textColor,
+                            decoration: isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _InlineRiskEditor(
+                        value: quest.risk,
+                        enabled: !isBusy,
+                        onChanged: onRiskChanged,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -159,6 +173,93 @@ class QuestItemCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _InlineRiskEditor extends StatefulWidget {
+  final int value;
+  final bool enabled;
+  final ValueChanged<int>? onChanged;
+
+  const _InlineRiskEditor({
+    required this.value,
+    required this.enabled,
+    this.onChanged,
+  });
+
+  @override
+  State<_InlineRiskEditor> createState() => _InlineRiskEditorState();
+}
+
+class _InlineRiskEditorState extends State<_InlineRiskEditor> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value.toString());
+  }
+
+  @override
+  void didUpdateWidget(covariant _InlineRiskEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final nextText = widget.value.toString();
+    if (nextText != _controller.text) {
+      _controller.text = nextText;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _commit() {
+    final parsed = int.tryParse(_controller.text);
+    if (parsed == null) {
+      _controller.text = widget.value.toString();
+      return;
+    }
+
+    final clamped = parsed.clamp(0, 100);
+    if (clamped != widget.value) {
+      widget.onChanged?.call(clamped);
+    }
+    if (_controller.text != clamped.toString()) {
+      _controller.text = clamped.toString();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return SizedBox(
+      width: 78,
+      child: TextField(
+        controller: _controller,
+        enabled: widget.enabled && widget.onChanged != null,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          labelText: 'Risk',
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 8,
+          ),
+          border: const OutlineInputBorder(),
+          labelStyle: theme.textTheme.labelSmall?.copyWith(
+            color: colorScheme.onSurface.withValues(alpha: 0.72),
+          ),
+        ),
+        onSubmitted: (_) => _commit(),
+        onEditingComplete: _commit,
+        onTapOutside: (_) => _commit(),
       ),
     );
   }

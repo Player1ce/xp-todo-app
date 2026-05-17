@@ -10,6 +10,8 @@ class Game extends IFirestoreModel {
   static String collectionName = 'Game';
   static String gameActiveFieldName = 'isActive';
   static String gameArchivedFieldName = 'archived';
+  static String completedQuestsFieldName = 'completedQuests';
+  static String totalQuestsFieldName = 'totalQuests';
 
   final String id;
 
@@ -91,8 +93,8 @@ class Game extends IFirestoreModel {
       'description': description,
       gameActiveFieldName: isActive,
       gameArchivedFieldName: archived,
-      'totalQuests': totalQuests,
-      'completedQuests': completedQuests,
+      totalQuestsFieldName: totalQuests,
+      completedQuestsFieldName: completedQuests,
       'difficulty': difficulty.toStorage(),
       'availableXP': availableXP,
       'totalXP': totalXP,
@@ -111,11 +113,11 @@ class Game extends IFirestoreModel {
       description: map['description'] as String,
       isActive: map[gameActiveFieldName] as bool,
       archived: map[gameArchivedFieldName] as bool? ?? false,
-      totalQuests: map['totalQuests'] as int,
-      completedQuests: map['completedQuests'] as int,
+      totalQuests: (map[totalQuestsFieldName] as double).toInt(),
+      completedQuests: (map[completedQuestsFieldName] as double).toInt(),
       difficulty: Difficulty.fromStorage(map['difficulty'] as String?),
-      availableXP: map['availableXP'] as int,
-      totalXP: map['totalXP'] as int,
+      availableXP: (map['availableXP'] as double).toInt(),
+      totalXP: (map['totalXP'] as double).toInt(),
       completionPercentage: map['completionPercentage'] as double,
       userId: map['userId'] as String,
       dateCreated: map['dateCreated'] != null
@@ -162,8 +164,10 @@ class Game extends IFirestoreModel {
     if (description != null) map['description'] = description;
     if (isActive != null) map[gameActiveFieldName] = isActive;
     if (archived != null) map[gameArchivedFieldName] = archived;
-    if (totalQuests != null) map['totalQuests'] = totalQuests;
-    if (completedQuests != null) map['completedQuests'] = completedQuests;
+    if (totalQuests != null) map[totalQuestsFieldName] = totalQuests;
+    if (completedQuests != null) {
+      map[completedQuestsFieldName] = completedQuests;
+    }
     if (difficulty != null) map['difficulty'] = difficulty.toStorage();
     if (availableXP != null) map['availableXP'] = availableXP;
     if (totalXP != null) map['totalXP'] = totalXP;
@@ -173,6 +177,43 @@ class Game extends IFirestoreModel {
     if (userId != null) map['userId'] = userId;
 
     return map;
+  }
+
+  // check the keys and types of the values in the map to ensure they are valid for updating a Game document
+  static bool isValidUpdateMap(Map<String, dynamic> updates) {
+    final validKeys = {
+      'title': String,
+      'imageUrl': String,
+      'description': String,
+      gameActiveFieldName: bool,
+      gameArchivedFieldName: bool,
+      totalQuestsFieldName: int,
+      completedQuestsFieldName: int,
+      'difficulty': Difficulty,
+      'availableXP': int,
+      'totalXP': int,
+      'completionPercentage': double,
+    };
+
+    for (final entry in updates.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
+      if (!validKeys.containsKey(key)) {
+        return false; // Invalid key
+      }
+
+      final expectedType = validKeys[key]!;
+      if (expectedType == Difficulty) {
+        if (value is! String || !Difficulty.isValidName(value)) {
+          return false; // Invalid type for difficulty
+        }
+      } else if (value.runtimeType != expectedType) {
+        return false; // Invalid type
+      }
+    }
+
+    return true; // All keys and types are valid
   }
 
   @override

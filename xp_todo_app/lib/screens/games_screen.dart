@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:xp_todo_app/const/route_constants.dart';
-import 'package:xp_todo_app/widgets/game_card.dart';
-import 'package:xp_todo_app/widgets/game_creation_dialog.dart';
+import 'package:xp_todo_app/widgets/game_widgets/game_card.dart';
+import 'package:xp_todo_app/widgets/game_widgets/game_creation_dialog.dart';
 
 class GamesScreen extends ConsumerWidget {
   const GamesScreen({super.key});

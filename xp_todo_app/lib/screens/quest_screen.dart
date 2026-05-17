@@ -1,8 +1,8 @@
 import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:xp_todo_app/widgets/quest_creation_dialog.dart';
-import 'package:xp_todo_app/widgets/quest_list_panel.dart';
+import 'package:xp_todo_app/widgets/quest_widgets/quest_creation_dialog.dart';
+import 'package:xp_todo_app/widgets/quest_widgets/quest_list_panel.dart';
 
 class QuestScreen extends ConsumerWidget {
   const QuestScreen({super.key});
