@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart'; // kIsWeb
 
 Future<void> configureFirestoreCache() async {
   const cacheSizeBytes = 100 * 1024 * 1024; // 100 MB
-  final firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   if (kIsWeb) {
     // Web can fail in some environments (incognito, restricted storage, etc.).
     try {
-      FirebaseFirestore.instance.settings = const Settings(
+      firestore.settings = const Settings(
         persistenceEnabled: true,
         cacheSizeBytes: cacheSizeBytes,
       );

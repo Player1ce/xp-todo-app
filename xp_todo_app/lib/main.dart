@@ -7,8 +7,11 @@ import 'package:adaptive_platform_ui/adaptive_platform_ui.dart';
 
 // flutter_riverpod
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:xp_todo_app/firebase_options.dart';
+
+// providers
 import 'package:xp_todo_app/providers/go_router_provider.dart';
+
+import 'package:xp_todo_app/firebase_options.dart';
 import 'package:xp_todo_app/theme/app_theme.dart';
 import 'package:xp_todo_app/util/configure_firestore_cache.dart';
 
