@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'xp-todo-app-672ff.firebaseapp.com',
     storageBucket: 'xp-todo-app-672ff.firebasestorage.app',
   );
+
 }
