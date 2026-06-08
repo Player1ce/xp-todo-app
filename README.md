@@ -1,5 +1,7 @@
 # XP based todo list
 
+Hosting URL: `https://xp-todo-app-672ff.web.app`
+
 ## setup
 
 run `flutterfire configure` from the root of the project to set up API keys.
