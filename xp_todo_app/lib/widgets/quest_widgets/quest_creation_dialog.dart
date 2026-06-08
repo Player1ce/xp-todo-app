@@ -23,11 +23,13 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
   final FocusNode _descriptionFocusNode = FocusNode();
   final FocusNode _xpFocusNode = FocusNode();
   final FocusNode _levelFocusNode = FocusNode();
+  final FocusNode _riskFocusNode = FocusNode();
   String _title = '';
   String _description = '';
   Difficulty _difficulty = Difficulty.easy;
   String _xpReward = '100';
   String _level = '1';
+  String _risk = '0';
   DateTime? _expireDate;
   String? _selectedGameId;
 
@@ -54,6 +56,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
     _descriptionFocusNode.dispose();
     _xpFocusNode.dispose();
     _levelFocusNode.dispose();
+    _riskFocusNode.dispose();
     super.dispose();
   }
 
@@ -68,6 +71,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
 
     final parsedXpReward = int.parse(_xpReward);
     final parsedLevel = int.parse(_level);
+    final parsedRisk = int.tryParse(_risk) ?? 0;
 
     setState(() => _isSubmitting = true);
     final quest = Quest(
@@ -79,6 +83,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
       xpReward: parsedXpReward,
       gameId: effectiveGameId,
       level: parsedLevel,
+      risk: parsedRisk,
       expireDate: _expireDate,
       userId: userId,
       dateCreated: DateTime.now(),
@@ -288,7 +293,7 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                     child: TextFormField(
                       focusNode: _levelFocusNode,
                       initialValue: _level,
-                      textInputAction: TextInputAction.done,
+                      textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: 'Level'),
                       validator: (value) {
@@ -300,15 +305,33 @@ class _QuestCreationDialogState extends ConsumerState<QuestCreationDialog> {
                       },
                       onChanged: (value) => setState(() => _level = value),
                       onFieldSubmitted: (_) {
-                        _submitForm(
-                          questActionNotifier,
-                          userId,
-                          effectiveGameId,
-                        );
+                        _riskFocusNode.requestFocus();
                       },
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                focusNode: _riskFocusNode,
+                initialValue: _risk,
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Risk',
+                  hintText: '0-100',
+                ),
+                validator: (value) {
+                  final parsed = int.tryParse(value ?? '');
+                  if (parsed == null || parsed < 0 || parsed > 100) {
+                    return 'Risk must be between 0 and 100';
+                  }
+                  return null;
+                },
+                onChanged: (value) => setState(() => _risk = value),
+                onFieldSubmitted: (_) {
+                  _submitForm(questActionNotifier, userId, effectiveGameId);
+                },
               ),
               const SizedBox(height: 12),
               Row(

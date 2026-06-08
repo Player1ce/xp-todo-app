@@ -6,7 +6,8 @@
 **/GoogleService-Info.plist
 **/*.p8
 web/firebase-config.js
-firebase_options.dart  # Regenerate with flutterfire CLI
+**/firebase_options.dart  # Regenerate with flutterfire CLI
+firebase_options.dart
 
 # Firebase CLI
 .firebaserc
